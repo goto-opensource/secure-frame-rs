@@ -1,0 +1,39 @@
+[package]
+name = "sframe"
+version = "0.1.0"
+edition = "2021"
+license = "MIT/Apache-2.0"
+
+authors = ["Tobias Waurick <tobias.waurick@goto.com>", "Hendrik Sollich <hendrik.sollich@goto.com>"]
+description = "Show desktop notifications (linux, bsd, mac). Pure Rust dbus client and server."
+repository = "https://github.com/goto-opensource/secure-frame-rs"
+documentation = "https://docs.rs/sframe/"
+readme = "README"
+
+keywords = ["encryption", "sframe", "webrtc"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bitfield = "0.14"
+log = "0.4"
+num-integer = "0.1" 
+thiserror = "1.0"
+
+[dependencies.ring]
+version = "0.16"
+
+[dev-dependencies]
+criterion = "0.3"
+hex = "0.4"
+pretty_assertions = "1.2"
+rand = "0.8"
+
+[features]
+default = []
+benchmark-internals = []
+wasm-bindgen = ["ring/wasm32_c"]
+
+[[bench]]
+name = "bench_main"
+harness = false
