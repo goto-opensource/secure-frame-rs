@@ -15,14 +15,20 @@ pub struct Receiver {
     cipher_suite: CipherSuite,
 }
 
-impl Receiver {
-    pub fn new() -> Self {
-        // TODO make this configurable
+impl Default for Receiver {
+    fn default() -> Self {
         let cipher_suite: CipherSuite = CipherSuiteVariant::AesGcm256Sha512.into();
         Receiver {
             secrets: Default::default(),
             cipher_suite,
         }
+    }
+}
+
+impl Receiver {
+    pub fn new() -> Self {
+        // TODO: make CipherSuite configurable
+        Self::default()
     }
 
     pub fn decrypt(&self, encrypted_frame: &[u8], skip: usize) -> Result<Vec<u8>> {
