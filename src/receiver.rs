@@ -60,7 +60,7 @@ impl Receiver {
             io_buffer.truncate(io_buffer.len() - self.cipher_suite.auth_tag_len);
             Ok(io_buffer)
         } else {
-            Err(SframeError::DecryptionFailure)
+            Err(SframeError::MissingDecryptionKey(key_id))
         }
     }
 
@@ -77,12 +77,16 @@ impl Receiver {
 #[cfg(test)]
 mod test {
     use super::*;
+
     #[test]
     fn fail_on_missing_secret() {
         let receiver = Receiver::new();
         // do not set the encryption-key
         let decrypted = receiver.decrypt(b"foobar is unsafe", 0);
 
-        assert_eq!(decrypted, Err(SframeError::DecryptionFailure));
+        assert_eq!(
+            decrypted,
+            Err(SframeError::MissingDecryptionKey(KeyId::from(6u8)))
+        );
     }
 }

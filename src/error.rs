@@ -1,5 +1,7 @@
 use std::error::Error;
 
+use crate::header::KeyId;
+
 pub type GenericResult<OkType> = std::result::Result<OkType, Box<dyn Error>>;
 
 pub type Result<T> = std::result::Result<T, SframeError>;
@@ -8,6 +10,12 @@ pub type Result<T> = std::result::Result<T, SframeError>;
 pub enum SframeError {
     #[error("Key Id {0} is not valid")]
     InvalidKeyId(u64),
+
+    #[error("No EncryptionKey has been set")]
+    MissingEncryptionKey,
+
+    #[error("No DecryptionKey has been found")]
+    MissingDecryptionKey(KeyId),
 
     #[error("Failed to Decrypt")]
     DecryptionFailure,

@@ -24,7 +24,7 @@ thiserror = "1.0"
 version = "0.16"
 
 [dev-dependencies]
-criterion = "0.3"
+criterion = "0.4"
 hex = "0.4"
 pretty_assertions = "1.2"
 rand = "0.8"

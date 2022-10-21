@@ -2,14 +2,14 @@ use criterion::{black_box, criterion_group, Criterion};
 use rand::{thread_rng, Rng};
 use sframe::{receiver::Receiver, sender::Sender};
 
-const KEY_MATERIAL: &str = "THIS_IS_SOME_MATERIAL";
+const KEY_MATERIAL: &[u8] = b"THIS_IS_SOME_MATERIAL";
 const PARTICIPANT_ID: u64 = 42;
 const SKIP: usize = 0;
 const PAYLOAD_SIZE: usize = 2056;
 
 fn encryption(c: &mut Criterion) {
     let mut sender = Sender::new(PARTICIPANT_ID);
-    sender.set_encryption_key(KEY_MATERIAL.as_bytes());
+    sender.set_encryption_key(KEY_MATERIAL).unwrap();
 
     c.bench_function("encrypt with AES_GCM_256_SHA512", |b| {
         let mut unencrypted_payload = [0u8; PAYLOAD_SIZE];
@@ -24,9 +24,12 @@ fn encryption(c: &mut Criterion) {
 
 fn decryption(c: &mut Criterion) {
     let mut sender = Sender::new(PARTICIPANT_ID);
-    sender.set_encryption_key(KEY_MATERIAL.as_bytes());
+    sender.set_encryption_key(KEY_MATERIAL).unwrap();
 
-    let receiver = Receiver::new();
+    let mut receiver = Receiver::new();
+    receiver
+        .set_encryption_key(PARTICIPANT_ID, KEY_MATERIAL)
+        .unwrap();
 
     c.bench_function("decrypt with AES_GCM_256_SHA512", |b| {
         let mut unencrypted_payload = [0u8; PAYLOAD_SIZE];
