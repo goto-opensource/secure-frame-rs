@@ -71,7 +71,7 @@ impl Sender {
 
             Ok(frame)
         } else {
-            Err(SframeError::EncryptionFailure)
+            Err(SframeError::MissingEncryptionKey)
         }
     }
 
@@ -90,6 +90,6 @@ mod test {
         // do not set the encryption-key
         let encrypted = sender.encrypt(b"foobar is unsafe", 0);
 
-        assert_eq!(encrypted, Err(SframeError::EncryptionFailure));
+        assert_eq!(encrypted, Err(SframeError::MissingEncryptionKey));
     }
 }

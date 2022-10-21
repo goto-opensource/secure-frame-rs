@@ -1,4 +1,4 @@
-use super::{cipher_suite::CipherSuite, key_expansion::Secret};
+use super::key_expansion::Secret;
 use crate::{error::Result, header::FrameCount};
 
 pub trait AeadEncrypt {
@@ -27,7 +27,7 @@ pub trait AeadDecrypt {
         IoBuffer: AsMut<[u8]> + ?Sized,
         Aad: AsRef<[u8]> + ?Sized;
 }
-impl CipherSuite {}
+
 mod ring {
 
     use ring::aead::{BoundKey, Tag};
@@ -168,7 +168,9 @@ mod ring {
         fn create_correct_nonce() {
             get_test_vectors().into_iter().for_each(|test_vector| {
                 let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
-                let secret = KeyMaterial(&test_vector.key_material).expand_as_secret(&cipher_suite).unwrap();
+                let secret = KeyMaterial(&test_vector.key_material)
+                    .expand_as_secret(&cipher_suite)
+                    .unwrap();
                 let nonce = FrameNonceSequence::new(test_vector.frame_counter, &secret.salt);
                 assert_bytes_eq(&nonce.iv, &test_vector.nonce);
             });
@@ -199,7 +201,9 @@ mod test {
             thread_rng().fill(data.as_mut_slice());
             let header = Header::default();
             let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
-            let secret = KeyMaterial(KEY_MATERIAL.as_bytes()).expand_as_secret(&cipher_suite).unwrap();
+            let secret = KeyMaterial(KEY_MATERIAL.as_bytes())
+                .expand_as_secret(&cipher_suite)
+                .unwrap();
 
             let _tag = cipher_suite
                 .encrypt(
