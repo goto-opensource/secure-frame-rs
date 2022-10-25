@@ -1,12 +1,6 @@
-#![allow(unused_imports)]
 use criterion::{black_box, criterion_group, Criterion};
 
-use sframe::{
-    header::Header,
-    header::KeyId,
-    header::{Deserialization, FrameCount, Serialization},
-    util::bin2string,
-};
+use sframe::header::{Deserialization, FrameCount, Header, KeyId, Serialization};
 
 fn header_serialization(c: &mut Criterion) {
     c.bench_function("basic header", |b| {
