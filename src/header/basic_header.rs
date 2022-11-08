@@ -72,7 +72,7 @@ impl Deserialization for BasicHeader {
         let frame_counter_length: usize = (header_view.get_frame_counter_length() + 1).into(); // frame counter length 1 is coded as 0
         let mut numeric_value = [0u8; 8];
         let offset = numeric_value.len() - frame_counter_length;
-        for index in 0..frame_counter_length as usize {
+        for index in 0..frame_counter_length {
             numeric_value[offset + index] = header_view.get_frame_counter(index);
         }
 
