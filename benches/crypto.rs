@@ -43,21 +43,13 @@ fn decryption(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "benchmark-internals")]
 fn key_expansion(c: &mut Criterion) {
-    use sframe::internals::{CipherSuite, CipherSuiteVariant, KeyMaterial};
-
-    c.bench_function("expand key with AesGcm256Sha512 cipher suite", |b| {
-        let suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
+    c.bench_function("expand key with AES_GCM_256_SHA512 cipher suite", |b| {
+        // currently defaults to AES_GCM_256_SHA512
+        let mut sender = Sender::new(PARTICIPANT_ID);
         b.iter(|| {
-            let secret = KeyMaterial(KEY_MATERIAL.as_bytes()).expand_as_secret(&suite);
-            black_box(secret);
+            black_box(sender.set_encryption_key(KEY_MATERIAL).unwrap());
         })
     });
 }
-
-#[cfg(not(feature = "benchmark-internals"))]
-criterion_group!(benches, encryption, decryption);
-
-#[cfg(feature = "benchmark-internals")]
 criterion_group!(benches, encryption, decryption, key_expansion);
