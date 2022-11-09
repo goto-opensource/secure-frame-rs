@@ -1,18 +1,37 @@
-use criterion::{black_box, criterion_group, Criterion};
+use criterion::{black_box, criterion_group, Bencher, BenchmarkId, Criterion};
 use rand::{thread_rng, Rng};
 use sframe::{receiver::Receiver, sender::Sender};
 
 const KEY_MATERIAL: &[u8] = b"THIS_IS_SOME_MATERIAL";
 const PARTICIPANT_ID: u64 = 42;
 const SKIP: usize = 0;
-const PAYLOAD_SIZE: usize = 2056;
+const PAYLOAD_SIZES: [usize; 4] = [512, 5120, 51200, 512000];
 
-fn encryption(c: &mut Criterion) {
+fn bench_over_payload_sizes<F>(c: &mut Criterion, name: &str, mut bench: F)
+where
+    F: FnMut(&mut Bencher, &usize),
+{
+    let mut group = c.benchmark_group(name);
+    for payload_size in PAYLOAD_SIZES.iter() {
+        group.throughput(criterion::Throughput::Bytes(*payload_size as u64));
+        group.bench_with_input(
+            BenchmarkId::from_parameter(payload_size),
+            payload_size,
+            &mut bench,
+        );
+    }
+}
+
+fn aes_gcm256_sha512(c: &mut Criterion) {
     let mut sender = Sender::new(PARTICIPANT_ID);
     sender.set_encryption_key(KEY_MATERIAL).unwrap();
+    let mut receiver = Receiver::new();
+    receiver
+        .set_encryption_key(PARTICIPANT_ID, KEY_MATERIAL)
+        .unwrap();
 
-    c.bench_function("encrypt with AES_GCM_256_SHA512", |b| {
-        let mut unencrypted_payload = [0u8; PAYLOAD_SIZE];
+    bench_over_payload_sizes(c, "encrypt with AES_GCM_256_SHA512", |b, &payload_size| {
+        let mut unencrypted_payload = vec![0; payload_size];
         thread_rng().fill(unencrypted_payload.as_mut_slice());
 
         b.iter(|| {
@@ -20,19 +39,8 @@ fn encryption(c: &mut Criterion) {
             black_box(encrypted_frame);
         });
     });
-}
-
-fn decryption(c: &mut Criterion) {
-    let mut sender = Sender::new(PARTICIPANT_ID);
-    sender.set_encryption_key(KEY_MATERIAL).unwrap();
-
-    let mut receiver = Receiver::new();
-    receiver
-        .set_encryption_key(PARTICIPANT_ID, KEY_MATERIAL)
-        .unwrap();
-
-    c.bench_function("decrypt with AES_GCM_256_SHA512", |b| {
-        let mut unencrypted_payload = [0u8; PAYLOAD_SIZE];
+    bench_over_payload_sizes(c, "decrypt with AES_GCM_256_SHA512", |b, &payload_size| {
+        let mut unencrypted_payload = vec![0u8; payload_size];
         thread_rng().fill(unencrypted_payload.as_mut_slice());
         let encrypted_frame = sender.encrypt(&unencrypted_payload, SKIP).unwrap();
 
@@ -52,4 +60,4 @@ fn key_expansion(c: &mut Criterion) {
         })
     });
 }
-criterion_group!(benches, encryption, decryption, key_expansion);
+criterion_group!(benches, aes_gcm256_sha512, key_expansion);
