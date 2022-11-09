@@ -1,4 +1,4 @@
-use criterion::{black_box, criterion_group, Bencher, BenchmarkId, Criterion};
+use criterion::{black_box, criterion_group, BatchSize, Bencher, BenchmarkId, Criterion};
 use rand::{thread_rng, Rng};
 use sframe::{receiver::Receiver, sender::Sender};
 
@@ -22,6 +22,15 @@ where
     }
 }
 
+fn create_random_payload(size: usize) -> Vec<u8> {
+    let mut unencrypted_payload = vec![0; size];
+    thread_rng().fill(unencrypted_payload.as_mut_slice());
+    unencrypted_payload
+}
+fn create_random_encrypted_payload(size: usize, sender: &mut Sender) -> Vec<u8> {
+    sender.encrypt(&create_random_payload(size), SKIP).unwrap()
+}
+
 fn aes_gcm256_sha512(c: &mut Criterion) {
     let mut sender = Sender::new(PARTICIPANT_ID);
     sender.set_encryption_key(KEY_MATERIAL).unwrap();
@@ -31,23 +40,25 @@ fn aes_gcm256_sha512(c: &mut Criterion) {
         .unwrap();
 
     bench_over_payload_sizes(c, "encrypt with AES_GCM_256_SHA512", |b, &payload_size| {
-        let mut unencrypted_payload = vec![0; payload_size];
-        thread_rng().fill(unencrypted_payload.as_mut_slice());
-
-        b.iter(|| {
-            let encrypted_frame = sender.encrypt(&unencrypted_payload, SKIP).unwrap();
-            black_box(encrypted_frame);
-        });
+        b.iter_batched(
+            || create_random_payload(payload_size),
+            |unencrypted_payload| {
+                let encrypted_frame = sender.encrypt(&unencrypted_payload, SKIP).unwrap();
+                black_box(encrypted_frame);
+            },
+            BatchSize::SmallInput,
+        );
     });
-    bench_over_payload_sizes(c, "decrypt with AES_GCM_256_SHA512", |b, &payload_size| {
-        let mut unencrypted_payload = vec![0u8; payload_size];
-        thread_rng().fill(unencrypted_payload.as_mut_slice());
-        let encrypted_frame = sender.encrypt(&unencrypted_payload, SKIP).unwrap();
 
-        b.iter(|| {
-            let decrypted_frame = receiver.decrypt(&encrypted_frame, SKIP).unwrap();
-            black_box(decrypted_frame);
-        });
+    bench_over_payload_sizes(c, "decrypt with AES_GCM_256_SHA512", |b, &payload_size| {
+        b.iter_batched(
+            || create_random_encrypted_payload(payload_size, &mut sender),
+            |encrypted_frame| {
+                let decrypted_frame = receiver.decrypt(&encrypted_frame, SKIP).unwrap();
+                black_box(decrypted_frame);
+            },
+            BatchSize::SmallInput,
+        );
     });
 }
 
