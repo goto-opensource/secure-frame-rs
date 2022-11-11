@@ -1,7 +1,7 @@
 sframe (the rust implementation)
 ======
 
-This package contains the rust implementation of [draft-omara-sframe-03](https://datatracker.ietf.org/doc/html/draft-omara-sframe-03), including benchmarks and tests.
+This package contains the rust implementation of [draft-ietf-sframe-enc](https://datatracker.ietf.org/doc/draft-ietf-sframe-enc/), including benchmarks and tests.
 
 
 ## License
