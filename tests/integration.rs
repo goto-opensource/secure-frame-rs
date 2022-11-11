@@ -8,7 +8,7 @@ fn encrypt_decrypt_1000_frames(participant_id: u64, skipped_payload: usize) {
     let key_material = "THIS_IS_SOME_MATERIAL";
     sender.set_encryption_key(key_material.as_bytes()).unwrap();
 
-    let mut receiver = Receiver::new();
+    let mut receiver = Receiver::default();
     receiver
         .set_encryption_key(participant_id.into(), key_material.as_bytes())
         .unwrap();

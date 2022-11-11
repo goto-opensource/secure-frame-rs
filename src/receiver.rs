@@ -26,11 +26,6 @@ impl Default for Receiver {
 }
 
 impl Receiver {
-    pub fn new() -> Self {
-        // TODO: make CipherSuite configurable
-        Self::default()
-    }
-
     pub fn decrypt(&self, encrypted_frame: &[u8], skip: usize) -> Result<Vec<u8>> {
         let header = Header::deserialize(&encrypted_frame[skip..])?;
 
@@ -80,7 +75,7 @@ mod test {
 
     #[test]
     fn fail_on_missing_secret() {
-        let receiver = Receiver::new();
+        let receiver = Receiver::default();
         // do not set the encryption-key
         let decrypted = receiver.decrypt(b"foobar is unsafe", 0);
 
