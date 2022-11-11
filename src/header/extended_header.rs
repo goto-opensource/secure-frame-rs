@@ -58,7 +58,7 @@ impl Serialization for ExtendedHeader {
 
         for (index, value) in into_be_bytes(self.key_id)
             .into_iter()
-            .chain(into_be_bytes(self.frame_counter.as_numeric_value()).into_iter())
+            .chain(into_be_bytes(self.frame_counter.value()).into_iter())
             .enumerate()
         {
             header_setter.set_key_id_and_ctr(index, value)
@@ -214,6 +214,6 @@ mod test {
         let data = [0b0_000_1_000, 0b00000010, 0b10011010];
         let header = ExtendedHeader::deserialize(&data).unwrap();
         assert_eq!(header.get_key_id(), 2);
-        assert_eq!(header.get_frame_counter().as_numeric_value(), 154);
+        assert_eq!(header.get_frame_counter().value(), 154);
     }
 }

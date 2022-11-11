@@ -1,8 +1,8 @@
-use std::ops::Deref;
+use std::ops::Add;
 
 use num_integer::div_ceil;
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd)]
 pub struct FrameCount {
     numeric_value: u64,
 }
@@ -23,7 +23,7 @@ impl FrameCount {
         FrameCount { numeric_value }
     }
 
-    pub fn as_numeric_value(&self) -> u64 {
+    pub fn value(&self) -> u64 {
         self.numeric_value
     }
 
@@ -36,11 +36,24 @@ impl FrameCount {
     }
 }
 
-impl Deref for FrameCount {
-    type Target = u64;
+impl Add<u64> for FrameCount {
+    type Output = Self;
 
-    fn deref(&self) -> &Self::Target {
-        &self.numeric_value
+    fn add(self, rhs: u64) -> Self::Output {
+        FrameCount {
+            numeric_value: self.numeric_value + rhs,
+        }
+    }
+}
+impl PartialEq<u64> for FrameCount {
+    fn eq(&self, other: &u64) -> bool {
+        self.numeric_value == *other
+    }
+}
+
+impl From<u64> for FrameCount {
+    fn from(numeric_value: u64) -> Self {
+        FrameCount { numeric_value }
     }
 }
 
@@ -68,7 +81,7 @@ mod test {
     #[test]
     fn return_numeric_value() {
         let frame_counter = FrameCount::new(42);
-        assert_eq!(42, frame_counter.as_numeric_value());
+        assert_eq!(42, frame_counter.value());
     }
 
     #[test]
@@ -97,7 +110,7 @@ mod test {
         let mut frame_counter_generator = FrameCountGenerator::default();
 
         for i in 0..10 as u64 {
-            assert_eq!(frame_counter_generator.increment().as_numeric_value(), i);
+            assert_eq!(frame_counter_generator.increment().value(), i);
         }
     }
 }

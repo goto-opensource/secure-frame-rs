@@ -29,6 +29,9 @@ pub enum SframeError {
     #[error("Unable to create unbound encryption key")]
     KeyExpansion,
 
+    #[error("Replay check failed, frame counter too old")]
+    FrameValidationFailed,
+
     #[error("{0}")]
     Other(String),
 }

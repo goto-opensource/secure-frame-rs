@@ -10,7 +10,7 @@ fn main() {
         .unwrap_or(10);
 
     for k in 0..limit as u64 {
-        let header = Header::new(k.try_into().unwrap());
+        let header = Header::new(k);
         let mut buffer = vec![0u8; 4];
         header.serialize(&mut buffer).unwrap();
         println!("{:}", bin2string(&buffer));

@@ -26,3 +26,5 @@ pub mod header;
 pub mod receiver;
 pub mod sender;
 pub mod util;
+
+mod frame_validation;
