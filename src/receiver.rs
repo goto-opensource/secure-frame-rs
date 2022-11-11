@@ -67,11 +67,32 @@ impl Receiver {
         );
         Ok(())
     }
+
+    pub fn remove_encryption_key(&mut self, receiver_id: u64) -> bool {
+        self.secrets.remove(&KeyId::from(receiver_id)).is_some()
+    }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn remove_key() {
+        let mut receiver = Receiver::default();
+        assert_eq!(receiver.remove_encryption_key(1234), false);
+
+        receiver.set_encryption_key(4223, b"hendrikswaytoshortpassword").unwrap();
+        receiver.set_encryption_key(4711, b"tobismuchbetterpassword;)").unwrap();
+
+        assert!(receiver.remove_encryption_key(4223));
+        assert_eq!(receiver.remove_encryption_key(4223), false);
+
+        assert!(receiver.remove_encryption_key(4711));
+        assert_eq!(receiver.remove_encryption_key(4711), false);
+
+
+    }
 
     #[test]
     fn fail_on_missing_secret() {
