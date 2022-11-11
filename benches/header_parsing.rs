@@ -28,7 +28,7 @@ fn header_serialization(c: &mut Criterion) {
 
         b.iter(move || {
             serialized_headers.iter().for_each(|header| {
-                let h = Header::deserialize(&header).unwrap();
+                let h = Header::deserialize(header).unwrap();
                 black_box(h);
             })
         })
@@ -47,7 +47,7 @@ fn header_serialization(c: &mut Criterion) {
 
         b.iter(move || {
             serialized_headers.iter().for_each(|header| {
-                let h = Header::deserialize(&header).unwrap();
+                let h = Header::deserialize(header).unwrap();
                 black_box(h);
             })
         })

@@ -40,9 +40,9 @@ mod ring {
     impl From<&CipherSuite> for ring::hkdf::Algorithm {
         fn from(cipher_suite: &CipherSuite) -> Self {
             match cipher_suite.variant {
-                CipherSuiteVariant::AesCm128HmacSha256_8 => ring::hkdf::HKDF_SHA256,
-                CipherSuiteVariant::AesCm128HmacSha256_4 => ring::hkdf::HKDF_SHA256,
-                CipherSuiteVariant::AesGcm128Sha256 => ring::hkdf::HKDF_SHA256,
+                CipherSuiteVariant::AesCm128HmacSha256_8
+                | CipherSuiteVariant::AesCm128HmacSha256_4
+                | CipherSuiteVariant::AesGcm128Sha256 => ring::hkdf::HKDF_SHA256,
                 CipherSuiteVariant::AesGcm256Sha512 => ring::hkdf::HKDF_SHA512,
             }
         }

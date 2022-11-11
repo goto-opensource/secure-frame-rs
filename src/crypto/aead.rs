@@ -91,9 +91,9 @@ mod ring {
 
         fn get_algorithm(&self) -> &'static ring::aead::Algorithm {
             match self.variant {
-                CipherSuiteVariant::AesCm128HmacSha256_8 => &ring::aead::AES_128_GCM,
-                CipherSuiteVariant::AesCm128HmacSha256_4 => &ring::aead::AES_128_GCM,
-                CipherSuiteVariant::AesGcm128Sha256 => &ring::aead::AES_128_GCM,
+                CipherSuiteVariant::AesCm128HmacSha256_8
+                | CipherSuiteVariant::AesCm128HmacSha256_4
+                | CipherSuiteVariant::AesGcm128Sha256 => &ring::aead::AES_128_GCM,
                 CipherSuiteVariant::AesGcm256Sha512 => &ring::aead::AES_256_GCM,
             }
         }
@@ -245,7 +245,7 @@ mod test {
                 let full_frame: Vec<u8> = header_buffer
                     .into_iter()
                     .chain(data.into_iter())
-                    .chain(tag.as_ref().into_iter().cloned())
+                    .chain(tag.as_ref().iter().cloned())
                     .collect();
 
                 assert_bytes_eq(&full_frame, &test_vector.cipher_text);
