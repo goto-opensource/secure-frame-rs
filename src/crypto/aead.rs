@@ -30,7 +30,7 @@ pub trait AeadDecrypt {
 
 mod ring {
 
-    use ring::aead::{BoundKey, Tag};
+    use ring::aead::{BoundKey, SealingKey, Tag};
 
     use crate::{
         crypto::{
@@ -107,12 +107,12 @@ mod ring {
             secret: &Secret,
             aad_buffer: &Aad,
             frame_count: &FrameCount,
-        ) -> Result<ring::aead::Tag>
+        ) -> Result<Tag>
         where
             IoBuffer: AsMut<[u8]> + ?Sized,
             Aad: AsRef<[u8]> + ?Sized,
         {
-            let mut sealing_key = ring::aead::SealingKey::new(
+            let mut sealing_key = SealingKey::new(
                 self.unbound_encryption_key(secret)?,
                 FrameNonceSequence::new(frame_count.value(), secret.salt.as_slice()),
             );
@@ -135,7 +135,7 @@ mod ring {
             secret: &Secret,
             aad_buffer: &Aad,
             frame_count: &FrameCount,
-        ) -> crate::error::Result<&'a mut [u8]>
+        ) -> Result<&'a mut [u8]>
         where
             IoBuffer: AsMut<[u8]> + ?Sized,
             Aad: AsRef<[u8]> + ?Sized,

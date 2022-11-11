@@ -57,7 +57,7 @@ impl From<u64> for FrameCount {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Copy, Clone, Debug, Default)]
 pub struct FrameCountGenerator {
     current_frame_count: u64,
 }
@@ -109,7 +109,7 @@ mod test {
     fn create_increasing_frame_counters() {
         let mut frame_counter_generator = FrameCountGenerator::default();
 
-        for i in 0..10 as u64 {
+        for i in 0..10 {
             assert_eq!(frame_counter_generator.increment().value(), i);
         }
     }

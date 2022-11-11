@@ -30,7 +30,7 @@ pub trait HeaderFields {
     fn size(&self) -> usize;
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct BasicHeader {
     key_id: BasicKeyId,
     frame_counter: FrameCount,
@@ -49,7 +49,7 @@ impl BasicHeader {
     }
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct ExtendedHeader {
     key_id: ExtendedKeyId,
     frame_counter: FrameCount,
@@ -68,7 +68,7 @@ impl ExtendedHeader {
     }
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum Header {
     Basic(BasicHeader),
     Extended(ExtendedHeader),
