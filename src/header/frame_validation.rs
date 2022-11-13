@@ -25,7 +25,7 @@ impl ReplayAttackProtection {
 impl FrameValidation for ReplayAttackProtection {
     fn validate(&self, header: &Header) -> Result<()> {
         let last_frame_count = self.last_frame_count.get();
-        let current_frame_count = header.get_frame_counter();
+        let current_frame_count = header.frame_count();
 
         if current_frame_count > last_frame_count {
             // frame is fine and fresh
@@ -62,8 +62,8 @@ mod test {
     #[test]
     fn accept_newer_headers() {
         let validator = ReplayAttackProtection::with_tolerance(128);
-        let first_header = Header::with_frame_counter(23456789u64, 2400);
-        let second_header = Header::with_frame_counter(23456789u64, 2480);
+        let first_header = Header::with_frame_count(23456789u64, 2400);
+        let second_header = Header::with_frame_count(23456789u64, 2480);
 
         assert_eq!(validator.validate(&first_header), Ok(()));
         assert_eq!(validator.validate(&second_header), Ok(()));
@@ -72,8 +72,8 @@ mod test {
     #[test]
     fn accept_older_headers_in_tolerance() {
         let validator = ReplayAttackProtection::with_tolerance(128);
-        let first_header = Header::with_frame_counter(23456789u64, 2480);
-        let late_header = Header::with_frame_counter(23456789u64, 2400);
+        let first_header = Header::with_frame_count(23456789u64, 2480);
+        let late_header = Header::with_frame_count(23456789u64, 2400);
 
         assert_eq!(validator.validate(&first_header), Ok(()));
         assert_eq!(validator.validate(&late_header), Ok(()));
@@ -82,8 +82,8 @@ mod test {
     #[test]
     fn reject_too_old_headers() {
         let validator = ReplayAttackProtection::with_tolerance(128);
-        let first_header = Header::with_frame_counter(23456789u64, 2480);
-        let too_late_header = Header::with_frame_counter(23456789u64, 1024);
+        let first_header = Header::with_frame_count(23456789u64, 2480);
+        let too_late_header = Header::with_frame_count(23456789u64, 1024);
 
         assert_eq!(validator.validate(&first_header), Ok(()));
         assert_eq!(
@@ -96,13 +96,13 @@ mod test {
     fn handle_overflowing_counters() {
         let validator = ReplayAttackProtection::with_tolerance(128);
         let start_count = u64::MAX - 3;
-        let first_header = Header::with_frame_counter(23456789u64, start_count);
+        let first_header = Header::with_frame_count(23456789u64, start_count);
 
         assert_eq!(validator.validate(&first_header), Ok(()));
 
         for step in 0..10 {
             let late_count = start_count.wrapping_add(step); // using this instead of `+` to avoid overflow panic in debug
-            let too_late_header = Header::with_frame_counter(23456789u64, late_count);
+            let too_late_header = Header::with_frame_count(23456789u64, late_count);
             assert_eq!(validator.validate(&too_late_header), Ok(()))
         }
     }

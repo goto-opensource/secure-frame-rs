@@ -9,7 +9,7 @@ use crate::{
 };
 
 pub struct Sender {
-    frame_counter: FrameCountGenerator,
+    frame_count: FrameCountGenerator,
     sender_id: KeyId,
     cipher_suite: CipherSuite,
     secret: Option<Secret>,
@@ -21,7 +21,7 @@ impl Sender {
         // TODO make this configurable
         let cipher_suite: CipherSuite = CipherSuiteVariant::AesGcm256Sha512.into();
         Sender {
-            frame_counter: Default::default(),
+            frame_count: Default::default(),
             sender_id: sender_id.into(),
             cipher_suite,
             secret: None,
@@ -29,21 +29,21 @@ impl Sender {
     }
 
     pub fn encrypt(&mut self, unencrypted_payload: &[u8], skip: usize) -> Result<Vec<u8>> {
-        log::trace!("Encrypt frame # {:#?}!", self.frame_counter);
+        log::trace!("Encrypt frame # {:#?}!", self.frame_count);
         if let Some(ref secret) = self.secret {
             log::trace!("Skipping first {} bytes in frame", skip);
 
-            let frame_count = self.frame_counter.increment();
+            let frame_count = self.frame_count.increment();
             log::trace!("frame count: {:?}", frame_count);
 
             log::trace!("Creating SFrame Header");
-            let header = Header::with_frame_counter(self.sender_id, frame_count);
+            let header = Header::with_frame_count(self.sender_id, frame_count);
 
             log::trace!(
                 "Sender: FrameCount: {:?}, FrameCount length: {:?}, KeyId: {:?}, Extend: {:?}",
-                header.get_frame_counter(),
-                header.get_frame_counter().length_in_bytes(),
-                header.get_key_id(),
+                header.frame_count(),
+                header.frame_count().length_in_bytes(),
+                header.key_id(),
                 header.is_extended()
             );
 
@@ -64,7 +64,7 @@ impl Sender {
                 encrypt_buffer,
                 secret,
                 &leading_buffer[skip..],
-                &header.get_frame_counter(),
+                &header.frame_count(),
             )?;
 
             frame.extend(tag.as_ref());

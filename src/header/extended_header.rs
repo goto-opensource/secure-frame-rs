@@ -4,7 +4,7 @@ use bitfield::bitfield;
 use crate::error::{Result, SframeError};
 
 use super::{
-    frame_counter::{get_nof_non_zero_bytes, into_be_bytes},
+    frame_count::{get_nof_non_zero_bytes, into_be_bytes},
     keyid::ExtendedKeyId,
     Deserialization, ExtendedHeader, FrameCount, HeaderFields, Serialization,
 };
@@ -21,7 +21,7 @@ bitfield! {
     impl Debug;
     u8;
     reserved, _: 0;
-    u8, frame_counter_len, set_frame_counter_len: 3 , 1;
+    u8, get_frame_count_len, set_frame_count_len: 3 , 1;
     bool, extend_key_id_flag, set_extended_key_flag: 4;
     u8, key_id_len, set_key_len: 7 , 5;
     key_id_and_ctr, set_key_id_and_ctr: 15, 8, 16;
@@ -29,17 +29,17 @@ bitfield! {
 
 impl HeaderFields for ExtendedHeader {
     type KeyIdType = ExtendedKeyId;
-    fn get_frame_counter(&self) -> FrameCount {
-        self.frame_counter
+    fn frame_count(&self) -> FrameCount {
+        self.frame_count
     }
-    fn get_key_id(&self) -> ExtendedKeyId {
+    fn key_id(&self) -> ExtendedKeyId {
         self.key_id
     }
 
     fn size(&self) -> usize {
         ExtendedHeader::STATIC_HEADER_LENGHT_BYTE
             + get_nof_non_zero_bytes(self.key_id).max(1) as usize
-            + self.frame_counter.length_in_bytes() as usize
+            + self.frame_count.length_in_bytes() as usize
     }
 }
 
@@ -53,13 +53,13 @@ impl Serialization for ExtendedHeader {
             )));
         }
         let mut header_setter = ExtendedHeaderBitField(buffer);
-        header_setter.set_frame_counter_len(self.frame_counter.length_in_bytes() - 1);
+        header_setter.set_frame_count_len(self.frame_count.length_in_bytes() - 1);
         header_setter.set_extended_key_flag(true);
         header_setter.set_key_len(get_nof_non_zero_bytes(self.key_id).max(1) - 1);
 
         for (index, value) in into_be_bytes(self.key_id)
             .into_iter()
-            .chain(into_be_bytes(self.frame_counter.value()).into_iter())
+            .chain(into_be_bytes(self.frame_count.value()).into_iter())
             .enumerate()
         {
             header_setter.set_key_id_and_ctr(index, value);
@@ -75,7 +75,7 @@ impl Deserialization for ExtendedHeader {
         let view = ExtendedHeaderBitField(data);
 
         let key_len: usize = (view.key_id_len() + 1).into();
-        let ctr_len: usize = (view.frame_counter_len() + 1).into();
+        let ctr_len: usize = (view.get_frame_count_len() + 1).into();
         let remainder_len = key_len + ctr_len;
 
         let remainder = || {
@@ -99,7 +99,7 @@ impl Deserialization for ExtendedHeader {
 
         Ok(ExtendedHeader {
             key_id: u64::from_be_bytes(kid),
-            frame_counter: FrameCount::new(u64::from_be_bytes(ctr)),
+            frame_count: FrameCount::new(u64::from_be_bytes(ctr)),
         })
     }
 
@@ -113,7 +113,7 @@ impl Deserialization for ExtendedHeader {
         header_view.extend_key_id_flag()
             && data.len()
                 >= ExtendedHeader::STATIC_HEADER_LENGHT_BYTE
-                    + header_view.frame_counter_len() as usize
+                    + header_view.get_frame_count_len() as usize
                     + header_view.key_id_len() as usize
     }
 }
@@ -157,7 +157,7 @@ mod test {
     }
 
     #[test]
-    fn serialize_when_frame_counter_and_key_id_is_0() {
+    fn serialize_when_frame_count_and_key_id_is_0() {
         let header = ExtendedHeader::new(0, FrameCount::new(0));
         let mut buffer = vec![0u8; header.size()];
 
@@ -168,7 +168,7 @@ mod test {
     }
 
     #[test]
-    fn serialize_when_frame_counter_and_key_id_length_is_8() {
+    fn serialize_when_frame_count_and_key_id_length_is_8() {
         let header = ExtendedHeader::new(u64::MAX, FrameCount::new(u64::MAX));
         let mut buffer = vec![0u8; header.size()];
 
@@ -214,7 +214,7 @@ mod test {
     fn deserialize_from_valid_data() {
         let data = [0b0_000_1_000, 0b00000010, 0b10011010];
         let header = ExtendedHeader::deserialize(&data).unwrap();
-        assert_eq!(header.get_key_id(), 2);
-        assert_eq!(header.get_frame_counter().value(), 154);
+        assert_eq!(header.key_id(), 2);
+        assert_eq!(header.frame_count().value(), 154);
     }
 }

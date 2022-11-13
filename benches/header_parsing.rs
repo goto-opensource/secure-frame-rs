@@ -19,7 +19,7 @@ fn header_serialization(c: &mut Criterion) {
         let serialized_headers = (0..1000_u64)
             .map(|i| {
                 let k: u8 = (i % 8) as u8;
-                let header = Header::with_frame_counter(KeyId::Basic(k), FrameCount::new(1000 - i));
+                let header = Header::with_frame_count(KeyId::Basic(k), FrameCount::new(1000 - i));
                 let mut buffer = vec![0_u8; 4];
                 header.serialize(&mut buffer).unwrap();
                 buffer
@@ -37,8 +37,7 @@ fn header_serialization(c: &mut Criterion) {
     c.bench_function("deserialize 1000 extended headers", |b| {
         let serialized_headers = (0..1000_u64)
             .map(|k| {
-                let header =
-                    Header::with_frame_counter(k, FrameCount::new(1000 - k));
+                let header = Header::with_frame_count(k, FrameCount::new(1000 - k));
                 let mut buffer = vec![0_u8; 7];
                 header.serialize(&mut buffer).unwrap();
                 buffer

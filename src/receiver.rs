@@ -36,13 +36,13 @@ impl Receiver {
         let header = Header::deserialize(&encrypted_frame[skip..])?;
 
         self.options.frame_validation.validate(&header)?;
+        let key_id = header.key_id();
 
-        let key_id = header.get_key_id();
         if let Some(secret) = self.secrets.get(&key_id) {
             log::trace!(
                 "Receiver: Frame counter: {:?}, Key id: {:?}",
-                header.get_frame_counter(),
-                header.get_key_id()
+                header.frame_count(),
+                header.key_id()
             );
 
             let payload_begin_idx = skip + header.size();
@@ -56,7 +56,7 @@ impl Receiver {
                 &mut io_buffer[skip..],
                 secret,
                 &encrypted_frame[skip..payload_begin_idx],
-                &header.get_frame_counter(),
+                &header.frame_count(),
             )?;
 
             io_buffer.truncate(io_buffer.len() - self.options.cipher_suite.auth_tag_len);
@@ -89,16 +89,18 @@ mod test {
         let mut receiver = Receiver::default();
         assert_eq!(receiver.remove_encryption_key(1234), false);
 
-        receiver.set_encryption_key(4223, b"hendrikswaytoshortpassword").unwrap();
-        receiver.set_encryption_key(4711, b"tobismuchbetterpassword;)").unwrap();
+        receiver
+            .set_encryption_key(4223, b"hendrikswaytoshortpassword")
+            .unwrap();
+        receiver
+            .set_encryption_key(4711, b"tobismuchbetterpassword;)")
+            .unwrap();
 
         assert!(receiver.remove_encryption_key(4223));
         assert_eq!(receiver.remove_encryption_key(4223), false);
 
         assert!(receiver.remove_encryption_key(4711));
         assert_eq!(receiver.remove_encryption_key(4711), false);
-
-
     }
 
     #[test]

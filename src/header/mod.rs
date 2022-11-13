@@ -1,9 +1,9 @@
 mod basic_header;
 mod extended_header;
-mod frame_counter;
+mod frame_count;
 mod keyid;
 
-pub use frame_counter::{FrameCount, FrameCountGenerator};
+pub use frame_count::{FrameCount, FrameCountGenerator};
 pub mod frame_validation;
 pub use keyid::KeyId;
 
@@ -23,15 +23,15 @@ pub trait Serialization {
 
 pub trait HeaderFields {
     type KeyIdType;
-    fn get_frame_counter(&self) -> FrameCount;
-    fn get_key_id(&self) -> Self::KeyIdType;
+    fn frame_count(&self) -> FrameCount;
+    fn key_id(&self) -> Self::KeyIdType;
     fn size(&self) -> usize;
 }
 
 #[derive(Copy, Clone, Debug)]
 pub struct BasicHeader {
     key_id: BasicKeyId,
-    frame_counter: FrameCount,
+    frame_count: FrameCount,
 }
 
 impl BasicHeader {
@@ -39,10 +39,10 @@ impl BasicHeader {
     pub const MAX_KEY_ID: u64 = (1 << Self::MAX_KEY_ID_LEN_BIT) - 1;
     const STATIC_HEADER_LENGHT_BYTE: usize = 1;
 
-    pub fn new(key_id: BasicKeyId, frame_counter: FrameCount) -> BasicHeader {
+    pub fn new(key_id: BasicKeyId, frame_count: FrameCount) -> BasicHeader {
         BasicHeader {
             key_id,
-            frame_counter,
+            frame_count,
         }
     }
 }
@@ -50,7 +50,7 @@ impl BasicHeader {
 #[derive(Copy, Clone, Debug)]
 pub struct ExtendedHeader {
     key_id: ExtendedKeyId,
-    frame_counter: FrameCount,
+    frame_count: FrameCount,
 }
 
 impl ExtendedHeader {
@@ -58,10 +58,10 @@ impl ExtendedHeader {
     pub const MAX_KEY_ID: u64 = u64::MAX;
     const STATIC_HEADER_LENGHT_BYTE: usize = 1;
 
-    pub fn new(key_id: ExtendedKeyId, frame_counter: FrameCount) -> ExtendedHeader {
+    pub fn new(key_id: ExtendedKeyId, frame_count: FrameCount) -> ExtendedHeader {
         ExtendedHeader {
             key_id,
-            frame_counter,
+            frame_count,
         }
     }
 }
@@ -74,14 +74,14 @@ pub enum Header {
 
 impl Header {
     pub fn new<K: Into<KeyId>>(key_id: K) -> Header {
-        Self::with_frame_counter(key_id.into(), FrameCount::default())
+        Self::with_frame_count(key_id.into(), FrameCount::default())
     }
 
     pub fn extended(key_id: u64) -> Header {
         Header::Extended(ExtendedHeader::new(key_id.into(), FrameCount::default()))
     }
 
-    pub fn with_frame_counter<K: Into<KeyId>, F: Into<FrameCount>>(
+    pub fn with_frame_count<K: Into<KeyId>, F: Into<FrameCount>>(
         key_id: K,
         frame_count: F,
     ) -> Header {
@@ -116,7 +116,7 @@ impl Header {
 
 impl Default for Header {
     fn default() -> Self {
-        Header::with_frame_counter(KeyId::default(), FrameCount::default())
+        Header::with_frame_count(KeyId::default(), FrameCount::default())
     }
 }
 
@@ -156,17 +156,17 @@ impl Serialization for Header {
 impl HeaderFields for Header {
     type KeyIdType = KeyId;
 
-    fn get_frame_counter(&self) -> FrameCount {
+    fn frame_count(&self) -> FrameCount {
         match self {
-            Header::Basic(basic) => basic.get_frame_counter(),
-            Header::Extended(extended) => extended.get_frame_counter(),
+            Header::Basic(basic) => basic.frame_count(),
+            Header::Extended(extended) => extended.frame_count(),
         }
     }
 
-    fn get_key_id(&self) -> Self::KeyIdType {
+    fn key_id(&self) -> Self::KeyIdType {
         match self {
-            Header::Basic(basic) => KeyId::Basic(basic.get_key_id()),
-            Header::Extended(extended) => KeyId::Extended(extended.get_key_id()),
+            Header::Basic(basic) => KeyId::Basic(basic.key_id()),
+            Header::Extended(extended) => KeyId::Extended(extended.key_id()),
         }
     }
 
@@ -189,7 +189,7 @@ impl From<&Header> for Vec<u8> {
 #[cfg(test)]
 mod test {
 
-    use super::{frame_counter::FrameCount, keyid::KeyId, Header};
+    use super::{frame_count::FrameCount, keyid::KeyId, Header};
     use crate::{
         header::{Deserialization, HeaderFields},
         test_vectors::aes_gcm_256_sha512::get_test_vectors,
@@ -200,24 +200,24 @@ mod test {
     #[test]
     fn create_basic_header_from_basic_key_id_with_correct_fields() {
         let key_id = KeyId::Basic(0);
-        let frame_counter = FrameCount::new(0);
-        let header = Header::with_frame_counter(key_id, frame_counter);
+        let frame_count = FrameCount::new(0);
+        let header = Header::with_frame_count(key_id, frame_count);
         assert!(matches!(header, Header::Basic(_)));
 
-        assert_eq!(key_id, header.get_key_id());
-        assert_eq!(frame_counter, header.get_frame_counter());
+        assert_eq!(key_id, header.key_id());
+        assert_eq!(frame_count, header.frame_count());
         assert_eq!(2, header.size());
     }
 
     #[test]
     fn create_extended_header_from_extended_key_id_with_correct_fields() {
         let key_id = KeyId::Extended(666);
-        let frame_counter = FrameCount::new(0);
-        let header = Header::with_frame_counter(key_id, frame_counter);
+        let frame_count = FrameCount::new(0);
+        let header = Header::with_frame_count(key_id, frame_count);
         assert!(matches!(header, Header::Extended(_)));
 
-        assert_eq!(key_id, header.get_key_id());
-        assert_eq!(frame_counter, header.get_frame_counter());
+        assert_eq!(key_id, header.key_id());
+        assert_eq!(frame_count, header.frame_count());
     }
 
     #[test]
@@ -233,9 +233,9 @@ mod test {
     #[test]
     fn serialize_test_vectors() {
         get_test_vectors().into_iter().for_each(|test_vector| {
-            let header = Header::with_frame_counter(
+            let header = Header::with_frame_count(
                 KeyId::from(test_vector.key_id),
-                FrameCount::new(test_vector.frame_counter),
+                FrameCount::new(test_vector.frame_count),
             );
             assert_bytes_eq(Vec::from(&header).as_slice(), &test_vector.header);
         });
@@ -246,11 +246,8 @@ mod test {
     fn deserialize_test_vectors() {
         get_test_vectors().into_iter().for_each(|test_vector| {
             let header = Header::deserialize(&test_vector.header).unwrap();
-            assert_eq!(header.get_key_id(), KeyId::from(test_vector.key_id));
-            assert_eq!(
-                header.get_frame_counter().value(),
-                test_vector.frame_counter
-            );
+            assert_eq!(header.key_id(), KeyId::from(test_vector.key_id));
+            assert_eq!(header.frame_count().value(), test_vector.frame_count);
         });
     }
 }

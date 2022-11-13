@@ -47,8 +47,8 @@ mod ring {
     }
 
     impl FrameNonceSequence {
-        pub fn new(frame_counter: u64, salt_key: &[u8]) -> FrameNonceSequence {
-            let iv = FrameNonceSequence::generate_iv(&frame_counter.to_be_bytes(), salt_key);
+        pub fn new(frame_count: u64, salt_key: &[u8]) -> FrameNonceSequence {
+            let iv = FrameNonceSequence::generate_iv(&frame_count.to_be_bytes(), salt_key);
             FrameNonceSequence { iv }
         }
 
@@ -171,7 +171,7 @@ mod ring {
                 let secret = KeyMaterial(&test_vector.key_material)
                     .expand_as_secret(&cipher_suite)
                     .unwrap();
-                let nonce = FrameNonceSequence::new(test_vector.frame_counter, &secret.salt);
+                let nonce = FrameNonceSequence::new(test_vector.frame_count, &secret.salt);
                 assert_bytes_eq(&nonce.iv, &test_vector.nonce);
             });
         }
@@ -210,7 +210,7 @@ mod test {
                     &mut data,
                     &secret,
                     &Vec::from(&header),
-                    &header.get_frame_counter(),
+                    &header.frame_count(),
                 )
                 .unwrap();
         }
@@ -229,18 +229,13 @@ mod test {
                 };
 
                 let mut data = test_vector.plain_text.clone();
-                let header = Header::with_frame_counter(
+                let header = Header::with_frame_count(
                     KeyId::from(test_vector.key_id),
-                    FrameCount::new(test_vector.frame_counter),
+                    FrameCount::new(test_vector.frame_count),
                 );
                 let header_buffer = Vec::from(&header);
                 let tag = cipher_suite
-                    .encrypt(
-                        &mut data,
-                        &secret,
-                        &header_buffer,
-                        &header.get_frame_counter(),
-                    )
+                    .encrypt(&mut data, &secret, &header_buffer, &header.frame_count())
                     .unwrap();
                 let full_frame: Vec<u8> = header_buffer
                     .into_iter()
@@ -263,20 +258,15 @@ mod test {
                     salt: test_vector.salt,
                 };
 
-                let header = Header::with_frame_counter(
+                let header = Header::with_frame_count(
                     KeyId::from(test_vector.key_id),
-                    FrameCount::new(test_vector.frame_counter),
+                    FrameCount::new(test_vector.frame_count),
                 );
                 let header_buffer = Vec::from(&header);
                 let mut data = Vec::from(&test_vector.cipher_text[header.size()..]);
 
                 let decrypted = cipher_suite
-                    .decrypt(
-                        &mut data,
-                        &secret,
-                        &header_buffer,
-                        &header.get_frame_counter(),
-                    )
+                    .decrypt(&mut data, &secret, &header_buffer, &header.frame_count())
                     .unwrap();
 
                 assert_bytes_eq(decrypted, &test_vector.plain_text);

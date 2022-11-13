@@ -18,23 +18,23 @@ bitfield! {
     impl Debug;
     u8;
     get_reserved, _: 0;
-    get_frame_counter_length, set_frame_counter_length: 3 , 1;
+    get_frame_count_length, set_frame_count_length: 3 , 1;
     get_extend_key_id_flag, set_extended_key_flag: 4;
     get_key_id, set_key_id: 7 , 5;
-    get_frame_counter, set_frame_counter: 15, 8, 8;
+    frame_count, set_frame_count: 15, 8, 8;
 }
 
 impl HeaderFields for BasicHeader {
     type KeyIdType = BasicKeyId;
-    fn get_frame_counter(&self) -> FrameCount {
-        self.frame_counter
+    fn frame_count(&self) -> FrameCount {
+        self.frame_count
     }
-    fn get_key_id(&self) -> BasicKeyId {
+    fn key_id(&self) -> BasicKeyId {
         self.key_id
     }
 
     fn size(&self) -> usize {
-        BasicHeader::STATIC_HEADER_LENGHT_BYTE + self.frame_counter.length_in_bytes() as usize
+        BasicHeader::STATIC_HEADER_LENGHT_BYTE + self.frame_count.length_in_bytes() as usize
     }
 }
 
@@ -51,13 +51,13 @@ impl Serialization for BasicHeader {
         header_setter.set_extended_key_flag(false);
         header_setter.set_key_id(self.key_id);
 
-        let frame_counter_length = self.frame_counter.length_in_bytes();
-        header_setter.set_frame_counter_length(frame_counter_length - 1); // frame counter length 1 is coded as 0
+        let frame_count_length = self.frame_count.length_in_bytes();
+        header_setter.set_frame_count_length(frame_count_length - 1); // frame counter length 1 is coded as 0
 
-        let frame_counter_bytes = self.frame_counter.into_be_bytes();
+        let frame_count_bytes = self.frame_count.into_be_bytes();
 
-        (0..frame_counter_length as usize).for_each(|idx| {
-            header_setter.set_frame_counter(idx, frame_counter_bytes[idx]);
+        (0..frame_count_length as usize).for_each(|idx| {
+            header_setter.set_frame_count(idx, frame_count_bytes[idx]);
         });
         Ok(())
     }
@@ -69,11 +69,11 @@ impl Deserialization for BasicHeader {
     fn deserialize(data: &[u8]) -> crate::error::Result<Self::DeserializedOutput> {
         let header_view = BasicHeaderBitfield(data);
         let key_id = header_view.get_key_id();
-        let frame_counter_length: usize = (header_view.get_frame_counter_length() + 1).into(); // frame counter length 1 is coded as 0
+        let frame_count_length: usize = (header_view.get_frame_count_length() + 1).into(); // frame counter length 1 is coded as 0
         let mut numeric_value = [0u8; 8];
-        let offset = numeric_value.len() - frame_counter_length;
-        for index in 0..frame_counter_length {
-            numeric_value[offset + index] = header_view.get_frame_counter(index);
+        let offset = numeric_value.len() - frame_count_length;
+        for index in 0..frame_count_length {
+            numeric_value[offset + index] = header_view.frame_count(index);
         }
 
         Ok(BasicHeader::new(
@@ -92,7 +92,7 @@ impl Deserialization for BasicHeader {
         !header_view.get_extend_key_id_flag()
             && data.len()
                 >= BasicHeader::STATIC_HEADER_LENGHT_BYTE
-                    + header_view.get_frame_counter_length() as usize
+                    + header_view.get_frame_count_length() as usize
     }
 }
 
@@ -124,7 +124,7 @@ mod test {
         assert_bytes_eq(&expected_serialized_buffer, &buffer);
     }
     #[test]
-    fn serialize_when_frame_counter_and_key_id_is_0() {
+    fn serialize_when_frame_count_and_key_id_is_0() {
         let header = BasicHeader::new(0, FrameCount::new(0));
         let mut buffer = vec![0u8; header.size()];
 
@@ -162,7 +162,7 @@ mod test {
     fn deserialize_from_valid_data() {
         let data = [0b00010110, 0b00000010, 0b10011010];
         let header = BasicHeader::deserialize(&data).unwrap();
-        assert_eq!(header.get_key_id(), 6);
-        assert_eq!(header.get_frame_counter().value(), 666);
+        assert_eq!(header.key_id(), 6);
+        assert_eq!(header.frame_count().value(), 666);
     }
 }

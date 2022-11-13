@@ -63,13 +63,13 @@ pub struct FrameCountGenerator {
 }
 
 impl FrameCountGenerator {
-    const MAX_FRAME_COUNTER: u64 = u64::MAX;
+    const MAX_FRAME_COUNT: u64 = u64::MAX;
 
     pub fn increment(&mut self) -> FrameCount {
-        let frame_counter = FrameCount::new(self.current_frame_count);
+        let frame_count = FrameCount::new(self.current_frame_count);
         self.current_frame_count =
-            (self.current_frame_count + 1) % FrameCountGenerator::MAX_FRAME_COUNTER;
-        frame_counter
+            (self.current_frame_count + 1) % FrameCountGenerator::MAX_FRAME_COUNT;
+        frame_count
     }
 }
 
@@ -80,37 +80,37 @@ mod test {
 
     #[test]
     fn return_numeric_value() {
-        let frame_counter = FrameCount::new(42);
-        assert_eq!(42, frame_counter.value());
+        let frame_count = FrameCount::new(42);
+        assert_eq!(42, frame_count.value());
     }
 
     #[test]
     fn return_value_as_be_bytes_without_trailing_zeros() {
-        let frame_counter = FrameCount::new(666);
-        assert_eq!(vec![2, 154], frame_counter.into_be_bytes());
+        let frame_count = FrameCount::new(666);
+        assert_eq!(vec![2, 154], frame_count.into_be_bytes());
 
-        let frame_counter = FrameCount::new(0);
-        assert_eq!(vec![0], frame_counter.into_be_bytes());
+        let frame_count = FrameCount::new(0);
+        assert_eq!(vec![0], frame_count.into_be_bytes());
     }
 
     #[test]
     fn return_length_in_bytes() {
-        let frame_counter = FrameCount::new(666);
-        assert_eq!(2, frame_counter.length_in_bytes());
+        let frame_count = FrameCount::new(666);
+        assert_eq!(2, frame_count.length_in_bytes());
 
-        let frame_counter = FrameCount::new(0);
-        assert_eq!(1, frame_counter.length_in_bytes());
+        let frame_count = FrameCount::new(0);
+        assert_eq!(1, frame_count.length_in_bytes());
 
-        let frame_counter = FrameCount::new(u64::MAX);
-        assert_eq!((usize::BITS / 8) as u8, frame_counter.length_in_bytes());
+        let frame_count = FrameCount::new(u64::MAX);
+        assert_eq!((usize::BITS / 8) as u8, frame_count.length_in_bytes());
     }
 
     #[test]
-    fn create_increasing_frame_counters() {
-        let mut frame_counter_generator = FrameCountGenerator::default();
+    fn create_increasing_frame_counts() {
+        let mut frame_count_generator = FrameCountGenerator::default();
 
         for i in 0..10 {
-            assert_eq!(frame_counter_generator.increment().value(), i);
+            assert_eq!(frame_count_generator.increment().value(), i);
         }
     }
 }

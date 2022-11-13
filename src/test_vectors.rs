@@ -9,7 +9,7 @@ pub struct TestVector {
     pub plain_text: Vec<u8>,
 
     pub key_id: u64,
-    pub frame_counter: u64,
+    pub frame_count: u64,
     pub header: Vec<u8>,
     pub nonce: Vec<u8>,
     pub cipher_text: Vec<u8>,
@@ -29,7 +29,7 @@ pub mod aes_gcm_256_sha512 {
 
     fn create_test_vector(
         key_id: u64,
-        frame_counter: u64,
+        frame_count: u64,
         header: &str,
         nonce: &str,
         cipher_text: &str,
@@ -41,7 +41,7 @@ pub mod aes_gcm_256_sha512 {
             salt: vec_from_hex_str("31ed26f90a072e6aee646298"),
             plain_text: vec_from_hex_str("46726f6d2068656176656e6c79206861726d6f6e79202f2f205468697320756e6976657273616c206672616d6520626567616e"),
             key_id,
-            frame_counter,
+            frame_count,
             header: vec_from_hex_str(header),
             nonce: vec_from_hex_str(nonce),
             cipher_text: vec_from_hex_str(cipher_text),
