@@ -32,6 +32,15 @@ impl From<u64> for KeyId {
     }
 }
 
+impl From<KeyId> for u64 {
+    fn from(val: KeyId) -> Self {
+        match val {
+            KeyId::Basic(key_id) => key_id as u64,
+            KeyId::Extended(key_id) => key_id,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::KeyId;
