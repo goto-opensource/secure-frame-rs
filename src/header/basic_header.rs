@@ -39,13 +39,13 @@ impl HeaderFields for BasicHeader {
 }
 
 impl Serialization for BasicHeader {
-    fn serialize(&self, buffer: &mut [u8]) -> crate::error::GenericResult<()> {
+    fn serialize(&self, buffer: &mut [u8]) -> crate::error::Result<()> {
         if buffer.len() < self.size() {
-            return Err(Box::new(SframeError::Other(format!(
+            return Err(SframeError::Other(format!(
                 "Buffer is to small to serialize the header {}<{}",
                 buffer.len(),
                 self.size()
-            ))));
+            )));
         }
         let mut header_setter = BasicHeaderBitfield(buffer);
         header_setter.set_extended_key_flag(false);

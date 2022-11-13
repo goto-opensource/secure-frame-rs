@@ -44,13 +44,13 @@ impl HeaderFields for ExtendedHeader {
 }
 
 impl Serialization for ExtendedHeader {
-    fn serialize(&self, buffer: &mut [u8]) -> crate::error::GenericResult<()> {
+    fn serialize(&self, buffer: &mut [u8]) -> Result<()> {
         if buffer.len() < self.size() {
-            return Err(Box::new(SframeError::Other(format!(
+            return Err(SframeError::Other(format!(
                 "Buffer is to small to serialize the header {}<{}",
                 buffer.len(),
                 self.size()
-            ))));
+            )));
         }
         let mut header_setter = ExtendedHeaderBitField(buffer);
         header_setter.set_frame_counter_len(self.frame_counter.length_in_bytes() - 1);

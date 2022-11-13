@@ -1,8 +1,4 @@
-use std::error::Error;
-
 use crate::header::KeyId;
-
-pub type GenericResult<OkType> = std::result::Result<OkType, Box<dyn Error>>;
 
 pub type Result<T> = std::result::Result<T, SframeError>;
 

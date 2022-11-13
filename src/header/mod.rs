@@ -1,6 +1,4 @@
-use crate::error::Result;
-
-pub mod basic_header;
+mod basic_header;
 mod extended_header;
 mod frame_counter;
 mod keyid;
@@ -11,7 +9,7 @@ pub use keyid::KeyId;
 
 use self::keyid::{BasicKeyId, ExtendedKeyId};
 
-use super::error::{GenericResult, SframeError};
+use super::error::{Result, SframeError};
 
 pub trait Deserialization {
     type DeserializedOutput;
@@ -20,7 +18,7 @@ pub trait Deserialization {
 }
 
 pub trait Serialization {
-    fn serialize(&self, buffer: &mut [u8]) -> GenericResult<()>;
+    fn serialize(&self, buffer: &mut [u8]) -> Result<()>;
 }
 
 pub trait HeaderFields {
@@ -147,7 +145,7 @@ impl Deserialization for Header {
 }
 
 impl Serialization for Header {
-    fn serialize(&self, buffer: &mut [u8]) -> GenericResult<()> {
+    fn serialize(&self, buffer: &mut [u8]) -> Result<()> {
         match self {
             Header::Basic(basic) => basic.serialize(buffer),
             Header::Extended(extended) => extended.serialize(buffer),
