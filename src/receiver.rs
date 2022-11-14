@@ -26,11 +26,6 @@ impl Default for Receiver {
 }
 
 impl Receiver {
-    pub fn new() -> Self {
-        // TODO: make CipherSuite configurable
-        Self::default()
-    }
-
     pub fn decrypt(&self, encrypted_frame: &[u8], skip: usize) -> Result<Vec<u8>> {
         let header = Header::deserialize(&encrypted_frame[skip..])?;
 
@@ -72,6 +67,10 @@ impl Receiver {
         );
         Ok(())
     }
+
+    pub fn remove_encryption_key(&mut self, receiver_id: u64) -> bool {
+        self.secrets.remove(&KeyId::from(receiver_id)).is_some()
+    }
 }
 
 #[cfg(test)]
@@ -79,8 +78,25 @@ mod test {
     use super::*;
 
     #[test]
+    fn remove_key() {
+        let mut receiver = Receiver::default();
+        assert_eq!(receiver.remove_encryption_key(1234), false);
+
+        receiver.set_encryption_key(4223, b"hendrikswaytoshortpassword").unwrap();
+        receiver.set_encryption_key(4711, b"tobismuchbetterpassword;)").unwrap();
+
+        assert!(receiver.remove_encryption_key(4223));
+        assert_eq!(receiver.remove_encryption_key(4223), false);
+
+        assert!(receiver.remove_encryption_key(4711));
+        assert_eq!(receiver.remove_encryption_key(4711), false);
+
+
+    }
+
+    #[test]
     fn fail_on_missing_secret() {
-        let receiver = Receiver::new();
+        let receiver = Receiver::default();
         // do not set the encryption-key
         let decrypted = receiver.decrypt(b"foobar is unsafe", 0);
 
