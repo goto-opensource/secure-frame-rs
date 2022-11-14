@@ -1,11 +1,12 @@
+use crate::error::Result;
+
 pub mod basic_header;
 mod extended_header;
 mod frame_counter;
 mod keyid;
 
-use crate::error::Result;
-
 pub use frame_counter::{FrameCount, FrameCountGenerator};
+pub mod frame_validation;
 pub use keyid::KeyId;
 
 use self::keyid::{BasicKeyId, ExtendedKeyId};

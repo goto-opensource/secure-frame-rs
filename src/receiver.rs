@@ -7,7 +7,7 @@ use crate::{
         key_expansion::{KeyMaterial, Secret},
     },
     error::{Result, SframeError},
-    frame_validation::{FrameValidation, ReplayAttackProtection},
+    header::frame_validation::{FrameValidation, ReplayAttackProtection},
     header::{Deserialization, Header, HeaderFields, KeyId},
 };
 
