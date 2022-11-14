@@ -114,7 +114,7 @@ mod ring {
         {
             let mut sealing_key = ring::aead::SealingKey::new(
                 self.unbound_encryption_key(secret)?,
-                FrameNonceSequence::new(frame_count.as_numeric_value(), secret.salt.as_slice()),
+                FrameNonceSequence::new(frame_count.value(), secret.salt.as_slice()),
             );
 
             let aad = ring::aead::Aad::from(aad_buffer);
@@ -144,7 +144,7 @@ mod ring {
 
             let mut opening_key = ring::aead::OpeningKey::new(
                 self.unbound_encryption_key(secret)?,
-                FrameNonceSequence::new(frame_count.as_numeric_value(), &secret.salt),
+                FrameNonceSequence::new(frame_count.value(), &secret.salt),
             );
             opening_key
                 .open_in_place(aad, io_buffer.as_mut())

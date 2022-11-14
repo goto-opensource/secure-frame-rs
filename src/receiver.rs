@@ -7,20 +7,34 @@ use crate::{
         key_expansion::{KeyMaterial, Secret},
     },
     error::{Result, SframeError},
+    header::frame_validation::{FrameValidation, ReplayAttackProtection},
     header::{Deserialization, Header, HeaderFields, KeyId},
 };
 
+pub struct ReceiverOptions {
+    cipher_suite: CipherSuite,
+    frame_validation: Box<dyn FrameValidation>,
+}
+
+impl Default for ReceiverOptions {
+    fn default() -> Self {
+        Self {
+            cipher_suite: CipherSuiteVariant::AesGcm256Sha512.into(),
+            frame_validation: Box::new(ReplayAttackProtection::with_tolerance(128)),
+        }
+    }
+}
+
 pub struct Receiver {
     secrets: HashMap<KeyId, Secret>,
-    cipher_suite: CipherSuite,
+    options: ReceiverOptions,
 }
 
 impl Default for Receiver {
     fn default() -> Self {
-        let cipher_suite: CipherSuite = CipherSuiteVariant::AesGcm256Sha512.into();
         Receiver {
             secrets: Default::default(),
-            cipher_suite,
+            options: ReceiverOptions::default(),
         }
     }
 }
@@ -29,8 +43,9 @@ impl Receiver {
     pub fn decrypt(&self, encrypted_frame: &[u8], skip: usize) -> Result<Vec<u8>> {
         let header = Header::deserialize(&encrypted_frame[skip..])?;
 
-        let key_id = header.get_key_id();
+        self.options.frame_validation.validate(&header)?;
 
+        let key_id = header.get_key_id();
         if let Some(secret) = self.secrets.get(&key_id) {
             log::trace!(
                 "Receiver: Frame counter: {:?}, Key id: {:?}",
@@ -45,14 +60,14 @@ impl Receiver {
                 .copied()
                 .collect();
 
-            self.cipher_suite.decrypt(
+            self.options.cipher_suite.decrypt(
                 &mut io_buffer[skip..],
                 secret,
                 &encrypted_frame[skip..payload_begin_idx],
                 &header.get_frame_counter(),
             )?;
 
-            io_buffer.truncate(io_buffer.len() - self.cipher_suite.auth_tag_len);
+            io_buffer.truncate(io_buffer.len() - self.options.cipher_suite.auth_tag_len);
             Ok(io_buffer)
         } else {
             Err(SframeError::MissingDecryptionKey(key_id))
@@ -63,7 +78,7 @@ impl Receiver {
     pub fn set_encryption_key(&mut self, receiver_id: u64, key_material: &[u8]) -> Result<()> {
         self.secrets.insert(
             KeyId::from(receiver_id),
-            KeyMaterial(key_material).expand_as_secret(&self.cipher_suite)?,
+            KeyMaterial(key_material).expand_as_secret(&self.options.cipher_suite)?,
         );
         Ok(())
     }

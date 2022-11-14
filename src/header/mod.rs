@@ -1,11 +1,12 @@
+use crate::error::Result;
+
 pub mod basic_header;
 mod extended_header;
 mod frame_counter;
 mod keyid;
 
-use crate::error::Result;
-
 pub use frame_counter::{FrameCount, FrameCountGenerator};
+pub mod frame_validation;
 pub use keyid::KeyId;
 
 use self::keyid::{BasicKeyId, ExtendedKeyId};
@@ -74,14 +75,19 @@ pub enum Header {
 }
 
 impl Header {
-    pub fn new(key_id: KeyId) -> Header {
-        Self::with_frame_counter(key_id, FrameCount::default())
+    pub fn new<K: Into<KeyId>>(key_id: K) -> Header {
+        Self::with_frame_counter(key_id.into(), FrameCount::default())
     }
 
-    pub fn with_frame_counter(key_id: KeyId, frame_counter: FrameCount) -> Header {
+    pub fn with_frame_counter<K: Into<KeyId>, F: Into<FrameCount>>(
+        key_id: K,
+        frame_count: F,
+    ) -> Header {
+        let key_id = key_id.into();
+        let frame_count = frame_count.into();
         match key_id {
-            KeyId::Basic(key_id) => Header::Basic(BasicHeader::new(key_id, frame_counter)),
-            KeyId::Extended(key_id) => Header::Extended(ExtendedHeader::new(key_id, frame_counter)),
+            KeyId::Basic(key_id) => Header::Basic(BasicHeader::new(key_id, frame_count)),
+            KeyId::Extended(key_id) => Header::Extended(ExtendedHeader::new(key_id, frame_count)),
         }
     }
 
@@ -108,7 +114,7 @@ impl Header {
 
 impl Default for Header {
     fn default() -> Self {
-        Header::with_frame_counter(Default::default(), Default::default())
+        Header::with_frame_counter(KeyId::default(), FrameCount::default())
     }
 }
 
@@ -240,7 +246,7 @@ mod test {
             let header = Header::deserialize(&test_vector.header).unwrap();
             assert_eq!(header.get_key_id(), KeyId::from(test_vector.key_id));
             assert_eq!(
-                header.get_frame_counter().as_numeric_value(),
+                header.get_frame_counter().value(),
                 test_vector.frame_counter
             );
         });

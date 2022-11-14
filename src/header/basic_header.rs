@@ -163,6 +163,6 @@ mod test {
         let data = [0b00010110, 0b00000010, 0b10011010];
         let header = BasicHeader::deserialize(&data).unwrap();
         assert_eq!(header.get_key_id(), 6);
-        assert_eq!(header.get_frame_counter().as_numeric_value(), 666);
+        assert_eq!(header.get_frame_counter().value(), 666);
     }
 }
