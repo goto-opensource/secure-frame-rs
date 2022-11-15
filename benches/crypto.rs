@@ -1,3 +1,4 @@
+#![allow(clippy::unit_arg)]
 use criterion::{black_box, criterion_group, BatchSize, Bencher, BenchmarkId, Criterion};
 use rand::{thread_rng, Rng};
 use sframe::{receiver::Receiver, sender::Sender};

@@ -24,7 +24,7 @@ impl Sender {
             frame_counter: Default::default(),
             sender_id: sender_id.into(),
             cipher_suite,
-            secret: Option::None,
+            secret: None,
         }
     }
 

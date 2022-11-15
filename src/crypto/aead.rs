@@ -30,7 +30,7 @@ pub trait AeadDecrypt {
 
 mod ring {
 
-    use ring::aead::{BoundKey, Tag};
+    use ring::aead::{BoundKey, SealingKey, Tag};
 
     use crate::{
         crypto::{
@@ -91,9 +91,9 @@ mod ring {
 
         fn get_algorithm(&self) -> &'static ring::aead::Algorithm {
             match self.variant {
-                CipherSuiteVariant::AesCm128HmacSha256_8 => &ring::aead::AES_128_GCM,
-                CipherSuiteVariant::AesCm128HmacSha256_4 => &ring::aead::AES_128_GCM,
-                CipherSuiteVariant::AesGcm128Sha256 => &ring::aead::AES_128_GCM,
+                CipherSuiteVariant::AesCm128HmacSha256_8
+                | CipherSuiteVariant::AesCm128HmacSha256_4
+                | CipherSuiteVariant::AesGcm128Sha256 => &ring::aead::AES_128_GCM,
                 CipherSuiteVariant::AesGcm256Sha512 => &ring::aead::AES_256_GCM,
             }
         }
@@ -107,12 +107,12 @@ mod ring {
             secret: &Secret,
             aad_buffer: &Aad,
             frame_count: &FrameCount,
-        ) -> Result<ring::aead::Tag>
+        ) -> Result<Tag>
         where
             IoBuffer: AsMut<[u8]> + ?Sized,
             Aad: AsRef<[u8]> + ?Sized,
         {
-            let mut sealing_key = ring::aead::SealingKey::new(
+            let mut sealing_key = SealingKey::new(
                 self.unbound_encryption_key(secret)?,
                 FrameNonceSequence::new(frame_count.value(), secret.salt.as_slice()),
             );
@@ -135,7 +135,7 @@ mod ring {
             secret: &Secret,
             aad_buffer: &Aad,
             frame_count: &FrameCount,
-        ) -> crate::error::Result<&'a mut [u8]>
+        ) -> Result<&'a mut [u8]>
         where
             IoBuffer: AsMut<[u8]> + ?Sized,
             Aad: AsRef<[u8]> + ?Sized,
@@ -245,7 +245,7 @@ mod test {
                 let full_frame: Vec<u8> = header_buffer
                     .into_iter()
                     .chain(data.into_iter())
-                    .chain(tag.as_ref().into_iter().cloned())
+                    .chain(tag.as_ref().iter().cloned())
                     .collect();
 
                 assert_bytes_eq(&full_frame, &test_vector.cipher_text);

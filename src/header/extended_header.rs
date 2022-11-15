@@ -1,3 +1,4 @@
+#![allow(clippy::unusual_byte_groupings)]
 use bitfield::bitfield;
 
 use crate::error::{Result, SframeError};
@@ -61,7 +62,7 @@ impl Serialization for ExtendedHeader {
             .chain(into_be_bytes(self.frame_counter.value()).into_iter())
             .enumerate()
         {
-            header_setter.set_key_id_and_ctr(index, value)
+            header_setter.set_key_id_and_ctr(index, value);
         }
         Ok(())
     }
@@ -88,12 +89,12 @@ impl Deserialization for ExtendedHeader {
 
         let mut ctr = [0u8; 8];
         for (i, v) in remainder().take(ctr_len).enumerate() {
-            ctr[8 - (i + 1)] = v
+            ctr[8 - (i + 1)] = v;
         }
 
         let mut kid = [0u8; 8];
         for (i, v) in remainder().skip(ctr_len).take(key_len).enumerate() {
-            kid[8 - (i + 1)] = v
+            kid[8 - (i + 1)] = v;
         }
 
         Ok(ExtendedHeader {
