@@ -35,7 +35,7 @@ fn create_random_encrypted_payload(size: usize, sender: &mut Sender) -> Vec<u8> 
 fn aes_gcm256_sha512(c: &mut Criterion) {
     let mut sender = Sender::new(PARTICIPANT_ID);
     sender.set_encryption_key(KEY_MATERIAL).unwrap();
-    let mut receiver = Receiver::new();
+    let mut receiver = Receiver::default();
     receiver
         .set_encryption_key(PARTICIPANT_ID, KEY_MATERIAL)
         .unwrap();

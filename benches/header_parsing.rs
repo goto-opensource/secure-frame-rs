@@ -5,13 +5,13 @@ use sframe::header::{Deserialization, FrameCount, Header, KeyId, Serialization};
 fn header_serialization(c: &mut Criterion) {
     c.bench_function("basic header", |b| {
         let mut buffer = vec![0_u8; 4];
-        let basic_header = Header::new(7_u8.into());
+        let basic_header = Header::new(7_u8);
         b.iter(|| black_box(basic_header.serialize(&mut buffer)))
     });
 
     c.bench_function("extended header", |b| {
         let mut buffer = vec![0_u8; 4];
-        let extended_header = Header::new(128_u64.try_into().unwrap());
+        let extended_header = Header::extended(128_u64);
         b.iter(|| black_box(extended_header.serialize(&mut buffer)))
     });
 
@@ -38,7 +38,7 @@ fn header_serialization(c: &mut Criterion) {
         let serialized_headers = (0..1000_u64)
             .map(|k| {
                 let header =
-                    Header::with_frame_counter(k.try_into().unwrap(), FrameCount::new(1000 - k));
+                    Header::with_frame_counter(k, FrameCount::new(1000 - k));
                 let mut buffer = vec![0_u8; 7];
                 header.serialize(&mut buffer).unwrap();
                 buffer
