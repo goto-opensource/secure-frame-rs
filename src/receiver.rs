@@ -25,18 +25,10 @@ impl Default for ReceiverOptions {
     }
 }
 
+#[derive(Default)]
 pub struct Receiver {
     secrets: HashMap<KeyId, Secret>,
     options: ReceiverOptions,
-}
-
-impl Default for Receiver {
-    fn default() -> Self {
-        Receiver {
-            secrets: Default::default(),
-            options: ReceiverOptions::default(),
-        }
-    }
 }
 
 impl Receiver {
