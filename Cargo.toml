@@ -4,9 +4,13 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT/Apache-2.0"
 
-authors = ["Tobias Waurick <tobias.waurick@goto.com>", "Hendrik Sollich <hendrik.sollich@goto.com>"]
-description = "Show desktop notifications (linux, bsd, mac). Pure Rust dbus client and server."
-repository = "https://github.com/goto-opensource/secure-frame-rs"
+authors = [
+  "Tobias Waurick <tobias.waurick@goto.com>",
+  "Hendrik Sollich <hendrik.sollich@goto.com>",
+  "Richard Haehne <richard.haehne@goto.com>",
+]
+description = "pure rust implementatio of SFrame draft-ietf-sframe-enc-00"
+repository = "https://github.com/goto-opensource/sframe-rs"
 documentation = "https://docs.rs/sframe/"
 readme = "README"
 
