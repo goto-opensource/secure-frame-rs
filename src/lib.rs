@@ -8,7 +8,7 @@
     unused_qualifications
 )]
 #![warn(
-    missing_docs,
+    // missing_docs,
     clippy::doc_markdown,
     clippy::semicolon_if_nothing_returned,
     clippy::single_match_else,
