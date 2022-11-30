@@ -4,6 +4,7 @@ use crate::error::SframeError;
 
 use super::{
     keyid::BasicKeyId, BasicHeader, Deserialization, FrameCount, HeaderFields, Serialization,
+    LEN_OFFSET,
 };
 
 bitfield! {
@@ -52,7 +53,7 @@ impl Serialization for BasicHeader {
         header_setter.set_key_id(self.key_id);
 
         let frame_count_length = self.frame_count.length_in_bytes();
-        header_setter.set_frame_count_length(frame_count_length - 1); // frame counter length 1 is coded as 0
+        header_setter.set_frame_count_length(frame_count_length - LEN_OFFSET); // frame counter length 1 is coded as 0
 
         let frame_count_bytes = self.frame_count.into_be_bytes();
 
@@ -69,7 +70,7 @@ impl Deserialization for BasicHeader {
     fn deserialize(data: &[u8]) -> crate::error::Result<Self::DeserializedOutput> {
         let header_view = BasicHeaderBitfield(data);
         let key_id = header_view.get_key_id();
-        let frame_count_length: usize = (header_view.get_frame_count_length() + 1).into(); // frame counter length 1 is coded as 0
+        let frame_count_length: usize = (header_view.get_frame_count_length() + LEN_OFFSET).into(); // frame counter length 1 is coded as 0
         let mut numeric_value = [0u8; 8];
         let offset = numeric_value.len() - frame_count_length;
         for index in 0..frame_count_length {
@@ -97,6 +98,7 @@ impl Deserialization for BasicHeader {
 }
 
 #[cfg(test)]
+#[cfg(not(feature = "verify-test-vectors"))]
 mod test {
     use crate::{
         header::{BasicHeader, Deserialization, FrameCount, HeaderFields, Serialization},

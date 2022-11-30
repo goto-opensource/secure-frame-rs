@@ -36,6 +36,7 @@ rand = "0.8"
 [features]
 default = []
 wasm-bindgen = ["ring/wasm32_c"]
+verify-test-vectors = []
 
 [[bench]]
 name = "bench_main"
