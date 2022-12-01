@@ -186,15 +186,20 @@ impl From<&Header> for Vec<u8> {
     }
 }
 
+// TODO remove the verify-test-vectors feature as soon the test vectors are fixed in the draft
+// Due to a spec change the lenghth offset changed (0 now means lenght of 1)
+#[cfg(not(feature = "verify-test-vectors"))]
+const LEN_OFFSET: u8 = 1;
+#[cfg(feature = "verify-test-vectors")]
+const LEN_OFFSET: u8 = 0;
 #[cfg(test)]
 mod test {
 
     use super::{frame_count::FrameCount, keyid::KeyId, Header};
-    use crate::{
-        header::{Deserialization, HeaderFields},
-        test_vectors::aes_gcm_256_sha512::get_test_vectors,
-        util::test::assert_bytes_eq,
-    };
+    use crate::header::{Deserialization, HeaderFields};
+    #[cfg(feature = "verify-test-vectors")]
+    use crate::{test_vectors::aes_gcm_256_sha512::get_test_vectors, util::test::assert_bytes_eq};
+
     use pretty_assertions::assert_eq;
 
     #[test]
@@ -227,10 +232,8 @@ mod test {
         assert!(matches!(header, Header::Basic(_)));
     }
 
-    // TODO reenable those tests when we clarified why the
-    // test vectors are wrong
-    #[ignore]
     #[test]
+    #[cfg(feature = "verify-test-vectors")]
     fn serialize_test_vectors() {
         get_test_vectors().into_iter().for_each(|test_vector| {
             let header = Header::with_frame_count(
@@ -241,8 +244,8 @@ mod test {
         });
     }
 
-    #[ignore]
     #[test]
+    #[cfg(feature = "verify-test-vectors")]
     fn deserialize_test_vectors() {
         get_test_vectors().into_iter().for_each(|test_vector| {
             let header = Header::deserialize(&test_vector.header).unwrap();

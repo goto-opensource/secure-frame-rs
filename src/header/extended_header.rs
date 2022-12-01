@@ -6,7 +6,7 @@ use crate::error::{Result, SframeError};
 use super::{
     frame_count::{get_nof_non_zero_bytes, into_be_bytes},
     keyid::ExtendedKeyId,
-    Deserialization, ExtendedHeader, FrameCount, HeaderFields, Serialization,
+    Deserialization, ExtendedHeader, FrameCount, HeaderFields, Serialization, LEN_OFFSET,
 };
 
 bitfield! {
@@ -53,9 +53,9 @@ impl Serialization for ExtendedHeader {
             )));
         }
         let mut header_setter = ExtendedHeaderBitField(buffer);
-        header_setter.set_frame_count_len(self.frame_count.length_in_bytes() - 1);
+        header_setter.set_frame_count_len(self.frame_count.length_in_bytes() - LEN_OFFSET);
         header_setter.set_extended_key_flag(true);
-        header_setter.set_key_len(get_nof_non_zero_bytes(self.key_id).max(1) - 1);
+        header_setter.set_key_len(get_nof_non_zero_bytes(self.key_id).max(1) - LEN_OFFSET);
 
         for (index, value) in into_be_bytes(self.key_id)
             .into_iter()
@@ -74,8 +74,8 @@ impl Deserialization for ExtendedHeader {
     fn deserialize(data: &[u8]) -> Result<Self::DeserializedOutput> {
         let view = ExtendedHeaderBitField(data);
 
-        let key_len: usize = (view.key_id_len() + 1).into();
-        let ctr_len: usize = (view.get_frame_count_len() + 1).into();
+        let key_len: usize = (view.key_id_len() + LEN_OFFSET).into();
+        let ctr_len: usize = (view.get_frame_count_len() + LEN_OFFSET).into();
         let remainder_len = key_len + ctr_len;
 
         let remainder = || {
@@ -119,6 +119,7 @@ impl Deserialization for ExtendedHeader {
 }
 
 #[cfg(test)]
+#[cfg(not(feature = "verify-test-vectors"))]
 mod test {
     use crate::{
         header::{Deserialization, ExtendedHeader, FrameCount, HeaderFields, Serialization},
