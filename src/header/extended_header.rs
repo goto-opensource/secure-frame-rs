@@ -4,7 +4,7 @@ use bitfield::bitfield;
 use crate::error::{Result, SframeError};
 
 use super::{
-    frame_count::{get_nof_non_zero_bytes, into_be_bytes},
+    frame_count::{as_be_bytes, get_nof_non_zero_bytes},
     keyid::ExtendedKeyId,
     Deserialization, ExtendedHeader, FrameCount, HeaderFields, Serialization, LEN_OFFSET,
 };
@@ -57,9 +57,9 @@ impl Serialization for ExtendedHeader {
         header_setter.set_extended_key_flag(true);
         header_setter.set_key_len(get_nof_non_zero_bytes(self.key_id).max(1) - LEN_OFFSET);
 
-        for (index, value) in into_be_bytes(self.key_id)
+        for (index, value) in as_be_bytes(self.key_id)
             .into_iter()
-            .chain(into_be_bytes(self.frame_count.value()).into_iter())
+            .chain(as_be_bytes(self.frame_count.value()))
             .enumerate()
         {
             header_setter.set_key_id_and_ctr(index, value);

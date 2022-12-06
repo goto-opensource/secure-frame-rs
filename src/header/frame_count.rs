@@ -13,6 +13,14 @@ pub fn into_be_bytes(x: u64) -> Vec<u8> {
     be_bytes[be_bytes.len() - length_in_bytes as usize..].to_vec()
 }
 
+pub fn as_be_bytes(x: u64) -> impl Iterator<Item = u8> {
+    let be_bytes = x.to_be_bytes();
+    let length_in_bytes = get_nof_non_zero_bytes(x).max(1);
+    be_bytes
+        .into_iter()
+        .skip(be_bytes.len() - length_in_bytes as usize)
+}
+
 // TODO: we could this on byte not on bit level
 pub fn get_nof_non_zero_bytes(value: u64) -> u8 {
     div_ceil(u64::BITS - value.leading_zeros(), u8::BITS) as u8
@@ -25,6 +33,10 @@ impl FrameCount {
 
     pub fn value(&self) -> u64 {
         self.numeric_value
+    }
+
+    pub fn as_be_bytes(&self) -> impl Iterator<Item = u8> {
+        as_be_bytes(self.numeric_value)
     }
 
     pub fn into_be_bytes(&self) -> Vec<u8> {
@@ -91,6 +103,15 @@ mod test {
 
         let frame_count = FrameCount::new(0);
         assert_eq!(vec![0], frame_count.into_be_bytes());
+    }
+
+    #[test]
+    fn return_value_as_be_bytes_without_trailing_zeros_iter() {
+        let frame_count = FrameCount::new(666);
+        assert_eq!(vec![2, 154], frame_count.as_be_bytes().collect::<Vec<_>>());
+
+        let frame_count = FrameCount::new(0);
+        assert_eq!(vec![0], frame_count.as_be_bytes().collect::<Vec<_>>());
     }
 
     #[test]
