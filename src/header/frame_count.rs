@@ -7,12 +7,6 @@ pub struct FrameCount {
     numeric_value: u64,
 }
 
-pub fn into_be_bytes(x: u64) -> Vec<u8> {
-    let be_bytes = x.to_be_bytes();
-    let length_in_bytes = get_nof_non_zero_bytes(x).max(1);
-    be_bytes[be_bytes.len() - length_in_bytes as usize..].to_vec()
-}
-
 pub fn as_be_bytes(x: u64) -> impl Iterator<Item = u8> {
     let be_bytes = x.to_be_bytes();
     let length_in_bytes = get_nof_non_zero_bytes(x).max(1);
@@ -37,10 +31,6 @@ impl FrameCount {
 
     pub fn as_be_bytes(&self) -> impl Iterator<Item = u8> {
         as_be_bytes(self.numeric_value)
-    }
-
-    pub fn into_be_bytes(&self) -> Vec<u8> {
-        into_be_bytes(self.numeric_value)
     }
 
     pub fn length_in_bytes(&self) -> u8 {
@@ -94,15 +84,6 @@ mod test {
     fn return_numeric_value() {
         let frame_count = FrameCount::new(42);
         assert_eq!(42, frame_count.value());
-    }
-
-    #[test]
-    fn return_value_as_be_bytes_without_trailing_zeros() {
-        let frame_count = FrameCount::new(666);
-        assert_eq!(vec![2, 154], frame_count.into_be_bytes());
-
-        let frame_count = FrameCount::new(0);
-        assert_eq!(vec![0], frame_count.into_be_bytes());
     }
 
     #[test]

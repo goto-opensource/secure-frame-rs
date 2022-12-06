@@ -55,11 +55,14 @@ impl Serialization for BasicHeader {
         let frame_count_length = self.frame_count.length_in_bytes();
         header_setter.set_frame_count_length(frame_count_length - LEN_OFFSET); // frame counter length 1 is coded as 0
 
-        let frame_count_bytes = self.frame_count.into_be_bytes();
-
-        (0..frame_count_length as usize).for_each(|idx| {
-            header_setter.set_frame_count(idx, frame_count_bytes[idx]);
-        });
+        for (idx, value) in self
+            .frame_count
+            .as_be_bytes()
+            .take(frame_count_length as usize)
+            .enumerate()
+        {
+            header_setter.set_frame_count(idx, value);
+        }
         Ok(())
     }
 }
