@@ -1,3 +1,6 @@
+// Copyright (c) 2023 GoTo Group, Inc
+// SPDX-License-Identifier: Apache-2.0 AND MIT
+
 use super::key_expansion::Secret;
 use crate::{error::Result, header::FrameCount};
 

@@ -1,3 +1,6 @@
+// Copyright (c) 2023 GoTo Group, Inc
+// SPDX-License-Identifier: Apache-2.0 AND MIT
+
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum CipherSuiteVariant {
     AesCm128HmacSha256_8,
