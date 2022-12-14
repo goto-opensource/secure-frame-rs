@@ -32,6 +32,25 @@ pub struct Receiver {
 }
 
 impl Receiver {
+    pub fn with_cipher_suite(suite: impl Into<CipherSuite>) -> Receiver {
+        let cipher_suite: CipherSuite = suite.into();
+        let replay_attack_tolerance = 128;
+        log::info!(
+            "Setting up Sframe Receiver (ciphersuite {:?}, replay_attack_tolerance: {}",
+            cipher_suite.variant,
+            replay_attack_tolerance
+        );
+        Self {
+            secrets: HashMap::default(),
+            options: ReceiverOptions {
+                cipher_suite,
+                frame_validation: Box::new(ReplayAttackProtection::with_tolerance(
+                    replay_attack_tolerance,
+                )),
+            },
+        }
+    }
+
     pub fn decrypt(&self, encrypted_frame: &[u8], skip: usize) -> Result<Vec<u8>> {
         let header = Header::deserialize(&encrypted_frame[skip..])?;
 

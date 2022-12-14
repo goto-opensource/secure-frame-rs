@@ -71,11 +71,15 @@ mod ring {
 
 #[cfg(test)]
 mod test {
+    fn hex(hex_str: &str) -> Vec<u8> {
+        hex::decode(hex_str).unwrap()
+    }
+
     mod aes_gcm_256_sha512 {
         use crate::{
             crypto::{
                 cipher_suite::{CipherSuite, CipherSuiteVariant},
-                key_expansion::KeyMaterial,
+                key_expansion::{test::hex, KeyMaterial},
             },
             test_vectors::aes_gcm_256_sha512::get_test_vectors,
             util::test::assert_bytes_eq,
@@ -90,6 +94,34 @@ mod test {
                 .unwrap();
             assert_bytes_eq(&secret.key, &test_vector.key);
             assert_bytes_eq(&secret.salt, &test_vector.salt);
+        }
+
+        #[test]
+        fn derive_keys_as_ts_aes_gcm128_sha256() {
+            let material = hex("303132333435363738393a3b3c3d3e3f");
+            let hex_key = hex("2ea2e8163ff56c0613e6fa9f20a213da");
+            let hex_salt = hex("a80478b3f6fba19983d540d5");
+
+            let key = KeyMaterial(&material);
+            let expanded = key
+                .expand_as_secret(&CipherSuite::from(CipherSuiteVariant::AesGcm128Sha256))
+                .unwrap();
+            assert_eq!(expanded.key, hex_key);
+            assert_eq!(expanded.salt, hex_salt);
+        }
+
+        #[test]
+        fn derive_keys_as_ts_aes_gcm_256_sha512() {
+            let material = hex("404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f");
+            let hex_key = hex("436774b0b5ae45633d96547f8f3cb06c8e6628eff2e4255b5c4d77e721aa3355");
+            let hex_salt = hex("31ed26f90a072e6aee646298");
+
+            let key = KeyMaterial(&material);
+            let exp = key
+                .expand_as_secret(&CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512))
+                .unwrap();
+            assert_eq!(exp.key, hex_key);
+            assert_eq!(exp.salt, hex_salt);
         }
     }
 }

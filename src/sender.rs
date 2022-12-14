@@ -17,9 +17,16 @@ pub struct Sender {
 
 impl Sender {
     pub fn new(sender_id: u64) -> Sender {
-        log::info!("Setting up Sframe Sender with ID {}", sender_id);
-        // TODO make this configurable
-        let cipher_suite: CipherSuite = CipherSuiteVariant::AesGcm256Sha512.into();
+        Self::with_cipher_suite(sender_id, CipherSuiteVariant::AesGcm256Sha512)
+    }
+
+    pub fn with_cipher_suite(sender_id: u64, suite: impl Into<CipherSuite>) -> Sender {
+        let cipher_suite: CipherSuite = suite.into();
+        log::info!(
+            "Setting up Sframe Sender with ID {} (ciphersuite {:?})",
+            sender_id,
+            cipher_suite.variant
+        );
         Sender {
             frame_count: Default::default(),
             sender_id: sender_id.into(),
@@ -82,8 +89,71 @@ impl Sender {
 }
 
 #[cfg(test)]
+#[cfg(not(feature = "verify-test-vectors"))]
+mod test_on_wire_format {
+    use super::*;
+    use crate::receiver::Receiver;
+
+    fn hex(hex_str: &str) -> Vec<u8> {
+        hex::decode(hex_str).unwrap()
+    }
+
+    #[test]
+    fn deadbeef_decrypt() {
+        let material = hex("1234567890123456789012345678901212345678901234567890123456789012");
+        let mut sender = Sender::new(0);
+        let mut receiver = Receiver::default();
+
+        sender.set_encryption_key(&material).unwrap();
+        receiver.set_encryption_key(0, &material).unwrap();
+
+        let encrypted = sender.encrypt(&hex("deadbeafcacadebaca00"), 4).unwrap();
+        let decrypted = receiver.decrypt(&encrypted, 4).unwrap();
+
+        assert_eq!(decrypted, hex("deadbeafcacadebaca00"));
+    }
+
+    #[test]
+    fn deadbeef_on_wire() {
+        let material = hex("1234567890123456789012345678901212345678901234567890123456789012");
+        let mut sender = Sender::new(0);
+        let mut receiver = Receiver::default();
+
+        sender.set_encryption_key(&material).unwrap();
+        receiver.set_encryption_key(0, &material).unwrap();
+
+        let encrypted = sender.encrypt(&hex("deadbeafcacadebaca00"), 4).unwrap();
+
+        assert_eq!(
+            hex::encode(encrypted),
+            "deadbeaf0000a160a9176ba4ce7ca128df74907d422e5064d1c23529"
+        );
+    }
+
+    #[test]
+    fn deadbeef_on_wire_long() {
+        let material = hex("1234567890123456789012345678901212345678901234567890123456789012");
+        let mut sender = Sender::new(0);
+        let mut receiver = Receiver::default();
+
+        sender.set_encryption_key(&material).unwrap();
+        receiver.set_encryption_key(0, &material).unwrap();
+
+        let encrypted = sender
+            .encrypt(&hex("deadbeafcacadebacacacadebacacacadebaca00"), 4)
+            .unwrap();
+
+        assert_eq!(
+            hex::encode(encrypted),
+            "deadbeaf0000a160a9176b6ebe53f594a64faa1f48a5246b202d13416bf671b3edae7704a862"
+        );
+    }
+}
+
+#[cfg(test)]
 mod test {
     use super::*;
+
     #[test]
     fn fail_on_missing_secret() {
         let mut sender = Sender::new(1);
