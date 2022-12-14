@@ -17,9 +17,16 @@ pub struct Sender {
 
 impl Sender {
     pub fn new(sender_id: u64) -> Sender {
-        log::info!("Setting up Sframe Sender with ID {}", sender_id);
-        // TODO make this configurable
-        let cipher_suite: CipherSuite = CipherSuiteVariant::AesGcm256Sha512.into();
+        Self::with_cipher_suite(sender_id, CipherSuiteVariant::AesGcm256Sha512)
+    }
+
+    pub fn with_cipher_suite(sender_id: u64, suite: impl Into<CipherSuite>) -> Sender {
+        let cipher_suite: CipherSuite = suite.into();
+        log::info!(
+            "Setting up Sframe Sender with ID {} (ciphersuite {:?})",
+            sender_id,
+            cipher_suite.variant
+        );
         Sender {
             frame_count: Default::default(),
             sender_id: sender_id.into(),
