@@ -1,3 +1,6 @@
+// Copyright (c) 2023 GoTo Group, Inc
+// SPDX-License-Identifier: Apache-2.0 AND MIT
+
 mod basic_header;
 mod extended_header;
 mod frame_count;

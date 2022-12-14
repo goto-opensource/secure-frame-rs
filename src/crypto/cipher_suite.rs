@@ -1,3 +1,6 @@
+// Copyright (c) 2023 GoTo Group, Inc
+// SPDX-License-Identifier: Apache-2.0 AND MIT
+
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum CipherSuiteVariant {
     /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
