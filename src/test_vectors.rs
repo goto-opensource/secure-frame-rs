@@ -19,6 +19,48 @@ fn vec_from_hex_str(hex_str: &str) -> Vec<u8> {
     hex::decode(hex_str).unwrap()
 }
 
+pub mod aes_gcm_128_sha256 {
+
+    use std::vec;
+
+    use crate::crypto::cipher_suite::CipherSuiteVariant;
+
+    use super::{vec_from_hex_str, TestVector};
+
+    fn create_test_vector(
+        key_id: u64,
+        frame_count: u64,
+        header: &str,
+        nonce: &str,
+        cipher_text: &str,
+    ) -> TestVector {
+        TestVector {
+            cipher_suite_variant: CipherSuiteVariant::AesGcm128Sha256,
+            key_material: vec_from_hex_str("303132333435363738393a3b3c3d3e3f"),
+            key: vec_from_hex_str("2ea2e8163ff56c0613e6fa9f20a213da"),
+            salt: vec_from_hex_str("a80478b3f6fba19983d540d5"),
+            plain_text: vec_from_hex_str("46726f6d2068656176656e6c79206861726d6f6e79202f2f205468697320756e6976657273616c206672616d6520626567616e"),
+            key_id,
+            frame_count,
+            header: vec_from_hex_str(header),
+            nonce: vec_from_hex_str(nonce),
+            cipher_text: vec_from_hex_str(cipher_text),
+        }
+    }
+
+    pub fn get_test_vectors() -> Vec<TestVector> {
+        vec![
+        create_test_vector(0x7, 0x0, "1700",            "a80478b3f6fba19983d540d5", "17000e426255e47ed70dd7d15d69d759bf459032ca15f5e8b2a91e7d348aa7c186d403f620801c495b1717a35097411aa97cbb140671eb3b49ac3775926db74d57b91e8e6c"),
+        create_test_vector(0x7, 0x1, "1701",            "a80478b3f6fba19983d540d4", "170103bbafa34ada8a6b9f2066bc34a1959d87384c9f4b1ce34fed58e938bde143393910b1aeb55b48d91d5b0db3ea67e3d0e02b843afd41630c940b1948e72dd45396a43a"),
+        create_test_vector(0x7, 0x2, "1702",            "a80478b3f6fba19983d540d7", "170258d58adebd8bf6f3cc0c1fcacf34ba4d7a763b2683fe302a57f1be7f2a274bf81b2236995fec1203cadb146cd402e1c52d5e6a10989dfe0f4116da1ee4c2fad0d21f8f"),
+        create_test_vector(0xf, 0xaa, "190faa",         "a80478b3f6fba19983d5407f", "190faad0b1743bf5248f90869c9456366d55724d16bbe08060875815565e90b114f9ccbdba192422b33848a1ae1e3bd266a001b2f5bb727112772e0072ea8679ca1850cf11d8"),
+        create_test_vector(0x1ff, 0xaa, "1a01ffaa",     "a80478b3f6fba19983d5407f", "1a01ffaad0b1743bf5248f90869c9456366d55724d16bbe08060875815565e90b114f9ccbdba192422b33848a1ae1e3bd266a001b2f5bbc9c63bd3973c19bd57127f565380ed4a"),
+        create_test_vector(0x1ff, 0xaaaa, "2a01ffaaaa", "a80478b3f6fba19983d5ea7f", "2a01ffaaaa9de65e21e4f1ca2247b87943c03c5cb7b182090e93d508dcfb76e08174c6397356e682d2eaddabc0b3c1018d2c13c3570f61c1beaab805f27b565e1329a823a7a649b6"),
+        create_test_vector(0xffffffffffffff, 0xffffffffffffff, "7fffffffffffffffffffffffffffff", "a80478b3f6045e667c2abf2a", "7fffffffffffffffffffffffffffff09981bdcdad80e380b6f74cf6afdbce946839bedadd57578bfcd809dbcea535546cc24660613d2761adea852155785011e633534f4ecc3b8257c8d34321c27854a1422"),
+    ]
+    }
+}
+
 pub mod aes_gcm_256_sha512 {
 
     use std::vec;

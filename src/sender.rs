@@ -84,6 +84,7 @@ impl Sender {
 #[cfg(test)]
 mod test {
     use super::*;
+
     #[test]
     fn fail_on_missing_secret() {
         let mut sender = Sender::new(1);
