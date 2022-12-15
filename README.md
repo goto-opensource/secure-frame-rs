@@ -1,7 +1,16 @@
-sframe
-======
+Secure Frame (SFrame)
+=======================
 
-## The rust implementation of [draft-ietf-sframe-enc](https://datatracker.ietf.org/doc/draft-ietf-sframe-enc/)
+
+This library is an implementation of [draft-ietf-sframe-enc-latest](https://sframe-wg.github.io/sframe/draft-ietf-sframe-enc.html) and provides and end-to-end encryption mechanism for media frames that is suited for WebRTC conferences.
+It is in it's current form a subset of the specification.
+There is an alternative implementation under [goto-opensource/secure-frame-ts](https://github.com/goto-opensource/secure-frame-ts)
+
+## Differences from the sframe draft
+* Aes-CTR is not implemented
+* ratcheting is not implemented
+* keyIds are used as senderIds
+
 
 ## License
 Licensed under either of Apache License, Version 2.0 or MIT license at your option.
