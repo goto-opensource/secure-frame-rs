@@ -6,7 +6,8 @@ mod extended_header;
 mod frame_count;
 mod keyid;
 
-pub use frame_count::{FrameCount, FrameCountGenerator};
+pub use frame_count::FrameCount;
+pub(crate) use frame_count::FrameCountGenerator;
 pub mod frame_validation;
 pub use keyid::KeyId;
 
