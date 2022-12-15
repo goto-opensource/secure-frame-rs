@@ -3,10 +3,10 @@
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum CipherSuiteVariant {
-    /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    AesCm128HmacSha256_8,
-    /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    AesCm128HmacSha256_4,
+    // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
+    // AesCm128HmacSha256_8,
+    // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
+    // AesCm128HmacSha256_4,
     AesGcm128Sha256,
     AesGcm256Sha512,
 }
@@ -23,8 +23,8 @@ pub struct CipherSuite {
 impl From<CipherSuiteVariant> for CipherSuite {
     fn from(variant: CipherSuiteVariant) -> Self {
         match variant {
-            CipherSuiteVariant::AesCm128HmacSha256_8 => unimplemented!(),
-            CipherSuiteVariant::AesCm128HmacSha256_4 => unimplemented!(),
+            // CipherSuiteVariant::AesCm128HmacSha256_8 => unimplemented!(),
+            // CipherSuiteVariant::AesCm128HmacSha256_4 => unimplemented!(),
             CipherSuiteVariant::AesGcm128Sha256 => CipherSuite {
                 variant,
                 hash_len: 32,

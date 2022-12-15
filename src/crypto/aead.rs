@@ -95,9 +95,7 @@ mod ring {
         fn get_algorithm(&self) -> &'static ring::aead::Algorithm {
             use CipherSuiteVariant::*;
             match self.variant {
-                AesCm128HmacSha256_8 | AesCm128HmacSha256_4 | AesGcm128Sha256 => {
-                    &ring::aead::AES_128_GCM
-                }
+                AesGcm128Sha256 => &ring::aead::AES_128_GCM,
                 AesGcm256Sha512 => &ring::aead::AES_256_GCM,
             }
         }
