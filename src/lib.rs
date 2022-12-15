@@ -29,6 +29,7 @@ mod crypto;
 mod test_vectors;
 
 pub mod error;
+pub mod frame_validation;
 pub mod header;
 pub mod receiver;
 pub mod sender;

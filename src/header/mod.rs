@@ -8,7 +8,6 @@ mod keyid;
 
 pub use frame_count::FrameCount;
 pub(crate) use frame_count::FrameCountGenerator;
-pub mod frame_validation;
 pub use keyid::KeyId;
 
 use self::keyid::{BasicKeyId, ExtendedKeyId};
