@@ -4,8 +4,12 @@
 use sframe::{
     header::Header,
     header::{Deserialization, Serialization},
-    util::bin2string,
 };
+
+fn bin2string(bin: &[u8]) -> String {
+    bin.iter().map(|x| format!("{x:08b} ")).collect()
+}
+
 fn main() {
     let limit = std::env::args()
         .nth(1)
