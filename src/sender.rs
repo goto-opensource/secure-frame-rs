@@ -23,8 +23,8 @@ impl Sender {
         Self::with_cipher_suite(sender_id, CipherSuiteVariant::AesGcm256Sha512)
     }
 
-    pub fn with_cipher_suite(sender_id: u64, suite: impl Into<CipherSuite>) -> Sender {
-        let cipher_suite: CipherSuite = suite.into();
+    pub fn with_cipher_suite(sender_id: u64, variant: CipherSuiteVariant) -> Sender {
+        let cipher_suite: CipherSuite = variant.into();
         log::debug!("Setting up sframe Sender");
         log::trace!(
             "SenderID {} (ciphersuite {:?})",
