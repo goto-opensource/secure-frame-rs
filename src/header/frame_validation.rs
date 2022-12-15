@@ -36,15 +36,15 @@ impl FrameValidation for ReplayAttackProtection {
             Ok(())
         } else {
             // frame old
-            let age: u64 = last_frame_count.value() - current_frame_count.value();
+            let age = last_frame_count - current_frame_count;
 
             if age <= self.tolerance {
                 self.last_frame_count.set(current_frame_count);
                 Ok(())
             } else {
                 // maybe there was an overflow
-                let dist_to_overflow = u64::MAX - last_frame_count.value();
-                let overflow_age = current_frame_count.value() + dist_to_overflow;
+                let dist_to_overflow = u64::MAX - last_frame_count;
+                let overflow_age = current_frame_count + dist_to_overflow;
 
                 // no it's just too old
                 if overflow_age <= self.tolerance {

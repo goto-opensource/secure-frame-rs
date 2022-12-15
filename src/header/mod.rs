@@ -208,7 +208,7 @@ mod test {
     #[test]
     fn create_basic_header_from_basic_key_id_with_correct_fields() {
         let key_id = KeyId::Basic(0);
-        let frame_count = FrameCount::new(0);
+        let frame_count = FrameCount::from(0);
         let header = Header::with_frame_count(key_id, frame_count);
         assert!(matches!(header, Header::Basic(_)));
 
@@ -220,7 +220,7 @@ mod test {
     #[test]
     fn create_extended_header_from_extended_key_id_with_correct_fields() {
         let key_id = KeyId::Extended(666);
-        let frame_count = FrameCount::new(0);
+        let frame_count = FrameCount::from(0);
         let header = Header::with_frame_count(key_id, frame_count);
         assert!(matches!(header, Header::Extended(_)));
 
@@ -243,7 +243,7 @@ mod test {
             .for_each(|test_vector| {
                 let header = Header::with_frame_count(
                     KeyId::from(test_vector.key_id),
-                    FrameCount::new(test_vector.frame_count),
+                    FrameCount::from(test_vector.frame_count),
                 );
                 assert_bytes_eq(Vec::from(&header).as_slice(), &test_vector.header);
             });
@@ -257,7 +257,7 @@ mod test {
             .for_each(|test_vector| {
                 let header = Header::deserialize(&test_vector.header).unwrap();
                 assert_eq!(header.key_id(), KeyId::from(test_vector.key_id));
-                assert_eq!(header.frame_count().value(), test_vector.frame_count);
+                assert_eq!(header.frame_count(), test_vector.frame_count);
             });
     }
 }

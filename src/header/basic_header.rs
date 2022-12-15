@@ -30,9 +30,11 @@ bitfield! {
 
 impl HeaderFields for BasicHeader {
     type KeyIdType = BasicKeyId;
+
     fn frame_count(&self) -> FrameCount {
         self.frame_count
     }
+
     fn key_id(&self) -> BasicKeyId {
         self.key_id
     }
@@ -85,7 +87,7 @@ impl Deserialization for BasicHeader {
 
         Ok(BasicHeader::new(
             key_id,
-            FrameCount::new(u64::from_be_bytes(numeric_value)),
+            FrameCount::from(u64::from_be_bytes(numeric_value)),
         ))
     }
 
@@ -114,7 +116,7 @@ mod test {
 
     #[test]
     fn fail_to_serialize_when_buffer_is_too_small() {
-        let header = BasicHeader::new(3, FrameCount::new(5));
+        let header = BasicHeader::new(3, FrameCount::from(5));
         let mut buffer = vec![0u8; header.size() - 1];
 
         let result = header.serialize(&mut buffer);
@@ -123,7 +125,7 @@ mod test {
 
     #[test]
     fn serialize_to_buffer() {
-        let header = BasicHeader::new(6, FrameCount::new(666));
+        let header = BasicHeader::new(6, FrameCount::from(666));
         let mut buffer = vec![0u8; header.size()];
 
         assert!(header.serialize(&mut buffer).is_ok());
@@ -133,7 +135,7 @@ mod test {
     }
     #[test]
     fn serialize_when_frame_count_and_key_id_is_0() {
-        let header = BasicHeader::new(0, FrameCount::new(0));
+        let header = BasicHeader::new(0, FrameCount::from(0));
         let mut buffer = vec![0u8; header.size()];
 
         assert!(header.serialize(&mut buffer).is_ok());
@@ -171,6 +173,6 @@ mod test {
         let data = [0b00010110, 0b00000010, 0b10011010];
         let header = BasicHeader::deserialize(&data).unwrap();
         assert_eq!(header.key_id(), 6);
-        assert_eq!(header.frame_count().value(), 666);
+        assert_eq!(header.frame_count(), 666);
     }
 }

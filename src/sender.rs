@@ -75,7 +75,7 @@ impl Sender {
                 encrypt_buffer,
                 secret,
                 &leading_buffer[skip..],
-                &header.frame_count(),
+                header.frame_count(),
             )?;
 
             frame.extend(tag.as_ref());

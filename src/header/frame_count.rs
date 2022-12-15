@@ -24,20 +24,40 @@ pub fn get_nof_non_zero_bytes(value: u64) -> u8 {
 }
 
 impl FrameCount {
-    pub fn new(numeric_value: u64) -> FrameCount {
-        FrameCount { numeric_value }
-    }
-
-    pub fn value(&self) -> u64 {
-        self.numeric_value
-    }
-
     pub fn as_be_bytes(&self) -> impl Iterator<Item = u8> {
         as_be_bytes(self.numeric_value)
     }
 
     pub fn length_in_bytes(&self) -> u8 {
         get_nof_non_zero_bytes(self.numeric_value).max(1)
+    }
+}
+
+impl std::ops::Sub<FrameCount> for FrameCount {
+    type Output = Self;
+
+    fn sub(self, rhs: FrameCount) -> Self::Output {
+        FrameCount {
+            numeric_value: self.numeric_value - rhs.numeric_value,
+        }
+    }
+}
+
+impl std::ops::Sub<FrameCount> for u64 {
+    type Output = Self;
+
+    fn sub(self, rhs: FrameCount) -> Self::Output {
+        self - rhs.numeric_value
+    }
+}
+
+impl std::ops::Sub<u64> for FrameCount {
+    type Output = Self;
+
+    fn sub(self, rhs: u64) -> Self::Output {
+        FrameCount {
+            numeric_value: self.numeric_value - rhs,
+        }
     }
 }
 
@@ -50,9 +70,22 @@ impl Add<u64> for FrameCount {
         }
     }
 }
+
+impl PartialOrd<u64> for FrameCount {
+    fn partial_cmp(&self, other: &u64) -> Option<std::cmp::Ordering> {
+        self.numeric_value.partial_cmp(other)
+    }
+}
+
 impl PartialEq<u64> for FrameCount {
     fn eq(&self, other: &u64) -> bool {
         self.numeric_value == *other
+    }
+}
+
+impl Into<u64> for FrameCount {
+    fn into(self) -> u64 {
+        self.numeric_value
     }
 }
 
@@ -71,7 +104,7 @@ impl FrameCountGenerator {
     const MAX_FRAME_COUNT: u64 = u64::MAX;
 
     pub fn increment(&mut self) -> FrameCount {
-        let frame_count = FrameCount::new(self.current_frame_count);
+        let frame_count = FrameCount::from(self.current_frame_count);
         self.current_frame_count =
             (self.current_frame_count + 1) % FrameCountGenerator::MAX_FRAME_COUNT;
         frame_count
@@ -85,28 +118,28 @@ mod test {
 
     #[test]
     fn return_numeric_value() {
-        let frame_count = FrameCount::new(42);
-        assert_eq!(42, frame_count.value());
+        let frame_count = FrameCount::from(42);
+        assert_eq!(frame_count, 42);
     }
 
     #[test]
     fn return_value_as_be_bytes_without_trailing_zeros_iter() {
-        let frame_count = FrameCount::new(666);
+        let frame_count = FrameCount::from(666);
         assert_eq!(vec![2, 154], frame_count.as_be_bytes().collect::<Vec<_>>());
 
-        let frame_count = FrameCount::new(0);
+        let frame_count = FrameCount::from(0);
         assert_eq!(vec![0], frame_count.as_be_bytes().collect::<Vec<_>>());
     }
 
     #[test]
     fn return_length_in_bytes() {
-        let frame_count = FrameCount::new(666);
+        let frame_count = FrameCount::from(666);
         assert_eq!(2, frame_count.length_in_bytes());
 
-        let frame_count = FrameCount::new(0);
+        let frame_count = FrameCount::from(0);
         assert_eq!(1, frame_count.length_in_bytes());
 
-        let frame_count = FrameCount::new(u64::MAX);
+        let frame_count = FrameCount::from(u64::MAX);
         assert_eq!((usize::BITS / 8) as u8, frame_count.length_in_bytes());
     }
 
@@ -115,7 +148,7 @@ mod test {
         let mut frame_count_generator = FrameCountGenerator::default();
 
         for i in 0..10 {
-            assert_eq!(frame_count_generator.increment().value(), i);
+            assert_eq!(frame_count_generator.increment(), i);
         }
     }
 }

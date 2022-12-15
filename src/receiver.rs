@@ -79,7 +79,7 @@ impl Receiver {
                 &mut io_buffer[skip..],
                 secret,
                 &encrypted_frame[skip..payload_begin_idx],
-                &header.frame_count(),
+                header.frame_count(),
             )?;
 
             io_buffer.truncate(io_buffer.len() - self.options.cipher_suite.auth_tag_len);
