@@ -51,7 +51,9 @@ impl FrameValidation for ReplayAttackProtection {
                     self.last_frame_count.set(current_frame_count);
                     Ok(())
                 } else {
-                    Err(SframeError::FrameValidationFailed)
+                    Err(SframeError::FrameValidationFailed(
+                        "Replay check failed, frame counter too old".to_string(),
+                    ))
                 }
             }
         }
@@ -89,10 +91,10 @@ mod test {
         let too_late_header = Header::with_frame_count(23456789u64, 1024);
 
         assert_eq!(validator.validate(&first_header), Ok(()));
-        assert_eq!(
+        assert!(matches!(
             validator.validate(&too_late_header),
-            Err(SframeError::FrameValidationFailed)
-        )
+            Err(SframeError::FrameValidationFailed(_))
+        ))
     }
 
     #[test]

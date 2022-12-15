@@ -44,7 +44,7 @@ pub trait HeaderFields {
     fn size(&self) -> usize;
 }
 
-/// sframe header with a KID with a length of up to 3bits
+/// Sframe header with a KID with a length of up to 3bits
 /// modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-00#name-sframe-header)
 /// ```txt
 ///  0 1 2 3 4 5 6 7
@@ -59,13 +59,13 @@ pub struct BasicHeader {
 }
 
 impl BasicHeader {
-    /// maximum length of the KID field in bits
+    /// Maximum length of the KID field in bits
     pub const MAX_KEY_ID_LEN_BIT: u32 = 3;
-    /// maximum value of the KID
+    /// Maximum value of the KID
     pub const MAX_KEY_ID: u64 = (1 << Self::MAX_KEY_ID_LEN_BIT) - 1;
     const STATIC_HEADER_LENGHT_BYTE: usize = 1;
 
-    /// create a new `BasicHeader` from key id and frame count
+    /// Create a new `BasicHeader` from key id and frame count
     pub fn new(key_id: BasicKeyId, frame_count: FrameCount) -> BasicHeader {
         BasicHeader {
             key_id,
@@ -73,7 +73,7 @@ impl BasicHeader {
         }
     }
 }
-/// extended sframe header with a KID with a length of up to 8 bytes
+/// Extended sframe header with a KID with a length of up to 8 bytes
 /// modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-00#name-sframe-header)
 /// ```txt
 ///  0 1 2 3 4 5 6 7
@@ -87,13 +87,13 @@ pub struct ExtendedHeader {
 }
 
 impl ExtendedHeader {
-    /// maximum length of the KID field in bits
+    /// Maximum length of the KID field in bits
     pub const MAX_KEY_ID_LEN_BIT: u32 = u64::BITS;
-    /// maximum value of the KID
+    /// Maximum value of the KID
     pub const MAX_KEY_ID: u64 = u64::MAX;
     const STATIC_HEADER_LENGHT_BYTE: usize = 1;
 
-    /// create a new `ExtendedHeader` from key id and frame count
+    /// Create a new `ExtendedHeader` from key id and frame count
     pub fn new(key_id: ExtendedKeyId, frame_count: FrameCount) -> ExtendedHeader {
         ExtendedHeader {
             key_id,
@@ -134,7 +134,7 @@ impl Header {
         }
     }
 
-    /// returns true if the header is `Header::Extended`
+    /// Returns true if the header is `Header::Extended`
     pub fn is_extended(&self) -> bool {
         matches!(self, Header::Extended(_))
     }
