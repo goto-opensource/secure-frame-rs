@@ -95,22 +95,6 @@ impl Header {
     pub fn is_extended(&self) -> bool {
         matches!(self, Header::Extended(_))
     }
-
-    pub fn as_basic(&self) -> Option<&BasicHeader> {
-        if let Header::Basic(basic) = self {
-            Some(basic)
-        } else {
-            None
-        }
-    }
-
-    pub fn as_extended(&self) -> Option<&ExtendedHeader> {
-        if let Header::Extended(extended) = self {
-            Some(extended)
-        } else {
-            None
-        }
-    }
 }
 
 impl Default for Header {
