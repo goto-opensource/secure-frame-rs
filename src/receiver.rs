@@ -38,8 +38,9 @@ impl Receiver {
     pub fn with_cipher_suite(suite: impl Into<CipherSuite>) -> Receiver {
         let cipher_suite: CipherSuite = suite.into();
         let replay_attack_tolerance = 128;
-        log::info!(
-            "Setting up Sframe Receiver (ciphersuite {:?}, replay_attack_tolerance: {}",
+        log::debug!("Setting up sframe Receiver");
+        log::trace!(
+            "using ciphersuite {:?}, replay_attack_tolerance: {}",
             cipher_suite.variant,
             replay_attack_tolerance
         );

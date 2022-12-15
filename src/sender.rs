@@ -25,8 +25,9 @@ impl Sender {
 
     pub fn with_cipher_suite(sender_id: u64, suite: impl Into<CipherSuite>) -> Sender {
         let cipher_suite: CipherSuite = suite.into();
-        log::info!(
-            "Setting up Sframe Sender with ID {} (ciphersuite {:?})",
+        log::debug!("Setting up sframe Sender");
+        log::trace!(
+            "SenderID {} (ciphersuite {:?})",
             sender_id,
             cipher_suite.variant
         );
