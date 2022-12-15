@@ -80,10 +80,6 @@ impl Header {
         Self::with_frame_count(key_id.into(), FrameCount::default())
     }
 
-    pub fn extended(key_id: u64) -> Header {
-        Header::Extended(ExtendedHeader::new(key_id, FrameCount::default()))
-    }
-
     pub fn with_frame_count<K: Into<KeyId>, F: Into<FrameCount>>(
         key_id: K,
         frame_count: F,
