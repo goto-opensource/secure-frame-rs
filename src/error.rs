@@ -3,13 +3,13 @@
 
 use crate::header::KeyId;
 
-/// Represents either success(T) or an failure (`SframeError`)
+/// Represents either success(T) or an failure ([`SframeError`])
 pub type Result<T> = std::result::Result<T, SframeError>;
 
 /// Represents an error which has occured in the sframe-rs library
 #[derive(PartialEq, Eq, Debug, thiserror::Error)]
 pub enum SframeError {
-    /// `Sender` has no valid encryption key set
+    /// [`Sender`] has no valid encryption key set
     #[error("No EncryptionKey has been set")]
     MissingEncryptionKey,
 
@@ -25,11 +25,11 @@ pub enum SframeError {
     #[error("Failed to Encrypt")]
     EncryptionFailure,
 
-    /// Could not expand encryption key for `Sender` or decryption key for `Receiver` with HKDF
+    /// Could not expand encryption key for [`Sender`] or decryption key for [`Receiver`] with HKDF
     #[error("Unable to create unbound encryption key")]
     KeyExpansion,
 
-    /// frame validation failed in the `receiver` before decryption
+    /// frame validation failed in the [`Receiver`] before decryption
     #[error("{0}")]
     FrameValidationFailed(String),
 

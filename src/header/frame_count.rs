@@ -30,7 +30,7 @@ impl FrameCount {
         as_be_bytes(self.numeric_value)
     }
 
-    /// the minimum nof bytes needed to represent this count
+    /// The minimum nof bytes needed to represent this count
     pub fn length_in_bytes(&self) -> u8 {
         get_nof_non_zero_bytes(self.numeric_value).max(1)
     }

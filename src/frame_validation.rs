@@ -7,16 +7,24 @@ use crate::{
 };
 use std::cell::Cell;
 
+/// Allows to validate frames by their sframe header before the decryption
 pub trait FrameValidation {
+    /// checks if the new header is valid, returns an [`SframeError`] if not
     fn validate(&self, header: &Header) -> Result<()>;
 }
 
+/// This implementation allows to detect replay attacks by omitting frames with
+/// to old frame counters. The window of allowed frame counts is given with a
+/// certain tolerance.
+///
+/// ! THIS IMPLENTATION IS NOT THREAD SAFE
 pub struct ReplayAttackProtection {
     tolerance: u64,
     last_frame_count: Cell<FrameCount>,
 }
 
 impl ReplayAttackProtection {
+    /// creates a [`ReplayAttackProtection`] with a given tolerance for the frame count
     pub fn with_tolerance(tolerance: u64) -> Self {
         ReplayAttackProtection {
             tolerance,

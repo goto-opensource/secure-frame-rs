@@ -18,9 +18,9 @@ use super::error::{Result, SframeError};
 pub trait Deserialization {
     /// The derialized type
     type DeserializedOutput;
-    /// Tries to deserialize `DeserializedOutput`, returns an error if this is not successful
+    /// Tries to deserialize [`DeserializedOutput`], returns an error if this is not successful
     fn deserialize(data: &[u8]) -> Result<Self::DeserializedOutput>;
-    /// Returns `true` if `DeserializedOutput` can be derialized from the given buffer
+    /// Returns `true` if [`DeserializedOutput`] can be derialized from the given buffer
     fn is_valid(data: &[u8]) -> bool;
 }
 
@@ -65,7 +65,7 @@ impl BasicHeader {
     pub const MAX_KEY_ID: u64 = (1 << Self::MAX_KEY_ID_LEN_BIT) - 1;
     const STATIC_HEADER_LENGHT_BYTE: usize = 1;
 
-    /// Create a new `BasicHeader` from key id and frame count
+    /// Create a new [`BasicHeader`] from key id and frame count
     pub fn new(key_id: BasicKeyId, frame_count: FrameCount) -> BasicHeader {
         BasicHeader {
             key_id,
@@ -93,7 +93,7 @@ impl ExtendedHeader {
     pub const MAX_KEY_ID: u64 = u64::MAX;
     const STATIC_HEADER_LENGHT_BYTE: usize = 1;
 
-    /// Create a new `ExtendedHeader` from key id and frame count
+    /// Create a new [`ExtendedHeader`] from key id and frame count
     pub fn new(key_id: ExtendedKeyId, frame_count: FrameCount) -> ExtendedHeader {
         ExtendedHeader {
             key_id,
@@ -109,19 +109,19 @@ impl ExtendedHeader {
 /// The CTR field has a variable length of up to 8 bytes where the size is represented with LEN. Here LEN=0 represents a length of 1.
 /// Same holds for the extended HEADER with the fields KID and KLEN.
 pub enum Header {
-    /// see `BasicHeader`
+    /// see [`BasicHeader`]
     Basic(BasicHeader),
-    /// see `ExtendedHeader`
+    /// see [`ExtendedHeader`]
     Extended(ExtendedHeader),
 }
 
 impl Header {
-    /// Creates a new Sframe header from a given key ID with frame count 0
+    /// Creates a new [`Header`] from a given key ID with frame count 0
     pub fn new<K: Into<KeyId>>(key_id: K) -> Header {
         Self::with_frame_count(key_id.into(), FrameCount::default())
     }
 
-    /// Creates a new Sframe header from a given key ID and frame count
+    /// Creates a new [`Header`] from a given key ID and frame count
     pub fn with_frame_count<K: Into<KeyId>, F: Into<FrameCount>>(
         key_id: K,
         frame_count: F,
@@ -134,7 +134,7 @@ impl Header {
         }
     }
 
-    /// Returns true if the header is `Header::Extended`
+    /// Returns true if the header is [`Header::Extended`]
     pub fn is_extended(&self) -> bool {
         matches!(self, Header::Extended(_))
     }
