@@ -1,5 +1,11 @@
 Secure Frame (SFrame)
 =======================
+[![build](https://img.shields.io/github/actions/workflow/status/goto-opensource/secure-frame-rs/ci.yml?branch=main)](https://github.com/goto-opensource/secure-frame-rs/actions?query=workflow%3A"Continuous+Integration")
+[![version](https://img.shields.io/crates/v/sframe)](https://crates.io/crates/sframe/)
+[![Crates.io](https://img.shields.io/crates/d/sframe)](https://crates.io/crates/sframe)
+[![license](https://img.shields.io/crates/l/sframe.svg?style=flat)](https://crates.io/crates/sframe/)
+[![documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://docs.rs/sframe/)
+![maintenance](https://img.shields.io/maintenance/yes/2023)
 
 
 This library is an implementation of [draft-ietf-sframe-enc-latest](https://sframe-wg.github.io/sframe/draft-ietf-sframe-enc.html) and provides and end-to-end encryption mechanism for media frames that is suited for WebRTC conferences.
