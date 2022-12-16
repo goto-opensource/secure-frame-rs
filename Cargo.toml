@@ -9,14 +9,12 @@ authors = [
   "Hendrik Sollich <hendrik.sollich@goto.com>",
   "Richard Haehne <richard.haehne@goto.com>",
 ]
-description = "pure rust implementatio of SFrame draft-ietf-sframe-enc-00"
+description = "pure rust implementation of SFrame draft-ietf-sframe-enc-00"
 repository = "https://github.com/goto-opensource/sframe-rs"
 documentation = "https://docs.rs/sframe/"
-readme = "README"
+readme = "README.md"
 
-keywords = ["encryption", "sframe", "webrtc"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+keywords = ["encryption", "sframe", "secure frame", "webrtc"]
 
 [dependencies]
 bitfield = "0.14"
