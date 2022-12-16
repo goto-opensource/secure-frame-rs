@@ -31,8 +31,6 @@ pub trait Serialization {
 }
 
 /// Represents the accessible fields in a sframe header
-/// - the associated key ID (KID)
-/// - the size in
 pub trait HeaderFields {
     /// associated key ID type (basic/extended)
     type KeyIdType;

@@ -16,8 +16,6 @@ pub trait FrameValidation {
 /// This implementation allows to detect replay attacks by omitting frames with
 /// to old frame counters. The window of allowed frame counts is given with a
 /// certain tolerance.
-///
-/// ! THIS IMPLENTATION IS NOT THREAD SAFE
 pub struct ReplayAttackProtection {
     tolerance: u64,
     last_frame_count: Cell<FrameCount>,
