@@ -14,7 +14,7 @@ fn header_serialization(c: &mut Criterion) {
 
     c.bench_function("extended header", |b| {
         let mut buffer = vec![0_u8; 4];
-        let extended_header = Header::extended(128_u64);
+        let extended_header = Header::new(128_u64);
         b.iter(|| black_box(extended_header.serialize(&mut buffer)))
     });
 

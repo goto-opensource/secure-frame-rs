@@ -3,34 +3,37 @@
 
 use crate::header::KeyId;
 
+/// Represents either success(T) or an failure ([`SframeError`])
 pub type Result<T> = std::result::Result<T, SframeError>;
 
+/// Represents an error which has occured in the sframe-rs library
 #[derive(PartialEq, Eq, Debug, thiserror::Error)]
 pub enum SframeError {
-    #[error("Key Id {0} is not valid")]
-    InvalidKeyId(u64),
-
+    /// [`Sender`] has no valid encryption key set
     #[error("No EncryptionKey has been set")]
     MissingEncryptionKey,
 
+    /// `Receiver` has no valid encryption key set
     #[error("No DecryptionKey has been found")]
     MissingDecryptionKey(KeyId),
 
+    /// Failed to decrypt a frame with AEAD
     #[error("Failed to Decrypt")]
     DecryptionFailure,
 
+    /// Failed to encrypt a frame with AEAD
     #[error("Failed to Encrypt")]
     EncryptionFailure,
 
-    #[error("Invalid MediaType")]
-    InvalidMediaType,
-
+    /// Could not expand encryption key for [`Sender`] or decryption key for [`Receiver`] with HKDF
     #[error("Unable to create unbound encryption key")]
     KeyExpansion,
 
-    #[error("Replay check failed, frame counter too old")]
-    FrameValidationFailed,
+    /// frame validation failed in the [`Receiver`] before decryption
+    #[error("{0}")]
+    FrameValidationFailed(String),
 
+    /// any arbitrary error
     #[error("{0}")]
     Other(String),
 }

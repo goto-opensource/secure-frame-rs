@@ -11,13 +11,14 @@ use super::{
 };
 
 bitfield! {
-    /// Modelt after [sframe draft 03 4.2](https://datatracker.ietf.org/doc/html/draft-omara-sframe-03#section-4.2)
+    /// Modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-00#name-sframe-header)
     /// ```txt
     ///  0 1 2 3 4 5 6 7
     /// +-+-+-+-+-+-+-+-+---------------------------------+
     /// |R|LEN  |0| KID |    CTR... (length=LEN)          |
     /// +-+-+-+-+-+-+-+-+---------------------------------+
     /// ```
+    ///
     struct BasicHeaderBitfield(MSB0 [u8]);
     impl Debug;
     u8;

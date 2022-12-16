@@ -6,31 +6,50 @@ mod extended_header;
 mod frame_count;
 mod keyid;
 
-pub use frame_count::{FrameCount, FrameCountGenerator};
-pub mod frame_validation;
+pub use frame_count::FrameCount;
+pub(crate) use frame_count::FrameCountGenerator;
 pub use keyid::KeyId;
 
 use self::keyid::{BasicKeyId, ExtendedKeyId};
 
 use super::error::{Result, SframeError};
 
+/// Allows to deserialze and validate a sframe header from a byte buffer.
 pub trait Deserialization {
+    /// The derialized type
     type DeserializedOutput;
+    /// Tries to deserialize [`DeserializedOutput`], returns an error if this is not successful
     fn deserialize(data: &[u8]) -> Result<Self::DeserializedOutput>;
+    /// Returns `true` if [`DeserializedOutput`] can be derialized from the given buffer
     fn is_valid(data: &[u8]) -> bool;
 }
 
+/// Allows to serialze a type from a byte buffer. This is used for our sframe header implementations.
 pub trait Serialization {
+    /// serializes a sframe header into the given buffer.
     fn serialize(&self, buffer: &mut [u8]) -> Result<()>;
 }
 
+/// Represents the accessible fields in a sframe header
 pub trait HeaderFields {
+    /// associated key ID type (basic/extended)
     type KeyIdType;
+    /// the frame count field (CTR)
     fn frame_count(&self) -> FrameCount;
+    /// the key id field (KID)
     fn key_id(&self) -> Self::KeyIdType;
+    /// size in bytes of the header
     fn size(&self) -> usize;
 }
 
+/// Sframe header with a KID with a length of up to 3bits
+/// modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-00#name-sframe-header)
+/// ```txt
+///  0 1 2 3 4 5 6 7
+/// +-+-+-+-+-+-+-+-+---------------------------------+
+/// |R|LEN  |0| KID |    CTR... (length=LEN)          |
+/// +-+-+-+-+-+-+-+-+---------------------------------+
+/// ```
 #[derive(Copy, Clone, Debug)]
 pub struct BasicHeader {
     key_id: BasicKeyId,
@@ -38,10 +57,13 @@ pub struct BasicHeader {
 }
 
 impl BasicHeader {
+    /// Maximum length of the KID field in bits
     pub const MAX_KEY_ID_LEN_BIT: u32 = 3;
+    /// Maximum value of the KID
     pub const MAX_KEY_ID: u64 = (1 << Self::MAX_KEY_ID_LEN_BIT) - 1;
     const STATIC_HEADER_LENGHT_BYTE: usize = 1;
 
+    /// Create a new [`BasicHeader`] from key id and frame count
     pub fn new(key_id: BasicKeyId, frame_count: FrameCount) -> BasicHeader {
         BasicHeader {
             key_id,
@@ -49,7 +71,13 @@ impl BasicHeader {
         }
     }
 }
-
+/// Extended sframe header with a KID with a length of up to 8 bytes
+/// modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-00#name-sframe-header)
+/// ```txt
+///  0 1 2 3 4 5 6 7
+/// +-+-+-+-+-+-+-+-+---------------------------+---------------------------+
+/// |R|LEN  |1|KLEN |   KID... (length=KLEN)    |    CTR... (length=LEN)    |
+/// +-+-----+-+-----+---------------------------+---------------------------+
 #[derive(Copy, Clone, Debug)]
 pub struct ExtendedHeader {
     key_id: ExtendedKeyId,
@@ -57,10 +85,13 @@ pub struct ExtendedHeader {
 }
 
 impl ExtendedHeader {
+    /// Maximum length of the KID field in bits
     pub const MAX_KEY_ID_LEN_BIT: u32 = u64::BITS;
+    /// Maximum value of the KID
     pub const MAX_KEY_ID: u64 = u64::MAX;
     const STATIC_HEADER_LENGHT_BYTE: usize = 1;
 
+    /// Create a new [`ExtendedHeader`] from key id and frame count
     pub fn new(key_id: ExtendedKeyId, frame_count: FrameCount) -> ExtendedHeader {
         ExtendedHeader {
             key_id,
@@ -70,20 +101,25 @@ impl ExtendedHeader {
 }
 
 #[derive(Copy, Clone, Debug)]
+/// Represents an Sframe header modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-00#name-sframe-header)
+/// containing the key id of the sender (KID) and the current frame count (CTR).
+/// There are two variants, either with a KID represented by 3 bits (Basic) and an extended version with a KID of up to 8 bytes (Extended).
+/// The CTR field has a variable length of up to 8 bytes where the size is represented with LEN. Here LEN=0 represents a length of 1.
+/// Same holds for the extended HEADER with the fields KID and KLEN.
 pub enum Header {
+    /// see [`BasicHeader`]
     Basic(BasicHeader),
+    /// see [`ExtendedHeader`]
     Extended(ExtendedHeader),
 }
 
 impl Header {
+    /// Creates a new [`Header`] from a given key ID with frame count 0
     pub fn new<K: Into<KeyId>>(key_id: K) -> Header {
         Self::with_frame_count(key_id.into(), FrameCount::default())
     }
 
-    pub fn extended(key_id: u64) -> Header {
-        Header::Extended(ExtendedHeader::new(key_id, FrameCount::default()))
-    }
-
+    /// Creates a new [`Header`] from a given key ID and frame count
     pub fn with_frame_count<K: Into<KeyId>, F: Into<FrameCount>>(
         key_id: K,
         frame_count: F,
@@ -96,24 +132,9 @@ impl Header {
         }
     }
 
+    /// Returns true if the header is [`Header::Extended`]
     pub fn is_extended(&self) -> bool {
         matches!(self, Header::Extended(_))
-    }
-
-    pub fn as_basic(&self) -> Option<&BasicHeader> {
-        if let Header::Basic(basic) = self {
-            Some(basic)
-        } else {
-            None
-        }
-    }
-
-    pub fn as_extended(&self) -> Option<&ExtendedHeader> {
-        if let Header::Extended(extended) = self {
-            Some(extended)
-        } else {
-            None
-        }
     }
 }
 

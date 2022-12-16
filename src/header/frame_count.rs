@@ -5,6 +5,7 @@ use std::ops::Add;
 
 use num_integer::div_ceil;
 
+/// Represents the frame count (CTR) in a sframe header
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd)]
 pub struct FrameCount {
     numeric_value: u64,
@@ -24,10 +25,12 @@ pub fn get_nof_non_zero_bytes(value: u64) -> u8 {
 }
 
 impl FrameCount {
+    /// returns the underlying value as an iterator over big-endian bytes
     pub fn as_be_bytes(&self) -> impl Iterator<Item = u8> {
         as_be_bytes(self.numeric_value)
     }
 
+    /// The minimum nof bytes needed to represent this count
     pub fn length_in_bytes(&self) -> u8 {
         get_nof_non_zero_bytes(self.numeric_value).max(1)
     }
@@ -96,7 +99,7 @@ impl From<u64> for FrameCount {
 }
 
 #[derive(Copy, Clone, Debug, Default)]
-pub struct FrameCountGenerator {
+pub(crate) struct FrameCountGenerator {
     current_frame_count: u64,
 }
 

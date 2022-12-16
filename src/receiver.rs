@@ -10,7 +10,7 @@ use crate::{
         key_expansion::{KeyMaterial, Secret},
     },
     error::{Result, SframeError},
-    header::frame_validation::{FrameValidation, ReplayAttackProtection},
+    frame_validation::{FrameValidation, ReplayAttackProtection},
     header::{Deserialization, Header, HeaderFields, KeyId},
 };
 
@@ -35,8 +35,8 @@ pub struct Receiver {
 }
 
 impl Receiver {
-    pub fn with_cipher_suite(suite: impl Into<CipherSuite>) -> Receiver {
-        let cipher_suite: CipherSuite = suite.into();
+    pub fn with_cipher_suite(variant: CipherSuiteVariant) -> Receiver {
+        let cipher_suite: CipherSuite = variant.into();
         let replay_attack_tolerance = 128;
         log::debug!("Setting up sframe Receiver");
         log::trace!(

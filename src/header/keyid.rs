@@ -6,9 +6,14 @@ use super::BasicHeader;
 pub type BasicKeyId = u8;
 pub type ExtendedKeyId = u64;
 
+/// Represents the key id (ID) field in the sframe header
+/// The kid can either be represented by 3 bits (Basic) for a short header
+/// or with a length up to 8 byte (Extended)
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub enum KeyId {
+    /// 3 bit key id (KID), as a u8
     Basic(BasicKeyId),
+    /// up to 8 byte  key id (KID), as a u64
     Extended(ExtendedKeyId),
 }
 

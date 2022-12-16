@@ -1,5 +1,9 @@
 // Copyright (c) 2023 GoTo Group, Inc
 // SPDX-License-Identifier: Apache-2.0 AND MIT
+//! # Secure Frame (SFrame)
+//! This library is an implementation of [draft-ietf-sframe-enc-latest](https://sframe-wg.github.io/sframe/draft-ietf-sframe-enc.html).
+//!
+//! It is in it's current form a subset of the specification (e.g. Aes-CTR is not implemented).
 
 #![deny(clippy::missing_panics_doc)]
 #![deny(
@@ -23,9 +27,11 @@
 mod crypto;
 #[cfg(test)]
 mod test_vectors;
+mod util;
 
 pub mod error;
+pub mod frame_validation;
 pub mod header;
 pub mod receiver;
 pub mod sender;
-pub mod util;
+pub use crypto::cipher_suite::CipherSuiteVariant;

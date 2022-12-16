@@ -1,7 +1,8 @@
 // Copyright (c) 2023 GoTo Group, Inc
 // SPDX-License-Identifier: Apache-2.0 AND MIT
 
-pub fn bin2string(bin: &[u8]) -> String {
+#[cfg(test)]
+pub(crate) fn bin2string(bin: &[u8]) -> String {
     bin.iter().map(|x| format!("{x:08b} ")).collect()
 }
 
