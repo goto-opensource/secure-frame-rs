@@ -6,13 +6,13 @@ use criterion::{black_box, criterion_group, Criterion};
 use sframe::header::{Deserialization, FrameCount, Header, KeyId, Serialization};
 
 fn header_serialization(c: &mut Criterion) {
-    c.bench_function("basic header", |b| {
+    c.bench_function("serialize basic header", |b| {
         let mut buffer = vec![0_u8; 4];
         let basic_header = Header::new(7_u8);
         b.iter(|| black_box(basic_header.serialize(&mut buffer)))
     });
 
-    c.bench_function("extended header", |b| {
+    c.bench_function("serialize extended header", |b| {
         let mut buffer = vec![0_u8; 4];
         let extended_header = Header::new(128_u64);
         b.iter(|| black_box(extended_header.serialize(&mut buffer)))
