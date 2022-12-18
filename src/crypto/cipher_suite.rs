@@ -10,9 +10,9 @@ pub enum CipherSuiteVariant {
     // AesCm128HmacSha256_8,
     // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
     // AesCm128HmacSha256_4,
-    /// encryption: AES GCM 128, key expansion: HDKF with SHA256
+    /// encryption: AES GCM 128, key expansion: HKDF with SHA256
     AesGcm128Sha256,
-    /// encryption: AES GCM 256, key expansion: HDKF with SHA512
+    /// encryption: AES GCM 256, key expansion: HKDF with SHA512
     AesGcm256Sha512,
 }
 
