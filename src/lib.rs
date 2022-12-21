@@ -25,6 +25,7 @@
 )]
 
 mod crypto;
+pub mod frame;
 #[cfg(test)]
 mod test_vectors;
 mod util;
@@ -35,3 +36,4 @@ pub mod header;
 pub mod receiver;
 pub mod sender;
 pub use crypto::cipher_suite::CipherSuiteVariant;
+pub use frame::*;
