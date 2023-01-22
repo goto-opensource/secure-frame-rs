@@ -19,7 +19,6 @@ keywords = ["encryption", "sframe", "secure-frame", "webrtc"]
 [dependencies]
 bitfield = "0.14"
 log = "0.4"
-num-integer = "0.1" 
 thiserror = "1.0"
 
 [dependencies.ring]

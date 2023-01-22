@@ -7,8 +7,8 @@ use bitfield::bitfield;
 use crate::error::{Result, SframeError};
 
 use super::{
-    frame_count::{as_be_bytes, get_nof_non_zero_bytes},
     keyid::ExtendedKeyId,
+    util::{as_min_be_bytes, min_len_in_bytes},
     Deserialization, ExtendedHeader, FrameCount, HeaderFields, Serialization, LEN_OFFSET,
 };
 
@@ -41,7 +41,7 @@ impl HeaderFields for ExtendedHeader {
 
     fn size(&self) -> usize {
         ExtendedHeader::STATIC_HEADER_LENGHT_BYTE
-            + get_nof_non_zero_bytes(self.key_id).max(1) as usize
+            + min_len_in_bytes(self.key_id) as usize
             + self.frame_count.length_in_bytes() as usize
     }
 }
@@ -58,11 +58,11 @@ impl Serialization for ExtendedHeader {
         let mut header_setter = ExtendedHeaderBitField(buffer);
         header_setter.set_frame_count_len(self.frame_count.length_in_bytes() - LEN_OFFSET);
         header_setter.set_extended_key_flag(true);
-        header_setter.set_key_len(get_nof_non_zero_bytes(self.key_id).max(1) - LEN_OFFSET);
+        header_setter.set_key_len(min_len_in_bytes(self.key_id) - LEN_OFFSET);
 
-        for (index, value) in as_be_bytes(self.key_id)
+        for (index, value) in as_min_be_bytes(self.key_id)
             .into_iter()
-            .chain(as_be_bytes(self.frame_count.into()))
+            .chain(as_min_be_bytes(self.frame_count.into()))
             .enumerate()
         {
             header_setter.set_key_id_and_ctr(index, value);
