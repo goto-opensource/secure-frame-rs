@@ -11,7 +11,7 @@ pub struct FrameCount {
     numeric_value: u64,
 }
 
-pub fn as_be_bytes(x: u64) -> impl Iterator<Item = u8> {
+pub fn as_be_bytes(x: u64) -> impl DoubleEndedIterator<Item = u8> {
     let be_bytes = x.to_be_bytes();
     let length_in_bytes = get_nof_non_zero_bytes(x).max(1);
     be_bytes
@@ -26,7 +26,7 @@ pub fn get_nof_non_zero_bytes(value: u64) -> u8 {
 
 impl FrameCount {
     /// returns the underlying value as an iterator over big-endian bytes
-    pub fn as_be_bytes(&self) -> impl Iterator<Item = u8> {
+    pub fn as_be_bytes(&self) -> impl DoubleEndedIterator<Item = u8> {
         as_be_bytes(self.numeric_value)
     }
 
