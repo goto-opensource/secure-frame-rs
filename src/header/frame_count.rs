@@ -3,7 +3,7 @@
 
 use std::ops::Add;
 
-use num_integer::div_ceil;
+use super::util::{as_min_be_bytes, min_len_in_bytes};
 
 /// Represents the frame count (CTR) in a sframe header
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd)]
@@ -11,28 +11,15 @@ pub struct FrameCount {
     numeric_value: u64,
 }
 
-pub fn as_be_bytes(x: u64) -> impl Iterator<Item = u8> {
-    let be_bytes = x.to_be_bytes();
-    let length_in_bytes = get_nof_non_zero_bytes(x).max(1);
-    be_bytes
-        .into_iter()
-        .skip(be_bytes.len() - length_in_bytes as usize)
-}
-
-// TODO: we could this on byte not on bit level
-pub fn get_nof_non_zero_bytes(value: u64) -> u8 {
-    div_ceil(u64::BITS - value.leading_zeros(), u8::BITS) as u8
-}
-
 impl FrameCount {
     /// returns the underlying value as an iterator over big-endian bytes
-    pub fn as_be_bytes(&self) -> impl Iterator<Item = u8> {
-        as_be_bytes(self.numeric_value)
+    pub fn as_be_bytes(&self) -> impl DoubleEndedIterator<Item = u8> {
+        as_min_be_bytes(self.numeric_value)
     }
 
     /// The minimum nof bytes needed to represent this count
     pub fn length_in_bytes(&self) -> u8 {
-        get_nof_non_zero_bytes(self.numeric_value).max(1)
+        min_len_in_bytes(self.numeric_value)
     }
 }
 
