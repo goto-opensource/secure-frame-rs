@@ -1,7 +1,7 @@
 // Copyright (c) 2023 GoTo Group, Inc
 // SPDX-License-Identifier: Apache-2.0 AND MIT
 
-use super::key_expansion::Secret;
+use super::secret::Secret;
 use crate::{error::Result, header::FrameCount};
 
 pub trait AeadEncrypt {
@@ -38,7 +38,7 @@ mod ring {
     use crate::{
         crypto::{
             cipher_suite::{CipherSuite, CipherSuiteVariant},
-            key_expansion::Secret,
+            secret::Secret,
         },
         error::{Result, SframeError},
         header::FrameCount,
@@ -46,40 +46,18 @@ mod ring {
 
     use super::{AeadDecrypt, AeadEncrypt};
     struct FrameNonceSequence {
-        iv: [u8; ring::aead::NONCE_LEN],
+        buffer: [u8; ring::aead::NONCE_LEN],
     }
 
-    impl FrameNonceSequence {
-        pub fn new(frame_count: &FrameCount, salt_key: &[u8]) -> FrameNonceSequence {
-            debug_assert!(
-                salt_key.len() >= ring::aead::NONCE_LEN,
-                "Salt key is too short, is the cipher suite misconfigured?"
-            );
-
-            let iv = FrameNonceSequence::generate_iv(frame_count.as_be_bytes().rev(), salt_key);
-
-            FrameNonceSequence { iv }
-        }
-
-        fn generate_iv(
-            mut counter: impl Iterator<Item = u8>,
-            salt: &[u8],
-        ) -> [u8; ring::aead::NONCE_LEN] {
-            let mut iv = [0u8; ring::aead::NONCE_LEN];
-            for i in (0..ring::aead::NONCE_LEN).rev() {
-                iv[i] = salt[i];
-                if let Some(counter_byte) = counter.next() {
-                    iv[i] ^= counter_byte;
-                }
-            }
-
-            iv
+    impl From<[u8; ring::aead::NONCE_LEN]> for FrameNonceSequence {
+        fn from(nonce: [u8; ring::aead::NONCE_LEN]) -> Self {
+            Self { buffer: nonce }
         }
     }
 
     impl ring::aead::NonceSequence for FrameNonceSequence {
         fn advance(&mut self) -> std::result::Result<ring::aead::Nonce, ring::error::Unspecified> {
-            let nonce = ring::aead::Nonce::assume_unique_for_key(std::mem::take(&mut self.iv));
+            let nonce = ring::aead::Nonce::assume_unique_for_key(std::mem::take(&mut self.buffer));
             Ok(nonce)
         }
     }
@@ -112,9 +90,9 @@ mod ring {
             IoBuffer: AsMut<[u8]> + ?Sized,
             Aad: AsRef<[u8]> + ?Sized,
         {
-            let mut sealing_key = SealingKey::new(
+            let mut sealing_key = SealingKey::<FrameNonceSequence>::new(
                 self.unbound_encryption_key(secret)?,
-                FrameNonceSequence::new(&frame_count, secret.salt.as_slice()),
+                secret.create_nonce(&frame_count).into(),
             );
 
             let aad = ring::aead::Aad::from(aad_buffer);
@@ -142,9 +120,9 @@ mod ring {
         {
             let aad = ring::aead::Aad::from(&aad_buffer);
 
-            let mut opening_key = ring::aead::OpeningKey::new(
+            let mut opening_key = ring::aead::OpeningKey::<FrameNonceSequence>::new(
                 self.unbound_encryption_key(secret)?,
-                FrameNonceSequence::new(&frame_count, &secret.salt),
+                secret.create_nonce(&frame_count).into(),
             );
             opening_key
                 .open_in_place(aad, io_buffer.as_mut())
@@ -175,11 +153,11 @@ mod ring {
                     let secret = KeyMaterial(&test_vector.key_material)
                         .expand_as_secret(&cipher_suite)
                         .unwrap();
-                    let nonce = FrameNonceSequence::new(
-                        &FrameCount::from(test_vector.frame_count),
-                        &secret.salt,
-                    );
-                    assert_bytes_eq(&nonce.iv, &test_vector.nonce);
+                    let nonce: FrameNonceSequence = secret
+                        .create_nonce(&FrameCount::from(test_vector.frame_count))
+                        .into();
+
+                    assert_bytes_eq(&nonce.buffer, &test_vector.nonce);
                 });
         }
         #[test]
@@ -191,12 +169,11 @@ mod ring {
                     let secret = KeyMaterial(&test_vector.key_material)
                         .expand_as_secret(&cipher_suite)
                         .unwrap();
-                    let nonce = FrameNonceSequence::new(
-                        &FrameCount::from(test_vector.frame_count),
-                        &secret.salt,
-                    );
+                    let nonce: FrameNonceSequence = secret
+                        .create_nonce(&FrameCount::from(test_vector.frame_count))
+                        .into();
 
-                    assert_bytes_eq(&nonce.iv, &test_vector.nonce);
+                    assert_bytes_eq(&nonce.buffer, &test_vector.nonce);
                 });
         }
     }
@@ -243,7 +220,7 @@ mod test {
                 crypto::{
                     aead::{AeadDecrypt, AeadEncrypt},
                     cipher_suite::{CipherSuite, CipherSuiteVariant},
-                    key_expansion::Secret,
+                    secret::Secret,
                 },
                 header::{FrameCount, Header, HeaderFields, KeyId},
                 test_vectors::{aes_gcm_128_sha256, *},

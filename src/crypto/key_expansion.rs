@@ -1,7 +1,7 @@
 // Copyright (c) 2023 GoTo Group, Inc
 // SPDX-License-Identifier: Apache-2.0 AND MIT
 
-use super::cipher_suite::CipherSuite;
+use super::{cipher_suite::CipherSuite, secret::Secret};
 use crate::error::Result;
 
 #[derive(Debug, Default, Clone, Copy)]
@@ -13,24 +13,20 @@ impl KeyMaterial<'_> {
     }
 }
 
-pub struct Secret {
-    pub key: Vec<u8>,
-    pub salt: Vec<u8>,
-}
-
 const SFRAME_HKDF_SALT: &[u8] = "SFrame10".as_bytes();
 const SFRAME_HKDF_KEY_EXPAND_INFO: &[u8] = "key".as_bytes();
 const SFRAME_HDKF_SALT_EXPAND_INFO: &[u8] = "salt".as_bytes();
 
 mod ring {
     use crate::{
-        crypto::cipher_suite::{CipherSuite, CipherSuiteVariant},
+        crypto::{
+            cipher_suite::{CipherSuite, CipherSuiteVariant},
+            secret::Secret,
+        },
         error::{Result, SframeError},
     };
 
-    use super::{
-        Secret, SFRAME_HDKF_SALT_EXPAND_INFO, SFRAME_HKDF_KEY_EXPAND_INFO, SFRAME_HKDF_SALT,
-    };
+    use super::{SFRAME_HDKF_SALT_EXPAND_INFO, SFRAME_HKDF_KEY_EXPAND_INFO, SFRAME_HKDF_SALT};
 
     struct OkmKeyLength(usize);
 
