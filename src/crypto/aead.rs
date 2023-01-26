@@ -50,8 +50,8 @@ mod ring {
     }
 
     impl From<[u8; ring::aead::NONCE_LEN]> for FrameNonceSequence {
-        fn from(nonce: [u8; ring::aead::NONCE_LEN]) -> Self {
-            Self { buffer: nonce }
+        fn from(buffer: [u8; ring::aead::NONCE_LEN]) -> Self {
+            Self { buffer }
         }
     }
 
@@ -62,18 +62,20 @@ mod ring {
         }
     }
 
-    impl CipherSuite {
-        fn unbound_encryption_key(&self, secret: &Secret) -> Result<ring::aead::UnboundKey> {
-            ring::aead::UnboundKey::new(self.get_algorithm(), secret.key.as_slice())
-                .map_err(|_| SframeError::KeyExpansion)
-        }
-
-        fn get_algorithm(&self) -> &'static ring::aead::Algorithm {
+    impl From<CipherSuiteVariant> for &'static ring::aead::Algorithm {
+        fn from(variant: CipherSuiteVariant) -> Self {
             use CipherSuiteVariant::*;
-            match self.variant {
+            match variant {
                 AesGcm128Sha256 => &ring::aead::AES_128_GCM,
                 AesGcm256Sha512 => &ring::aead::AES_256_GCM,
             }
+        }
+    }
+
+    impl CipherSuite {
+        fn unbound_encryption_key(&self, secret: &Secret) -> Result<ring::aead::UnboundKey> {
+            ring::aead::UnboundKey::new(self.variant.into(), secret.key.as_slice())
+                .map_err(|_| SframeError::KeyExpansion)
         }
     }
 
