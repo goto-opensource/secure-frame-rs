@@ -100,7 +100,7 @@ mod test {
         assert!(matches!(
             validator.validate(&too_late_header),
             Err(SframeError::FrameValidationFailed(_))
-        ))
+        ));
     }
 
     #[test]
@@ -114,7 +114,7 @@ mod test {
         for step in 0..10 {
             let late_count = start_count.wrapping_add(step); // using this instead of `+` to avoid overflow panic in debug
             let too_late_header = Header::with_frame_count(23456789u64, late_count);
-            assert_eq!(validator.validate(&too_late_header), Ok(()))
+            assert_eq!(validator.validate(&too_late_header), Ok(()));
         }
     }
 }
