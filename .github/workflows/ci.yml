@@ -6,6 +6,8 @@ on:
   pull_request:
   workflow_dispatch:
 
+  schedule:
+    - cron: "0 5 * * 4" # 5 o'clock utc on thursdays
 jobs:
   build-test:
     name: build and test
