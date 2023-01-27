@@ -1,6 +1,6 @@
 // Copyright (c) 2023 GoTo Group, Inc
 // SPDX-License-Identifier: Apache-2.0 AND MIT
-//! # Secure Frame (SFrame)
+//! # Secure Frame (`SFrame`)
 //! This library is an implementation of [draft-ietf-sframe-enc-latest](https://sframe-wg.github.io/sframe/draft-ietf-sframe-enc.html).
 //!
 //! It is in it's current form a subset of the specification (e.g. Aes-CTR is not implemented).

@@ -73,9 +73,9 @@ impl PartialEq<u64> for FrameCount {
     }
 }
 
-impl Into<u64> for FrameCount {
-    fn into(self) -> u64 {
-        self.numeric_value
+impl From<FrameCount> for u64 {
+    fn from(frame_count: FrameCount) -> Self {
+        frame_count.numeric_value
     }
 }
 
