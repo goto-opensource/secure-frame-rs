@@ -5,7 +5,8 @@ use crate::{
     crypto::{
         aead::AeadEncrypt,
         cipher_suite::{CipherSuite, CipherSuiteVariant},
-        key_expansion::{KeyMaterial, Secret},
+        key_expansion::KeyMaterial,
+        secret::Secret,
     },
     error::{Result, SframeError},
     header::{FrameCountGenerator, Header, HeaderFields, KeyId},
