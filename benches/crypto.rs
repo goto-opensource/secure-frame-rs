@@ -17,7 +17,10 @@ fn create_random_payload(size: usize) -> Vec<u8> {
     unencrypted_payload
 }
 fn create_random_encrypted_payload(size: usize, sender: &mut Sender) -> Vec<u8> {
-    sender.encrypt(&create_random_payload(size), SKIP).unwrap()
+    sender
+        .encrypt(&create_random_payload(size), SKIP)
+        .unwrap()
+        .into()
 }
 
 struct CryptoBenches {

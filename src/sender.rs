@@ -17,6 +17,7 @@ pub struct Sender {
     sender_id: KeyId,
     cipher_suite: CipherSuite,
     secret: Option<Secret>,
+    buffer: Vec<u8>,
 }
 
 impl Sender {
@@ -37,10 +38,11 @@ impl Sender {
             sender_id: sender_id.into(),
             cipher_suite,
             secret: None,
+            buffer: Default::default(),
         }
     }
 
-    pub fn encrypt(&mut self, unencrypted_payload: &[u8], skip: usize) -> Result<Vec<u8>> {
+    pub fn encrypt(&mut self, unencrypted_payload: &[u8], skip: usize) -> Result<&[u8]> {
         log::trace!("Encrypt frame # {:#?}!", self.frame_count);
         if let Some(ref secret) = self.secret {
             log::trace!("Skipping first {} bytes in frame", skip);
@@ -62,9 +64,8 @@ impl Sender {
             let skipped_payload = &unencrypted_payload[0..skip];
             let to_be_encrypted_payload = &unencrypted_payload[skip..];
 
-            let frame_length =
-                unencrypted_payload.len() + header.size() + self.cipher_suite.auth_tag_len;
-            let mut frame = Vec::<u8>::with_capacity(frame_length);
+            self.buffer.clear();
+            let frame = &mut self.buffer;
             frame.extend_from_slice(skipped_payload);
             frame.extend(Vec::from(&header));
             frame.extend(to_be_encrypted_payload);
