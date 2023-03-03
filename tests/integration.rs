@@ -20,13 +20,11 @@ fn encrypt_decrypt_1000_frames(participant_id: u64, skipped_payload: usize) {
         let mut media_frame = vec![0u8; 64];
         thread_rng().fill(media_frame.as_mut_slice());
 
-        let mut encrypted_frame = sender
+        let encrypted_frame = sender
             .encrypt(media_frame.as_slice(), skipped_payload)
             .unwrap();
 
-        let decrypted_frame = receiver
-            .decrypt(encrypted_frame.as_mut_slice(), skipped_payload)
-            .unwrap();
+        let decrypted_frame = receiver.decrypt(encrypted_frame, skipped_payload).unwrap();
 
         assert_eq!(media_frame, decrypted_frame);
     });

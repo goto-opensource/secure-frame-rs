@@ -33,6 +33,7 @@ impl Default for ReceiverOptions {
 pub struct Receiver {
     secrets: HashMap<KeyId, Secret>,
     options: ReceiverOptions,
+    buffer: Vec<u8>,
 }
 
 impl Receiver {
@@ -53,10 +54,11 @@ impl Receiver {
                     replay_attack_tolerance,
                 )),
             },
+            buffer: Default::default(),
         }
     }
 
-    pub fn decrypt(&self, encrypted_frame: &[u8], skip: usize) -> Result<Vec<u8>> {
+    pub fn decrypt(&mut self, encrypted_frame: &[u8], skip: usize) -> Result<&[u8]> {
         let header = Header::deserialize(&encrypted_frame[skip..])?;
 
         self.options.frame_validation.validate(&header)?;
@@ -69,22 +71,20 @@ impl Receiver {
                 header.key_id()
             );
 
-            let payload_begin_idx = skip + header.size();
-            let mut io_buffer: Vec<u8> = encrypted_frame[..skip]
-                .iter()
-                .chain(encrypted_frame[payload_begin_idx..].iter())
-                .copied()
-                .collect();
+            let payload_begin = skip + header.size();
+            self.buffer.clear();
+            self.buffer.extend(encrypted_frame[..skip].iter());
+            self.buffer.extend(encrypted_frame[payload_begin..].iter());
 
             self.options.cipher_suite.decrypt(
-                &mut io_buffer[skip..],
+                &mut self.buffer[skip..],
                 secret,
-                &encrypted_frame[skip..payload_begin_idx],
+                &encrypted_frame[skip..payload_begin],
                 header.frame_count(),
             )?;
 
-            io_buffer.truncate(io_buffer.len() - self.options.cipher_suite.auth_tag_len);
-            Ok(io_buffer)
+            let payload_end = self.buffer.len() - self.options.cipher_suite.auth_tag_len;
+            Ok(&self.buffer[..payload_end])
         } else {
             Err(SframeError::MissingDecryptionKey(key_id))
         }
@@ -129,7 +129,7 @@ mod test {
 
     #[test]
     fn fail_on_missing_secret() {
-        let receiver = Receiver::default();
+        let mut receiver = Receiver::default();
         // do not set the encryption-key
         let decrypted = receiver.decrypt(b"foobar is unsafe", 0);
 
