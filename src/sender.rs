@@ -14,35 +14,51 @@ use crate::{
 
 pub struct Sender {
     frame_count: FrameCountGenerator,
-    sender_id: KeyId,
+    key_id: KeyId,
     cipher_suite: CipherSuite,
     secret: Option<Secret>,
     buffer: Vec<u8>,
 }
 
 impl Sender {
-    pub fn new(sender_id: u64) -> Sender {
-        Self::with_cipher_suite(sender_id, CipherSuiteVariant::AesGcm256Sha512)
+    pub fn new<K>(key_id: K) -> Sender
+    where
+        K: Into<KeyId>,
+    {
+        Self::with_cipher_suite(key_id, CipherSuiteVariant::AesGcm256Sha512)
     }
 
-    pub fn with_cipher_suite(sender_id: u64, variant: CipherSuiteVariant) -> Sender {
+    pub fn with_cipher_suite<K>(key_id: K, variant: CipherSuiteVariant) -> Sender
+    where
+        K: Into<KeyId>,
+    {
         let cipher_suite: CipherSuite = variant.into();
+        let key_id = key_id.into();
         log::debug!("Setting up sframe Sender");
         log::trace!(
-            "SenderID {} (ciphersuite {:?})",
-            sender_id,
+            "KeyID {:?} (ciphersuite {:?})",
+            key_id,
             cipher_suite.variant
         );
         Sender {
             frame_count: Default::default(),
-            sender_id: sender_id.into(),
+            key_id,
             cipher_suite,
             secret: None,
             buffer: Default::default(),
         }
     }
 
-    pub fn encrypt(&mut self, unencrypted_payload: &[u8], skip: usize) -> Result<&[u8]> {
+    pub fn encrypt<Plaintext>(
+        &mut self,
+        unencrypted_payload: &Plaintext,
+        skip: usize,
+    ) -> Result<&[u8]>
+    where
+        Plaintext: AsRef<[u8]> + ?Sized,
+    {
+        let unencrypted_payload = unencrypted_payload.as_ref();
+
         log::trace!("Encrypt frame # {:#?}!", self.frame_count);
         if let Some(ref secret) = self.secret {
             log::trace!("Skipping first {} bytes in frame", skip);
@@ -51,7 +67,7 @@ impl Sender {
             log::trace!("frame count: {:?}", frame_count);
 
             log::trace!("Creating SFrame Header");
-            let header = Header::with_frame_count(self.sender_id, frame_count);
+            let header = Header::with_frame_count(self.key_id, frame_count);
 
             log::trace!(
                 "Sender: FrameCount: {:?}, FrameCount length: {:?}, KeyId: {:?}, Extend: {:?}",
@@ -88,8 +104,12 @@ impl Sender {
         }
     }
 
-    pub fn set_encryption_key(&mut self, key_material: &[u8]) -> Result<()> {
-        self.secret = Some(KeyMaterial(key_material).expand_as_secret(&self.cipher_suite)?);
+    pub fn set_encryption_key<KeyMaterial>(&mut self, key_material: &KeyMaterial) -> Result<()>
+    where
+        KeyMaterial: AsRef<[u8]> + ?Sized,
+    {
+        self.secret =
+            Some(KeyMaterial(key_material.as_ref()).expand_as_secret(&self.cipher_suite)?);
         Ok(())
     }
 }
@@ -104,14 +124,16 @@ mod test_on_wire_format {
         hex::decode(hex_str).unwrap()
     }
 
+    const KEY_ID: u8 = 0;
+
     #[test]
     fn deadbeef_decrypt() {
         let material = hex("1234567890123456789012345678901212345678901234567890123456789012");
-        let mut sender = Sender::new(0);
+        let mut sender = Sender::new(KEY_ID);
         let mut receiver = Receiver::default();
 
         sender.set_encryption_key(&material).unwrap();
-        receiver.set_encryption_key(0, &material).unwrap();
+        receiver.set_encryption_key(KEY_ID, &material).unwrap();
 
         let encrypted = sender.encrypt(&hex("deadbeafcacadebaca00"), 4).unwrap();
         let decrypted = receiver.decrypt(&encrypted, 4).unwrap();
@@ -122,11 +144,11 @@ mod test_on_wire_format {
     #[test]
     fn deadbeef_on_wire() {
         let material = hex("1234567890123456789012345678901212345678901234567890123456789012");
-        let mut sender = Sender::new(0);
+        let mut sender = Sender::new(KEY_ID);
         let mut receiver = Receiver::default();
 
         sender.set_encryption_key(&material).unwrap();
-        receiver.set_encryption_key(0, &material).unwrap();
+        receiver.set_encryption_key(KEY_ID, &material).unwrap();
 
         let encrypted = sender.encrypt(&hex("deadbeafcacadebaca00"), 4).unwrap();
 
@@ -139,11 +161,11 @@ mod test_on_wire_format {
     #[test]
     fn deadbeef_on_wire_long() {
         let material = hex("1234567890123456789012345678901212345678901234567890123456789012");
-        let mut sender = Sender::new(0);
+        let mut sender = Sender::new(KEY_ID);
         let mut receiver = Receiver::default();
 
         sender.set_encryption_key(&material).unwrap();
-        receiver.set_encryption_key(0, &material).unwrap();
+        receiver.set_encryption_key(KEY_ID, &material).unwrap();
 
         let encrypted = sender
             .encrypt(&hex("deadbeafcacadebacacacadebacacacadebaca00"), 4)
@@ -162,9 +184,9 @@ mod test {
 
     #[test]
     fn fail_on_missing_secret() {
-        let mut sender = Sender::new(1);
+        let mut sender = Sender::new(1_u8);
         // do not set the encryption-key
-        let encrypted = sender.encrypt(b"foobar is unsafe", 0);
+        let encrypted = sender.encrypt("foobar is unsafe", 0);
 
         assert_eq!(encrypted, Err(SframeError::MissingEncryptionKey));
     }
