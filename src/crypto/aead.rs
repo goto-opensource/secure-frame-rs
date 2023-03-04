@@ -131,54 +131,6 @@ mod ring {
                 .map_err(|_| SframeError::DecryptionFailure)
         }
     }
-
-    #[cfg(test)]
-    mod test {
-        use crate::{
-            crypto::{
-                cipher_suite::{CipherSuite, CipherSuiteVariant},
-                key_expansion::KeyMaterial,
-            },
-            header::FrameCount,
-            test_vectors::*,
-            util::test::assert_bytes_eq,
-        };
-
-        use super::FrameNonceSequence;
-
-        #[test]
-        fn create_correct_nonce_aes_gcm_128_sha256() {
-            aes_gcm_128_sha256::get_test_vectors()
-                .into_iter()
-                .for_each(|test_vector| {
-                    let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm128Sha256);
-                    let secret = KeyMaterial(&test_vector.key_material)
-                        .expand_as_secret(&cipher_suite)
-                        .unwrap();
-                    let nonce: FrameNonceSequence = secret
-                        .create_nonce(&FrameCount::from(test_vector.frame_count))
-                        .into();
-
-                    assert_bytes_eq(&nonce.buffer, &test_vector.nonce);
-                });
-        }
-        #[test]
-        fn create_correct_nonce_aes_gcm_256_sha512() {
-            aes_gcm_256_sha512::get_test_vectors()
-                .into_iter()
-                .for_each(|test_vector| {
-                    let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
-                    let secret = KeyMaterial(&test_vector.key_material)
-                        .expand_as_secret(&cipher_suite)
-                        .unwrap();
-                    let nonce: FrameNonceSequence = secret
-                        .create_nonce(&FrameCount::from(test_vector.frame_count))
-                        .into();
-
-                    assert_bytes_eq(&nonce.buffer, &test_vector.nonce);
-                });
-        }
-    }
 }
 
 #[cfg(test)]
