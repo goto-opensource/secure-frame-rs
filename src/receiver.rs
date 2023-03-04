@@ -73,8 +73,8 @@ impl Receiver {
 
             let payload_begin = skip + header.size();
             self.buffer.clear();
-            self.buffer.extend(encrypted_frame[..skip].iter());
-            self.buffer.extend(encrypted_frame[payload_begin..].iter());
+            self.buffer.extend(&encrypted_frame[..skip]);
+            self.buffer.extend(&encrypted_frame[payload_begin..]);
 
             self.options.cipher_suite.decrypt(
                 &mut self.buffer[skip..],
