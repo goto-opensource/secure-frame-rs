@@ -6,7 +6,7 @@ use criterion::{black_box, criterion_group, BatchSize, Bencher, BenchmarkId, Cri
 use rand::{thread_rng, Rng};
 use sframe::{receiver::Receiver, sender::Sender, CipherSuiteVariant};
 
-const KEY_MATERIAL: &[u8] = b"THIS_IS_SOME_MATERIAL";
+const KEY_MATERIAL: &str = "THIS_IS_SOME_MATERIAL";
 const PARTICIPANT_ID: u64 = 42;
 const SKIP: usize = 0;
 const PAYLOAD_SIZES: [usize; 4] = [512, 5120, 51200, 512000];

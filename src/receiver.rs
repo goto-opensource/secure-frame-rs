@@ -58,7 +58,15 @@ impl Receiver {
         }
     }
 
-    pub fn decrypt(&mut self, encrypted_frame: &[u8], skip: usize) -> Result<&[u8]> {
+    pub fn decrypt<EncryptedFrame>(
+        &mut self,
+        encrypted_frame: &EncryptedFrame,
+        skip: usize,
+    ) -> Result<&[u8]>
+    where
+        EncryptedFrame: AsRef<[u8]> + ?Sized,
+    {
+        let encrypted_frame = encrypted_frame.as_ref();
         let header = Header::deserialize(&encrypted_frame[skip..])?;
 
         self.options.frame_validation.validate(&header)?;
@@ -90,17 +98,27 @@ impl Receiver {
         }
     }
 
-    // TODO: use KeyId instead of u64
-    pub fn set_encryption_key(&mut self, receiver_id: u64, key_material: &[u8]) -> Result<()> {
+    pub fn set_encryption_key<Id, KeyMaterial>(
+        &mut self,
+        key_id: Id,
+        key_material: &KeyMaterial,
+    ) -> Result<()>
+    where
+        Id: Into<KeyId>,
+        KeyMaterial: AsRef<[u8]> + ?Sized,
+    {
         self.secrets.insert(
-            KeyId::from(receiver_id),
-            KeyMaterial(key_material).expand_as_secret(&self.options.cipher_suite)?,
+            key_id.into(),
+            KeyMaterial(key_material.as_ref()).expand_as_secret(&self.options.cipher_suite)?,
         );
         Ok(())
     }
 
-    pub fn remove_encryption_key(&mut self, receiver_id: u64) -> bool {
-        self.secrets.remove(&KeyId::from(receiver_id)).is_some()
+    pub fn remove_encryption_key<Id>(&mut self, key_id: Id) -> bool
+    where
+        Id: Into<KeyId>,
+    {
+        self.secrets.remove(&key_id.into()).is_some()
     }
 }
 
@@ -111,27 +129,27 @@ mod test {
     #[test]
     fn remove_key() {
         let mut receiver = Receiver::default();
-        assert!(!receiver.remove_encryption_key(1234));
+        assert!(!receiver.remove_encryption_key(1234_u64));
 
         receiver
-            .set_encryption_key(4223, b"hendrikswaytoshortpassword")
+            .set_encryption_key(4223_u64, "hendrikswaytoshortpassword")
             .unwrap();
         receiver
-            .set_encryption_key(4711, b"tobismuchbetterpassword;)")
+            .set_encryption_key(4711_u64, "tobismuchbetterpassword;)")
             .unwrap();
 
-        assert!(receiver.remove_encryption_key(4223));
-        assert!(!receiver.remove_encryption_key(4223));
+        assert!(receiver.remove_encryption_key(4223_u64));
+        assert!(!receiver.remove_encryption_key(4223_u64));
 
-        assert!(receiver.remove_encryption_key(4711));
-        assert!(!receiver.remove_encryption_key(4711));
+        assert!(receiver.remove_encryption_key(4711_u64));
+        assert!(!receiver.remove_encryption_key(4711_u64));
     }
 
     #[test]
     fn fail_on_missing_secret() {
         let mut receiver = Receiver::default();
         // do not set the encryption-key
-        let decrypted = receiver.decrypt(b"foobar is unsafe", 0);
+        let decrypted = receiver.decrypt("foobar is unsafe", 0);
 
         assert_eq!(
             decrypted,
