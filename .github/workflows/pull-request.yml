@@ -18,6 +18,9 @@ jobs:
           curl -sSfL https://github.com/convco/convco/releases/latest/download/convco-ubuntu.zip | zcat > convco
           chmod +x convco
           ./convco check ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
+
+      - name: Cleanup Convco
+        run: |
           rm convco
 
 
