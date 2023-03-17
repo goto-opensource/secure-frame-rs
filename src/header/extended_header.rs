@@ -61,7 +61,6 @@ impl Serialization for ExtendedHeader {
         header_setter.set_key_len(min_len_in_bytes(self.key_id) - LEN_OFFSET);
 
         for (index, value) in as_min_be_bytes(self.key_id)
-            .into_iter()
             .chain(as_min_be_bytes(self.frame_count.into()))
             .enumerate()
         {
