@@ -8,6 +8,7 @@ jobs:
     name: Check Commit Message
     runs-on: ubuntu-latest
     steps:
+      - uses: docker://convco/convco:latest
       - uses: actions/checkout@v3
         with:
           # A PR should not contain too many commits
@@ -15,14 +16,9 @@ jobs:
       - name: Validate commit messages
         run: |
           git show-ref
-          curl -sSfL https://github.com/convco/convco/releases/latest/download/convco-ubuntu.zip | zcat > convco
-          chmod +x convco
-          ./convco check ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
-
-      - name: Cleanup Convco
-        run: |
-          rm convco
-
+          #curl -sSfL https://github.com/convco/convco/releases/latest/download/convco-ubuntu.zip | zcat > convco
+          #chmod +x convco
+          convco check ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
 
 
   fmt:
