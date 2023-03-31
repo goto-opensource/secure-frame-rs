@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  release: 
+    types: [published]
+  workflow_dispatch:
+
+jobs: 
+  ci:
+    name: Continuous Integration 
+    uses: ./.github/workflows/ci.yml
+  release:
+    name: release
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: install convco
+        run: |
+            if ! test -f "convco"; then
+              echo Installing convco
+              curl -sSfL https://github.com/convco/convco/releases/latest/download/convco-ubuntu.zip | zcat > convco
+              chmod +x convco
+            fi
+      - name: Build utils
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: -p update_version
+      - name: Determine new version
+        run: |
+          echo "NEXT_VERSION=$(./convco version --bump HEAD)" >> $GITHUB_ENV
+          echo New version is ${NEXT_VERSION}
+      - name: update Cargo.toml
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: -p update_version "./"
+      - name: bump version
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore: bump version"
+          tagging_message: 'v${{env.NEXT_VERSION}}'
+      - name: update changelog
+        run: convco changelog > CHANGELOG.md 
+      - name: commit changelog
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore: update changelog"
+
