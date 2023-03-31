@@ -1,0 +1,8 @@
+[package]
+name = "update_version"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+toml_edit = "0.19"
