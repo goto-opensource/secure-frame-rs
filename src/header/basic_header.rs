@@ -107,7 +107,6 @@ impl Deserialization for BasicHeader {
 }
 
 #[cfg(test)]
-#[cfg(not(feature = "verify-test-vectors"))]
 mod test {
     use crate::{
         header::{BasicHeader, Deserialization, FrameCount, HeaderFields, Serialization},

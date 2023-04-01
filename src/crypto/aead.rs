@@ -168,7 +168,6 @@ mod test {
                 .unwrap();
         }
 
-        #[cfg(feature = "verify-test-vectors")]
         mod test_vectors {
             use test_vectors::get_test_vector;
 

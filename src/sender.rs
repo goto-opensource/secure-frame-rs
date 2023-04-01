@@ -115,7 +115,6 @@ impl Sender {
 }
 
 #[cfg(test)]
-#[cfg(not(feature = "verify-test-vectors"))]
 mod test_on_wire_format {
     use super::*;
     use crate::receiver::Receiver;

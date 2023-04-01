@@ -121,7 +121,6 @@ impl Deserialization for ExtendedHeader {
 }
 
 #[cfg(test)]
-#[cfg(not(feature = "verify-test-vectors"))]
 mod test {
     use crate::{
         header::{Deserialization, ExtendedHeader, FrameCount, HeaderFields, Serialization},
