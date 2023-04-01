@@ -223,7 +223,7 @@ mod test {
     use super::{frame_count::FrameCount, keyid::KeyId, Header};
     use crate::header::{Deserialization, HeaderFields};
     #[cfg(feature = "verify-test-vectors")]
-    use crate::{test_vectors::*, util::test::assert_bytes_eq};
+    use crate::util::test::assert_bytes_eq;
 
     use pretty_assertions::assert_eq;
 
@@ -260,8 +260,9 @@ mod test {
     #[test]
     #[cfg(feature = "verify-test-vectors")]
     fn serialize_test_vectors() {
-        aes_gcm_256_sha512::get_test_vectors()
-            .into_iter()
+        test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm128Sha256 as u8)
+            .encryptions
+            .iter()
             .for_each(|test_vector| {
                 let header = Header::with_frame_count(
                     KeyId::from(test_vector.key_id),
@@ -274,8 +275,9 @@ mod test {
     #[test]
     #[cfg(feature = "verify-test-vectors")]
     fn deserialize_test_vectors() {
-        aes_gcm_256_sha512::get_test_vectors()
-            .into_iter()
+        test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm256Sha512 as u8)
+            .encryptions
+            .iter()
             .for_each(|test_vector| {
                 let header = Header::deserialize(&test_vector.header).unwrap();
                 assert_eq!(header.key_id(), KeyId::from(test_vector.key_id));

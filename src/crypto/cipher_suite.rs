@@ -7,13 +7,13 @@
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum CipherSuiteVariant {
     // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    // AesCm128HmacSha256_8,
+    // AesCm128HmacSha256_8 = 1,
     // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    // AesCm128HmacSha256_4,
+    // AesCm128HmacSha256_4 = 2,
     /// encryption: AES GCM 128, key expansion: HKDF with SHA256
-    AesGcm128Sha256,
+    AesGcm128Sha256 = 3,
     /// encryption: AES GCM 256, key expansion: HKDF with SHA512
-    AesGcm256Sha512,
+    AesGcm256Sha512 = 4,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
