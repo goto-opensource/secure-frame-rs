@@ -79,7 +79,7 @@ mod test {
     };
 
     fn derive_correct_keys(variant: CipherSuiteVariant) {
-        let test_vector = get_test_vector(variant as u8);
+        let test_vector = get_test_vector(&variant.to_string());
         let secret = KeyMaterial(&test_vector.key_material)
             .expand_as_secret(&CipherSuite::from(variant))
             .unwrap();

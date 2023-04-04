@@ -38,7 +38,7 @@ mod test {
     const NONCE_LEN: usize = 12;
 
     fn test_nonce(cipher_suite_variant: CipherSuiteVariant) {
-        let tv = get_test_vector(cipher_suite_variant as u8);
+        let tv = get_test_vector(&cipher_suite_variant.to_string());
         let cipher_suite = cipher_suite_variant.into();
 
         for enc in &tv.encryptions {

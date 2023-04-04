@@ -182,7 +182,7 @@ mod test {
             };
 
             fn encrypt_test_vector(variant: CipherSuiteVariant) {
-                let test_vector = get_test_vector(variant as u8);
+                let test_vector = get_test_vector(&variant.to_string());
                 let cipher_suite = CipherSuite::from(variant);
 
                 let secret = Secret {
@@ -211,7 +211,7 @@ mod test {
             }
 
             fn decrypt_test_vector(variant: CipherSuiteVariant) {
-                let test_vector = get_test_vector(variant as u8);
+                let test_vector = get_test_vector(&variant.to_string());
                 let cipher_suite = CipherSuite::from(variant);
 
                 let secret = Secret {

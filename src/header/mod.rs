@@ -218,6 +218,7 @@ mod test {
     use super::{frame_count::FrameCount, keyid::KeyId, Header};
     use crate::header::{Deserialization, HeaderFields};
     use crate::util::test::assert_bytes_eq;
+    use crate::CipherSuiteVariant::{AesGcm128Sha256, AesGcm256Sha512};
 
     use pretty_assertions::assert_eq;
 
@@ -253,7 +254,7 @@ mod test {
 
     #[test]
     fn serialize_test_vectors() {
-        crate::test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm128Sha256 as u8)
+        crate::test_vectors::get_test_vector(&AesGcm128Sha256.to_string())
             .encryptions
             .iter()
             .for_each(|test_vector| {
@@ -267,7 +268,7 @@ mod test {
 
     #[test]
     fn deserialize_test_vectors() {
-        crate::test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm256Sha512 as u8)
+        crate::test_vectors::get_test_vector(&AesGcm256Sha512.to_string())
             .encryptions
             .iter()
             .for_each(|test_vector| {

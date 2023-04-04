@@ -4,10 +4,10 @@
 
 extern crate serde;
 
-pub fn get_test_vector(cipher_suite_variant: u8) -> &'static TestVector {
+pub fn get_test_vector(cipher_suite_variant: &str) -> &'static TestVector {
     TEST_VECTORS
         .iter()
-        .find(|v| v.cipher_suite_variant == cipher_suite_variant)
+        .find(|v| dbg!(&v.cipher_suite_variant) == dbg!(cipher_suite_variant))
         .unwrap()
 }
 
@@ -35,13 +35,17 @@ pub struct EncryptionTestCase {
 #[derive(serde::Deserialize, Debug, Clone)]
 pub struct TestVector {
     #[serde(rename = "cipher_suite")]
-    pub cipher_suite_variant: u8,
+    pub cipher_suite_variant: String,
+
     #[serde(rename = "base_key", deserialize_with = "vec_from_hex_str")]
     pub key_material: Vec<u8>,
+
     #[serde(deserialize_with = "vec_from_hex_str")]
     pub key: Vec<u8>,
+
     #[serde(deserialize_with = "vec_from_hex_str")]
     pub salt: Vec<u8>,
+
     #[serde(rename = "plaintext", deserialize_with = "vec_from_hex_str")]
     pub plain_text: Vec<u8>,
 

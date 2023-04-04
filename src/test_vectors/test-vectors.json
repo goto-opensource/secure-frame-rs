@@ -1,6 +1,6 @@
 [
   {
-    "cipher_suite": 1,
+    "cipher_suite": "AesCm128HmacSha256_8",
     "base_key": "101112131415161718191a1b1c1d1e1f",
     "key": "343d3290f5c0b936415bea9a43c6f5a2",
     "salt": "42d662fbad5cd81eb3aad79a",
@@ -58,7 +58,7 @@
     ]
   },
   {
-    "cipher_suite": 2,
+    "cipher_suite": "AesCm128HmacSha256_4",
     "base_key": "202122232425262728292a2b2c2d2e2f",
     "key": "3fce747d505e46ec9b92d9f58ee7a5d4",
     "salt": "77fbf5f1d82c73f6d2b353c9",
@@ -116,7 +116,7 @@
     ]
   },
   {
-    "cipher_suite": 3,
+    "cipher_suite": "AesGcm128Sha256",
     "base_key": "303132333435363738393a3b3c3d3e3f",
     "key": "2ea2e8163ff56c0613e6fa9f20a213da",
     "salt": "a80478b3f6fba19983d540d5",
@@ -174,7 +174,7 @@
     ]
   },
   {
-    "cipher_suite": 4,
+    "cipher_suite": "AesGcm256Sha512",
     "base_key": "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
     "key": "436774b0b5ae45633d96547f8f3cb06c8e6628eff2e4255b5c4d77e721aa3355",
     "salt": "31ed26f90a072e6aee646298",
