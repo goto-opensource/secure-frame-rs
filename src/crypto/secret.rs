@@ -27,42 +27,35 @@ impl Secret {
 
 #[cfg(test)]
 mod test {
+    use test_vectors::get_test_vector;
+
     use crate::{
-        crypto::{
-            cipher_suite::{CipherSuite, CipherSuiteVariant},
-            key_expansion::KeyMaterial,
-        },
+        crypto::{cipher_suite::CipherSuiteVariant, key_expansion::KeyMaterial},
         header::FrameCount,
-        test_vectors::*,
         util::test::assert_bytes_eq,
     };
 
     const NONCE_LEN: usize = 12;
 
-    fn test_nonce(cipher_suite: CipherSuite, test_vector: TestVector) {
-        let secret = KeyMaterial(&test_vector.key_material)
-            .expand_as_secret(&cipher_suite)
-            .unwrap();
-        let nonce: [u8; NONCE_LEN] =
-            secret.create_nonce(&FrameCount::from(test_vector.frame_count));
+    fn test_nonce(cipher_suite_variant: CipherSuiteVariant) {
+        let tv = get_test_vector(cipher_suite_variant as u8);
+        let cipher_suite = cipher_suite_variant.into();
 
-        assert_bytes_eq(&nonce, &test_vector.nonce);
+        for enc in &tv.encryptions {
+            let secret = KeyMaterial(&tv.key_material)
+                .expand_as_secret(&cipher_suite)
+                .unwrap();
+            let nonce: [u8; NONCE_LEN] = secret.create_nonce(&FrameCount::from(enc.frame_count));
+            assert_bytes_eq(&nonce, &enc.nonce);
+        }
     }
 
     #[test]
     fn create_correct_nonce_aes_gcm_128_sha256() {
-        aes_gcm_128_sha256::get_test_vectors()
-            .into_iter()
-            .for_each(|test_vector| {
-                test_nonce(CipherSuiteVariant::AesGcm128Sha256.into(), test_vector);
-            });
+        test_nonce(CipherSuiteVariant::AesGcm128Sha256);
     }
     #[test]
     fn create_correct_nonce_aes_gcm_256_sha512() {
-        aes_gcm_256_sha512::get_test_vectors()
-            .into_iter()
-            .for_each(|test_vector| {
-                test_nonce(CipherSuiteVariant::AesGcm256Sha512.into(), test_vector);
-            });
+        test_nonce(CipherSuiteVariant::AesGcm256Sha512);
     }
 }

@@ -25,8 +25,6 @@
 )]
 
 mod crypto;
-#[cfg(test)]
-mod test_vectors;
 mod util;
 
 pub mod error;

@@ -170,6 +170,8 @@ mod test {
 
         #[cfg(feature = "verify-test-vectors")]
         mod test_vectors {
+            use test_vectors::get_test_vector;
+
             use crate::{
                 crypto::{
                     aead::{AeadDecrypt, AeadEncrypt},
@@ -177,122 +179,81 @@ mod test {
                     secret::Secret,
                 },
                 header::{FrameCount, Header, HeaderFields, KeyId},
-                test_vectors::{aes_gcm_128_sha256, *},
                 util::test::assert_bytes_eq,
             };
-            #[test]
-            fn encrypt_test_vectors_aes_gcm_128_sha256() {
-                aes_gcm_128_sha256::get_test_vectors()
-                    .into_iter()
-                    .for_each(|test_vector| {
-                        let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm128Sha256);
 
-                        let secret = Secret {
-                            key: test_vector.key,
-                            salt: test_vector.salt,
-                        };
+            fn encrypt_test_vector(variant: CipherSuiteVariant) {
+                let test_vector = get_test_vector(variant as u8);
+                let cipher_suite = CipherSuite::from(variant);
 
-                        let mut data = test_vector.plain_text.clone();
-                        let header = Header::with_frame_count(
-                            KeyId::from(test_vector.key_id),
-                            FrameCount::from(test_vector.frame_count),
-                        );
-                        let header_buffer = Vec::from(&header);
-                        let tag = cipher_suite
-                            .encrypt(&mut data, &secret, &header_buffer, header.frame_count())
-                            .unwrap();
-                        let full_frame: Vec<u8> = header_buffer
-                            .into_iter()
-                            .chain(data.into_iter())
-                            .chain(tag.as_ref().iter().cloned())
-                            .collect();
+                let secret = Secret {
+                    key: test_vector.key.clone(),
+                    salt: test_vector.salt.clone(),
+                };
 
-                        assert_bytes_eq(&full_frame, &test_vector.cipher_text);
-                    });
+                for enc in &test_vector.encryptions {
+                    let mut data = test_vector.plain_text.clone();
+                    let header = Header::with_frame_count(
+                        KeyId::from(enc.key_id),
+                        FrameCount::from(enc.frame_count),
+                    );
+                    let header_buffer = Vec::from(&header);
+                    let tag = cipher_suite
+                        .encrypt(&mut data, &secret, &header_buffer, header.frame_count())
+                        .unwrap();
+                    let full_frame: Vec<u8> = header_buffer
+                        .into_iter()
+                        .chain(data.into_iter())
+                        .chain(tag.as_ref().iter().cloned())
+                        .collect();
+
+                    assert_bytes_eq(&full_frame, &enc.cipher_text);
+                }
+            }
+
+            fn decrypt_test_vector(variant: CipherSuiteVariant) {
+                let test_vector = get_test_vector(variant as u8);
+                let cipher_suite = CipherSuite::from(variant);
+
+                let secret = Secret {
+                    key: test_vector.key.clone(),
+                    salt: test_vector.salt.clone(),
+                };
+
+                for enc in &test_vector.encryptions {
+                    let header = Header::with_frame_count(
+                        KeyId::from(enc.key_id),
+                        FrameCount::from(enc.frame_count),
+                    );
+                    let header_buffer = Vec::from(&header);
+                    let mut data = Vec::from(&enc.cipher_text[header.size()..]);
+
+                    let decrypted = cipher_suite
+                        .decrypt(&mut data, &secret, &header_buffer, header.frame_count())
+                        .unwrap();
+
+                    assert_bytes_eq(decrypted, &test_vector.plain_text);
+                }
             }
 
             #[test]
-            fn should_decrypt_test_vectors_aes_gcm_128_sha256() {
-                aes_gcm_128_sha256::get_test_vectors()
-                    .into_iter()
-                    .for_each(|test_vector| {
-                        let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm128Sha256);
-
-                        let secret = Secret {
-                            key: test_vector.key,
-                            salt: test_vector.salt,
-                        };
-
-                        let header = Header::with_frame_count(
-                            KeyId::from(test_vector.key_id),
-                            FrameCount::from(test_vector.frame_count),
-                        );
-                        let header_buffer = Vec::from(&header);
-                        let mut data = Vec::from(&test_vector.cipher_text[header.size()..]);
-
-                        let decrypted = cipher_suite
-                            .decrypt(&mut data, &secret, &header_buffer, header.frame_count())
-                            .unwrap();
-
-                        assert_bytes_eq(decrypted, &test_vector.plain_text);
-                    });
+            fn encrypt_test_vector_aes_gcm_128_sha256() {
+                encrypt_test_vector(CipherSuiteVariant::AesGcm128Sha256);
             }
+
+            #[test]
+            fn should_decrypt_test_vector_aes_gcm_128_sha256() {
+                decrypt_test_vector(CipherSuiteVariant::AesGcm128Sha256);
+            }
+
             #[test]
             fn encrypt_test_vectors_aes_gcm_256_sha512() {
-                aes_gcm_256_sha512::get_test_vectors()
-                    .into_iter()
-                    .for_each(|test_vector| {
-                        let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
-
-                        let secret = Secret {
-                            key: test_vector.key,
-                            salt: test_vector.salt,
-                        };
-
-                        let mut data = test_vector.plain_text.clone();
-                        let header = Header::with_frame_count(
-                            KeyId::from(test_vector.key_id),
-                            FrameCount::from(test_vector.frame_count),
-                        );
-                        let header_buffer = Vec::from(&header);
-                        let tag = cipher_suite
-                            .encrypt(&mut data, &secret, &header_buffer, header.frame_count())
-                            .unwrap();
-                        let full_frame: Vec<u8> = header_buffer
-                            .into_iter()
-                            .chain(data.into_iter())
-                            .chain(tag.as_ref().iter().cloned())
-                            .collect();
-
-                        assert_bytes_eq(&full_frame, &test_vector.cipher_text);
-                    });
+                encrypt_test_vector(CipherSuiteVariant::AesGcm256Sha512);
             }
 
             #[test]
             fn should_decrypt_test_vectors_aes_gcm_256_sha512() {
-                aes_gcm_256_sha512::get_test_vectors()
-                    .into_iter()
-                    .for_each(|test_vector| {
-                        let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
-
-                        let secret = Secret {
-                            key: test_vector.key,
-                            salt: test_vector.salt,
-                        };
-
-                        let header = Header::with_frame_count(
-                            KeyId::from(test_vector.key_id),
-                            FrameCount::from(test_vector.frame_count),
-                        );
-                        let header_buffer = Vec::from(&header);
-                        let mut data = Vec::from(&test_vector.cipher_text[header.size()..]);
-
-                        let decrypted = cipher_suite
-                            .decrypt(&mut data, &secret, &header_buffer, header.frame_count())
-                            .unwrap();
-
-                        assert_bytes_eq(decrypted, &test_vector.plain_text);
-                    });
+                decrypt_test_vector(CipherSuiteVariant::AesGcm256Sha512);
             }
         }
     }
