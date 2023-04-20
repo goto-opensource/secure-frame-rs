@@ -34,7 +34,6 @@ test_vectors = { version = "0.1.0", path = "utils/test_vectors" }
 [features]
 default = []
 wasm-bindgen = ["ring/wasm32_c"]
-verify-test-vectors = []
 
 [[bench]]
 name = "bench_main"

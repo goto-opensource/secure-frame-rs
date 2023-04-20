@@ -41,12 +41,6 @@ jobs:
         with:
           command: test
 
-      - name: verify test vectors
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --lib --features verify-test-vectors
-
       - name: clippy
         uses: actions-rs/cargo@v1
         with:

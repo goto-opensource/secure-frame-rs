@@ -211,18 +211,12 @@ impl From<&Header> for Vec<u8> {
     }
 }
 
-// TODO remove the verify-test-vectors feature as soon the test vectors are fixed in the draft
-// Due to a spec change the lenghth offset changed (0 now means lenght of 1)
-#[cfg(not(feature = "verify-test-vectors"))]
 const LEN_OFFSET: u8 = 1;
-#[cfg(feature = "verify-test-vectors")]
-const LEN_OFFSET: u8 = 0;
 #[cfg(test)]
 mod test {
 
     use super::{frame_count::FrameCount, keyid::KeyId, Header};
     use crate::header::{Deserialization, HeaderFields};
-    #[cfg(feature = "verify-test-vectors")]
     use crate::util::test::assert_bytes_eq;
 
     use pretty_assertions::assert_eq;
@@ -258,7 +252,6 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "verify-test-vectors")]
     fn serialize_test_vectors() {
         test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm128Sha256 as u8)
             .encryptions
@@ -273,7 +266,6 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "verify-test-vectors")]
     fn deserialize_test_vectors() {
         test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm256Sha512 as u8)
             .encryptions
