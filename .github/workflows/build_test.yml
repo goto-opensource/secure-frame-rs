@@ -45,6 +45,13 @@ jobs:
         with:
           command: clippy
           args: --all-targets --all-features -- -Dwarnings
+
+      # test packaging to avoid surprisis at release time
+      - name: package
+        uses: actions-rs/cargo@v1
+        with:
+          command: package
+
   
   build-wasm:
     name: build wasm32
