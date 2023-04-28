@@ -1,5 +1,6 @@
 // Copyright (c) 2023 GoTo Group, Inc
 // SPDX-License-Identifier: Apache-2.0 AND MIT
+#![allow(clippy::missing_panics_doc)]
 
 extern crate serde;
 
@@ -61,7 +62,7 @@ fn parse_test_vectors() -> Vec<TestVector> {
 
 #[cfg(test)]
 mod test {
-    use crate::get_test_vector;
+    use super::get_test_vector;
 
     #[test]
     fn should_parse_test_vectors() {

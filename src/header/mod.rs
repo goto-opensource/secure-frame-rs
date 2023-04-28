@@ -253,7 +253,7 @@ mod test {
 
     #[test]
     fn serialize_test_vectors() {
-        test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm128Sha256 as u8)
+        crate::test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm128Sha256 as u8)
             .encryptions
             .iter()
             .for_each(|test_vector| {
@@ -267,7 +267,7 @@ mod test {
 
     #[test]
     fn deserialize_test_vectors() {
-        test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm256Sha512 as u8)
+        crate::test_vectors::get_test_vector(crate::CipherSuiteVariant::AesGcm256Sha512 as u8)
             .encryptions
             .iter()
             .for_each(|test_vector| {

@@ -27,7 +27,7 @@ impl Secret {
 
 #[cfg(test)]
 mod test {
-    use test_vectors::get_test_vector;
+    use crate::test_vectors::get_test_vector;
 
     use crate::{
         crypto::{cipher_suite::CipherSuiteVariant, key_expansion::KeyMaterial},
