@@ -33,3 +33,6 @@ pub mod header;
 pub mod receiver;
 pub mod sender;
 pub use crypto::cipher_suite::CipherSuiteVariant;
+
+#[cfg(test)]
+pub mod test_vectors;

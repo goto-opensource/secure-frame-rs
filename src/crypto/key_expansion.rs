@@ -68,7 +68,7 @@ mod ring {
 
 #[cfg(test)]
 mod test {
-    use test_vectors::get_test_vector;
+    use crate::test_vectors::get_test_vector;
 
     use crate::{
         crypto::{
