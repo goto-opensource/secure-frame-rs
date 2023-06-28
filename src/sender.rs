@@ -51,11 +51,11 @@ impl Sender {
 
     pub fn encrypt<Plaintext>(
         &mut self,
-        unencrypted_payload: &Plaintext,
+        unencrypted_payload: Plaintext,
         skip: usize,
     ) -> Result<&[u8]>
     where
-        Plaintext: AsRef<[u8]> + ?Sized,
+        Plaintext: AsRef<[u8]>,
     {
         let unencrypted_payload = unencrypted_payload.as_ref();
 
