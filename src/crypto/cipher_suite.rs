@@ -5,15 +5,16 @@
 /// and which hashing function is used for the key expansion,
 /// see [sframe draft 00 4.4](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-00#name-ciphersuites)
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[cfg_attr(test, derive(strum_macros::Display))]
 pub enum CipherSuiteVariant {
     // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    // AesCm128HmacSha256_8 = 1,
+    // AesCm128HmacSha256_8,
     // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    // AesCm128HmacSha256_4 = 2,
+    // AesCm128HmacSha256_4,
     /// encryption: AES GCM 128, key expansion: HKDF with SHA256
-    AesGcm128Sha256 = 3,
+    AesGcm128Sha256,
     /// encryption: AES GCM 256, key expansion: HKDF with SHA512
-    AesGcm256Sha512 = 4,
+    AesGcm256Sha512,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
