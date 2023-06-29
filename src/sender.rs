@@ -135,7 +135,7 @@ mod test_on_wire_format {
         receiver.set_encryption_key(KEY_ID, &material).unwrap();
 
         let encrypted = sender.encrypt(&hex("deadbeafcacadebaca00"), 4).unwrap();
-        let decrypted = receiver.decrypt(&encrypted, 4).unwrap();
+        let decrypted = receiver.decrypt(encrypted, 4).unwrap();
 
         assert_eq!(decrypted, hex("deadbeafcacadebaca00"));
     }

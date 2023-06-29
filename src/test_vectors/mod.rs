@@ -20,8 +20,9 @@ static ref TEST_VECTORS: Vec<TestVector> = {
 }
 
 const CIPHER_SUITE_NAME_FROM_ID: phf::Map<u8, &str> = phf_map! {
-        1u8 => "AesCm128HmacSha256_8",
-        2u8 => "AesCm128HmacSha256_4",
+        // AesCtr128HmacSha256_80 is not included in the test vectors
+        1u8 => "AesCtr128HmacSha256_64",
+        2u8 => "AesCtr128HmacSha256_32",
         3u8 => "AesGcm128Sha256",
         4u8 => "AesGcm256Sha512",
 };

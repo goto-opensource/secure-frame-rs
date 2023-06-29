@@ -26,7 +26,7 @@
     <component type="library" bom-ref="pkg:cargo/sframe@0.1.0">
       <name>sframe</name>
       <version>0.1.0</version>
-      <description>pure rust implementatio of SFrame draft-ietf-sframe-enc-00</description>
+      <description>pure rust implementatio of SFrame draft-ietf-sframe-enc-01</description>
       <scope>required</scope>
       <licenses>
         <expression>MIT OR Apache-2.0</expression>
