@@ -36,7 +36,7 @@ impl From<CipherSuiteVariant> for CipherSuite {
                 hash_len: 32,
                 key_len: 16,
                 nonce_len: 12,
-                auth_tag_len: 8,
+                auth_tag_len: 16,
             },
             CipherSuiteVariant::AesGcm256Sha512 => CipherSuite {
                 variant,
