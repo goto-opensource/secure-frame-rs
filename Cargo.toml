@@ -27,7 +27,7 @@ version = "0.16"
 optional = true
 
 [dependencies.openssl]
-openssl = "0.10"
+version = "0.10"
 optional = true
 
 [dev-dependencies]

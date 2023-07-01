@@ -15,18 +15,79 @@ use crate::{
 
 impl ExpandAsSecret for KeyMaterial<'_> {
     fn expand_as_secret(&self, cipher_suite: &CipherSuite) -> Result<Secret> {
-        todo!()
+        let try_expand = || {
+            let prk = extract_prk(cipher_suite, self.0)?;
+            let key = expand_key(
+                cipher_suite,
+                &prk,
+                SFRAME_HKDF_KEY_EXPAND_INFO,
+                cipher_suite.key_len,
+            )?;
+            let salt = expand_key(
+                cipher_suite,
+                &prk,
+                SFRAME_HDKF_SALT_EXPAND_INFO,
+                cipher_suite.nonce_len,
+            )?;
+
+            Ok(Secret { key, salt })
+        };
+
+        try_expand().map_err(|_: openssl::error::ErrorStack| SframeError::KeyExpansion)
     }
 }
 
-struct OkmKeyLength(usize);
+fn extract_prk(
+    cipher_suite: &CipherSuite,
+    key_material: &[u8],
+) -> std::result::Result<Vec<u8>, openssl::error::ErrorStack> {
+    let mut ctx = init_openssl_ctx(cipher_suite)?;
 
-// fn expand_key(prk: &ring::hkdf::Prk, info: &[u8], key_len: usize) -> Result<Vec<u8>> {
-//     let mut sframe_key = vec![0_u8; key_len];
+    ctx.set_hkdf_mode(openssl::pkey_ctx::HkdfMode::EXTRACT_ONLY)?;
+    ctx.set_hkdf_salt(SFRAME_HKDF_SALT)?;
+    ctx.set_hkdf_key(key_material)?;
 
-//     prk.expand(&[info], OkmKeyLength(key_len))
-//         .and_then(|okm| okm.fill(sframe_key.as_mut_slice()))
-//         .map_err(|_| SframeError::KeyExpansion)?;
+    let mut prk = vec![];
+    ctx.derive_to_vec(&mut prk)?;
 
-//     Ok(sframe_key)
-// }
+    Ok(prk)
+}
+
+fn expand_key(
+    cipher_suite: &CipherSuite,
+    prk: &[u8],
+    info: &[u8],
+    key_len: usize,
+) -> std::result::Result<Vec<u8>, openssl::error::ErrorStack> {
+    let mut ctx = init_openssl_ctx(cipher_suite)?;
+
+    ctx.set_hkdf_mode(openssl::pkey_ctx::HkdfMode::EXPAND_ONLY)?;
+    ctx.set_hkdf_key(&prk)?;
+    ctx.add_hkdf_info(info)?;
+
+    let mut key = vec![0; key_len];
+    ctx.derive(Some(&mut key))?;
+
+    Ok(key)
+}
+
+fn init_openssl_ctx(
+    cipher_suite: &CipherSuite,
+) -> std::result::Result<openssl::pkey_ctx::PkeyCtx<()>, openssl::error::ErrorStack> {
+    let mut ctx = openssl::pkey_ctx::PkeyCtx::new_id(openssl::pkey::Id::HKDF)?;
+    ctx.derive_init()?;
+
+    let digest = cipher_suite.into();
+    ctx.set_hkdf_md(digest)?;
+
+    Ok(ctx)
+}
+
+impl Into<&'static openssl::md::MdRef> for &CipherSuite {
+    fn into(self) -> &'static openssl::md::MdRef {
+        match self.variant {
+            CipherSuiteVariant::AesGcm128Sha256 => openssl::md::Md::sha256(),
+            CipherSuiteVariant::AesGcm256Sha512 => openssl::md::Md::sha512(),
+        }
+    }
+}
