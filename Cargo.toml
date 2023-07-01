@@ -18,11 +18,17 @@ keywords = ["encryption", "sframe", "secure-frame", "webrtc"]
 
 [dependencies]
 bitfield = "0.14"
+cfg-if = "1.0"
 log = "0.4"
 thiserror = "1.0"
 
 [dependencies.ring]
 version = "0.16"
+optional = true
+
+[dependencies.openssl]
+openssl = "0.10"
+optional = true
 
 [dev-dependencies]
 criterion = { version= "0.4", features=["html_reports"] }
@@ -37,8 +43,11 @@ phf = { version = "0.11", features = ["macros"] }
 
 
 [features]
-default = []
-wasm-bindgen = ["ring/wasm32_c"]
+# default = ["ring"]
+default = ["openssl"]
+openssl = ["dep:openssl"]
+ring = ["dep:ring"]
+wasm-bindgen = ["ring", "ring/wasm32_c"]
 
 [[bench]]
 name = "bench_main"
