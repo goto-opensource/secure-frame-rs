@@ -62,7 +62,7 @@ fn expand_key(
     let mut ctx = init_openssl_ctx(cipher_suite)?;
 
     ctx.set_hkdf_mode(openssl::pkey_ctx::HkdfMode::EXPAND_ONLY)?;
-    ctx.set_hkdf_key(&prk)?;
+    ctx.set_hkdf_key(prk)?;
     ctx.add_hkdf_info(info)?;
 
     let mut key = vec![0; key_len];
@@ -77,15 +77,15 @@ fn init_openssl_ctx(
     let mut ctx = openssl::pkey_ctx::PkeyCtx::new_id(openssl::pkey::Id::HKDF)?;
     ctx.derive_init()?;
 
-    let digest = cipher_suite.into();
+    let digest = cipher_suite.variant.into();
     ctx.set_hkdf_md(digest)?;
 
     Ok(ctx)
 }
 
-impl Into<&'static openssl::md::MdRef> for &CipherSuite {
-    fn into(self) -> &'static openssl::md::MdRef {
-        match self.variant {
+impl From<CipherSuiteVariant> for &'static openssl::md::MdRef {
+    fn from(variant: CipherSuiteVariant) -> Self {
+        match variant {
             CipherSuiteVariant::AesGcm128Sha256 => openssl::md::Md::sha256(),
             CipherSuiteVariant::AesGcm256Sha512 => openssl::md::Md::sha512(),
         }
