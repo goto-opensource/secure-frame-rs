@@ -15,6 +15,9 @@ jobs:
       matrix:
         rust:
           - stable
+        feature:
+          - ring
+          - openssl
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -28,29 +31,31 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --no-default-features --features ${{ matrix.feature }}
 
       - name: check (benches)
         uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --benches
+          args: --benches --no-default-features --features ${{ matrix.feature }}
 
       - name: check (tests)
         uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --tests
+          args: --tests --no-default-features --features ${{ matrix.feature }}
 
       - name: test
         uses: actions-rs/cargo@v1
         with:
           command: test
+          args: --no-default-features --features ${{ matrix.feature }}
 
       - name: clippy
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --all-targets --all-features -- -Dwarnings
+          args: --all-targets --no-default-features --features ${{ matrix.feature }} -- -Dwarnings
 
       # test packaging to avoid surprisis at release time
       - name: package
@@ -74,4 +79,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --target wasm32-unknown-unknown --features wasm-bindgen
+          args: --target wasm32-unknown-unknown --features ring
