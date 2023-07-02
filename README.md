@@ -29,7 +29,7 @@ Currently two crypto libraries are supported:
     - Per default the OpenSSL library is locally compiled and then statically linked. The build process requires a C compiler, `perl` (and `perl-core`), and `make`. For further options see the [openssl crate documentation](https://docs.rs/openssl/0.10.55/openssl/). 
     - Compilation to Wasm32 is [not yet supported](https://github.com/sfackler/rust-openssl/issues/1016)
 
-
+Both cannot be enabled at the same time, thus on conflict `sframe` fallsback to using `ring`. 
 ## License
 Licensed under either of Apache License, Version 2.0 or MIT license at your option.
 
