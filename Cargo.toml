@@ -1,14 +1,15 @@
 [package]
-name = "sframe"
-version = "0.2.0"
 edition = "2021"
 license = "MIT/Apache-2.0"
+name = "sframe"
+version = "0.2.0"
 
 authors = [
   "Tobias Waurick <tobias.waurick@goto.com>",
   "Hendrik Sollich <hendrik.sollich@goto.com>",
   "Richard Haehne <richard.haehne@goto.com>",
 ]
+
 description = "pure rust implementation of SFrame draft-ietf-sframe-enc-01"
 repository = "https://github.com/goto-opensource/sframe-rs"
 documentation = "https://docs.rs/sframe/"
@@ -26,28 +27,29 @@ thiserror = "1.0"
 version = "0.16"
 optional = true
 
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+ring = { version = "0.16", features = ["wasm32_c"], optional = true }
+
 [dependencies.openssl]
 version = "0.10"
+features = ["vendored"]
 optional = true
 
 [dev-dependencies]
-criterion = { version= "0.4", features=["html_reports"] }
+criterion = { version = "0.4", features = ["html_reports"] }
 hex = "0.4"
+lazy_static = "1.4.0"
+phf = { version = "0.11", features = ["macros"] }
 pretty_assertions = "1.3"
 rand = "0.8"
-serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-lazy_static = "1.4.0"
+serde_json = "1.0"
 strum_macros = "0.24"
-phf = { version = "0.11", features = ["macros"] }
-
 
 [features]
-# default = ["ring"]
-default = ["openssl"]
+default = ["ring"]
 openssl = ["dep:openssl"]
 ring = ["dep:ring"]
-wasm-bindgen = ["ring", "ring/wasm32_c"]
 
 [[bench]]
 name = "bench_main"

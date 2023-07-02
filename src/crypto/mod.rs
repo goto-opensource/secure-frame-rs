@@ -7,14 +7,13 @@ pub mod key_expansion;
 pub mod secret;
 
 cfg_if::cfg_if! {
-if #[cfg(all(feature = "openssl", feature = "wasm-bindgen"))]{
-    // TODO issue a warning
-    // compile_error!{"Cannot use openssl with wasm-bindgen. Falling back to ring."};
+if #[cfg(all(not(feature = "openssl"), feature = "ring"))]{
     mod ring;
 }
 else if #[cfg(all(feature = "openssl", not(feature = "ring")))] {
     mod openssl;
 } else {
+    // fallback to ring
     mod ring;
 }
 }
