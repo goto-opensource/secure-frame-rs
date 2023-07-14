@@ -4,11 +4,10 @@
 use super::{cipher_suite::CipherSuite, secret::Secret};
 use crate::error::Result;
 
-#[derive(Debug, Default, Clone, Copy)]
-pub struct KeyMaterial<'a>(pub &'a [u8]);
-
-pub trait ExpandAsSecret {
-    fn expand_as_secret(&self, cipher_suite: &CipherSuite) -> Result<Secret>;
+pub trait KeyExpansion {
+    fn expand_from<T>(cipher_suite: &CipherSuite, key_material: T) -> Result<Secret>
+    where
+        T: AsRef<[u8]>;
 }
 
 pub const SFRAME_HKDF_SALT: &[u8] = "SFrame10".as_bytes();
@@ -17,23 +16,19 @@ pub const SFRAME_HDKF_SALT_EXPAND_INFO: &[u8] = "salt".as_bytes();
 
 #[cfg(test)]
 mod test {
+    use crate::crypto::cipher_suite::CipherSuite;
+    use crate::crypto::secret::Secret;
     use crate::test_vectors::get_test_vector;
 
-    use crate::{
-        crypto::{
-            cipher_suite::{CipherSuite, CipherSuiteVariant},
-            key_expansion::KeyMaterial,
-        },
-        util::test::assert_bytes_eq,
-    };
+    use crate::{crypto::cipher_suite::CipherSuiteVariant, util::test::assert_bytes_eq};
 
-    use super::ExpandAsSecret;
+    use super::KeyExpansion;
 
     fn derive_correct_keys(variant: CipherSuiteVariant) {
         let test_vector = get_test_vector(&variant.to_string());
-        let secret = KeyMaterial(&test_vector.key_material)
-            .expand_as_secret(&CipherSuite::from(variant))
-            .unwrap();
+        let secret =
+            Secret::expand_from(&CipherSuite::from(variant), &test_vector.key_material).unwrap();
+
         assert_bytes_eq(&secret.key, &test_vector.key);
         assert_bytes_eq(&secret.salt, &test_vector.salt);
     }

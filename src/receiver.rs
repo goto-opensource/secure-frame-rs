@@ -7,7 +7,7 @@ use crate::{
     crypto::{
         aead::AeadDecrypt,
         cipher_suite::{CipherSuite, CipherSuiteVariant},
-        key_expansion::{ExpandAsSecret, KeyMaterial},
+        key_expansion::KeyExpansion,
         secret::Secret,
     },
     error::{Result, SframeError},
@@ -109,7 +109,7 @@ impl Receiver {
     {
         self.secrets.insert(
             key_id.into(),
-            KeyMaterial(key_material.as_ref()).expand_as_secret(&self.options.cipher_suite)?,
+            Secret::expand_from(&self.options.cipher_suite, key_material)?,
         );
         Ok(())
     }

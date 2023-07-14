@@ -5,7 +5,7 @@ use crate::{
     crypto::{
         cipher_suite::{CipherSuite, CipherSuiteVariant},
         key_expansion::{
-            ExpandAsSecret, KeyMaterial, SFRAME_HDKF_SALT_EXPAND_INFO, SFRAME_HKDF_KEY_EXPAND_INFO,
+            KeyExpansion, SFRAME_HDKF_SALT_EXPAND_INFO, SFRAME_HKDF_KEY_EXPAND_INFO,
             SFRAME_HKDF_SALT,
         },
         secret::Secret,
@@ -13,18 +13,21 @@ use crate::{
     error::{Result, SframeError},
 };
 
-impl ExpandAsSecret for KeyMaterial<'_> {
-    fn expand_as_secret(&self, cipher_suite: &CipherSuite) -> Result<Secret> {
+impl KeyExpansion for Secret {
+    fn expand_from<T>(cipher_suite: &CipherSuite, key_material: T) -> Result<Secret>
+    where
+        T: AsRef<[u8]>,
+    {
         let try_expand = || {
-            let prk = extract_prk(cipher_suite, self.0)?;
+            let prk = extract_prk(&cipher_suite, key_material.as_ref())?;
             let key = expand_key(
-                cipher_suite,
+                &cipher_suite,
                 &prk,
                 SFRAME_HKDF_KEY_EXPAND_INFO,
                 cipher_suite.key_len,
             )?;
             let salt = expand_key(
-                cipher_suite,
+                &cipher_suite,
                 &prk,
                 SFRAME_HDKF_SALT_EXPAND_INFO,
                 cipher_suite.nonce_len,

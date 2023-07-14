@@ -39,7 +39,8 @@ mod test {
             crypto::{
                 aead::AeadEncrypt,
                 cipher_suite::{CipherSuite, CipherSuiteVariant},
-                key_expansion::{ExpandAsSecret, KeyMaterial},
+                key_expansion::KeyExpansion,
+                secret::Secret,
             },
             header::{Header, HeaderFields},
         };
@@ -52,9 +53,7 @@ mod test {
             thread_rng().fill(data.as_mut_slice());
             let header = Header::default();
             let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
-            let secret = KeyMaterial(KEY_MATERIAL.as_bytes())
-                .expand_as_secret(&cipher_suite)
-                .unwrap();
+            let secret = Secret::expand_from(&cipher_suite, KEY_MATERIAL.as_bytes()).unwrap();
 
             let _tag = cipher_suite
                 .encrypt(

@@ -27,25 +27,24 @@ impl Secret {
 
 #[cfg(test)]
 mod test {
-    use crate::crypto::key_expansion::ExpandAsSecret;
+    use crate::crypto::cipher_suite::CipherSuite;
+    use crate::crypto::key_expansion::KeyExpansion;
     use crate::test_vectors::get_test_vector;
 
     use crate::{
-        crypto::{cipher_suite::CipherSuiteVariant, key_expansion::KeyMaterial},
-        header::FrameCount,
-        util::test::assert_bytes_eq,
+        crypto::cipher_suite::CipherSuiteVariant, header::FrameCount, util::test::assert_bytes_eq,
     };
+
+    use super::Secret;
 
     const NONCE_LEN: usize = 12;
 
-    fn test_nonce(cipher_suite_variant: CipherSuiteVariant) {
-        let tv = get_test_vector(&cipher_suite_variant.to_string());
-        let cipher_suite = cipher_suite_variant.into();
+    fn test_nonce(variant: CipherSuiteVariant) {
+        let tv = get_test_vector(&variant.to_string());
 
         for enc in &tv.encryptions {
-            let secret = KeyMaterial(&tv.key_material)
-                .expand_as_secret(&cipher_suite)
-                .unwrap();
+            let secret =
+                Secret::expand_from(&CipherSuite::from(variant), &tv.key_material).unwrap();
             let nonce: [u8; NONCE_LEN] = secret.create_nonce(&FrameCount::from(enc.frame_count));
             assert_bytes_eq(&nonce, &enc.nonce);
         }

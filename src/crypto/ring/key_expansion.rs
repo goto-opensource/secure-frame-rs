@@ -5,7 +5,7 @@ use crate::{
     crypto::{
         cipher_suite::{CipherSuite, CipherSuiteVariant},
         key_expansion::{
-            ExpandAsSecret, KeyMaterial, SFRAME_HDKF_SALT_EXPAND_INFO, SFRAME_HKDF_KEY_EXPAND_INFO,
+            KeyExpansion, SFRAME_HDKF_SALT_EXPAND_INFO, SFRAME_HKDF_KEY_EXPAND_INFO,
             SFRAME_HKDF_SALT,
         },
         secret::Secret,
@@ -13,10 +13,13 @@ use crate::{
     error::{Result, SframeError},
 };
 
-impl ExpandAsSecret for KeyMaterial<'_> {
-    fn expand_as_secret(&self, cipher_suite: &CipherSuite) -> Result<Secret> {
-        let algorithm = cipher_suite.into();
-        let prk = ring::hkdf::Salt::new(algorithm, SFRAME_HKDF_SALT).extract(self.0);
+impl KeyExpansion for Secret {
+    fn expand_from<T>(cipher_suite: &CipherSuite, key_material: T) -> Result<Secret>
+    where
+        T: AsRef<[u8]>,
+    {
+        let algorithm = cipher_suite.variant.into();
+        let prk = ring::hkdf::Salt::new(algorithm, SFRAME_HKDF_SALT).extract(key_material.as_ref());
 
         let key = expand_key(&prk, SFRAME_HKDF_KEY_EXPAND_INFO, cipher_suite.key_len)?;
         let salt = expand_key(&prk, SFRAME_HDKF_SALT_EXPAND_INFO, cipher_suite.nonce_len)?;
@@ -33,9 +36,9 @@ impl ring::hkdf::KeyType for OkmKeyLength {
     }
 }
 
-impl From<&CipherSuite> for ring::hkdf::Algorithm {
-    fn from(cipher_suite: &CipherSuite) -> Self {
-        match cipher_suite.variant {
+impl From<CipherSuiteVariant> for ring::hkdf::Algorithm {
+    fn from(variant: CipherSuiteVariant) -> Self {
+        match variant {
             CipherSuiteVariant::AesGcm128Sha256 => ring::hkdf::HKDF_SHA256,
             CipherSuiteVariant::AesGcm256Sha512 => ring::hkdf::HKDF_SHA512,
         }
