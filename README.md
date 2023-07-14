@@ -13,15 +13,16 @@ It is in it's current form a subset of the specification.
 There is an alternative implementation under [goto-opensource/secure-frame-ts](https://github.com/goto-opensource/secure-frame-ts)
 
 ## Differences from the sframe draft
-* Aes-CTR is not implemented
 * ratcheting is not implemented
 * keyIds are used as senderIds
+* no metadata authentication 
 
 ## Supported crypto libraries
 Currently two crypto libraries are supported:
 - [ring](https://crates.io/crates/ring) 
     - is enabled per default with the feature `ring`
     - supports compilation to Wasm32
+    - Aes-CTR mode ciphers are not supported
 - [openssl](https://crates.io/crates/openssl)
     - is enabled with the feature `openssl`
         - To build e.g. use `cargo build --features openssl --no-default-features`
