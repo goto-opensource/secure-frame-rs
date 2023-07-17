@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2023-07-17
+
+### Features
+
+- Update to draft enc-01
+
 ## [0.2.0] - 2023-04-28
 
 ### Performance
