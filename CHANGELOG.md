@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2023-07-17
+
+### Bug Fixes
+
+- Wrong auth tag size
+
+### Features
+
+- Crypto library feature handling
+- Openssl aead implemenation
+- Implement hkdf with openssl
+- Add openssl crypto crate stub
+- Update to draft enc-01
+
 ## [0.2.0] - 2023-04-28
 
 ### Performance
