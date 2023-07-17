@@ -4,6 +4,17 @@
 //! This library is an implementation of [draft-ietf-sframe-enc-latest](https://sframe-wg.github.io/sframe/draft-ietf-sframe-enc.html).
 //!
 //! It is in it's current form a subset of the specification (e.g. Aes-CTR is not implemented).
+//!
+//! # Optional features
+//!
+//! Using optional features `sframe` allows to configure different crypto libraries.
+//! Be aware that those features are mutually exlusive, if multiple `sframe` falls back to using `ring`.
+//!
+//! - **`ring`** *(enabled by default)* — Uses the [ring](https://crates.io/crates/ring) library which allows compilation to Wasm32.
+//! - **`openssl`** — Uses the [rust-openssl](https://crates.io/crates/openssl) crate, which provides bindings to OpenSSL.
+//! Per default the OpenSSL library is locally compiled and then statically linked. The build process requires a C compiler,
+//! `perl` (and `perl-core`), and `make`. For further options see the [openssl crate documentation](https://docs.rs/openssl/0.10.55/openssl/).
+//! Compilation to Wasm32 is not yet supported.
 
 #![deny(clippy::missing_panics_doc)]
 #![deny(

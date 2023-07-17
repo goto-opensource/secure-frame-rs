@@ -5,3 +5,15 @@ pub mod aead;
 pub mod cipher_suite;
 pub mod key_expansion;
 pub mod secret;
+
+cfg_if::cfg_if! {
+if #[cfg(all(not(feature = "openssl"), feature = "ring"))]{
+    mod ring;
+}
+else if #[cfg(all(feature = "openssl", not(feature = "ring")))] {
+    mod openssl;
+} else {
+    // fallback to ring
+    mod ring;
+}
+}

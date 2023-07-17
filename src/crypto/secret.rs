@@ -27,6 +27,7 @@ impl Secret {
 
 #[cfg(test)]
 mod test {
+    use crate::crypto::key_expansion::ExpandAsSecret;
     use crate::test_vectors::get_test_vector;
 
     use crate::{
