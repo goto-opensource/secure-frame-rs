@@ -51,11 +51,11 @@ impl Sender {
 
     pub fn encrypt<Plaintext>(
         &mut self,
-        unencrypted_payload: &Plaintext,
+        unencrypted_payload: Plaintext,
         skip: usize,
     ) -> Result<&[u8]>
     where
-        Plaintext: AsRef<[u8]> + ?Sized,
+        Plaintext: AsRef<[u8]>,
     {
         let unencrypted_payload = unencrypted_payload.as_ref();
 
@@ -135,7 +135,7 @@ mod test_on_wire_format {
         receiver.set_encryption_key(KEY_ID, &material).unwrap();
 
         let encrypted = sender.encrypt(&hex("deadbeafcacadebaca00"), 4).unwrap();
-        let decrypted = receiver.decrypt(&encrypted, 4).unwrap();
+        let decrypted = receiver.decrypt(encrypted, 4).unwrap();
 
         assert_eq!(decrypted, hex("deadbeafcacadebaca00"));
     }

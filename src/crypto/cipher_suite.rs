@@ -3,14 +3,14 @@
 
 /// Depicts which AEAD algorithm is used for encryption
 /// and which hashing function is used for the key expansion,
-/// see [sframe draft 00 4.4](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-00#name-ciphersuites)
+/// see [sframe draft 00 4.4](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-01#name-ciphersuites)
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(test, derive(strum_macros::Display))]
 pub enum CipherSuiteVariant {
     // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    // AesCm128HmacSha256_8,
-    // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    // AesCm128HmacSha256_4,
+    // AesCtr128HmacSha256_80,
+    // AesCtr128HmacSha256_64,
+    // AesCtr128HmacSha256_32,
     /// encryption: AES GCM 128, key expansion: HKDF with SHA256
     AesGcm128Sha256,
     /// encryption: AES GCM 256, key expansion: HKDF with SHA512
@@ -29,8 +29,9 @@ pub struct CipherSuite {
 impl From<CipherSuiteVariant> for CipherSuite {
     fn from(variant: CipherSuiteVariant) -> Self {
         match variant {
-            // CipherSuiteVariant::AesCm128HmacSha256_8 => unimplemented!(),
-            // CipherSuiteVariant::AesCm128HmacSha256_4 => unimplemented!(),
+            // CipherSuiteVariant::AesCtr128HmacSha256_80 => unimplemented!(),
+            // CipherSuiteVariant::AesCtr128HmacSha256_64 => unimplemented!(),
+            // CipherSuiteVariant::AesCtr128HmacSha256_32 => unimplemented!(),
             CipherSuiteVariant::AesGcm128Sha256 => CipherSuite {
                 variant,
                 hash_len: 32,

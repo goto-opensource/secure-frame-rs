@@ -60,11 +60,11 @@ impl Receiver {
 
     pub fn decrypt<EncryptedFrame>(
         &mut self,
-        encrypted_frame: &EncryptedFrame,
+        encrypted_frame: EncryptedFrame,
         skip: usize,
     ) -> Result<&[u8]>
     where
-        EncryptedFrame: AsRef<[u8]> + ?Sized,
+        EncryptedFrame: AsRef<[u8]>,
     {
         let encrypted_frame = encrypted_frame.as_ref();
         let header = Header::deserialize(&encrypted_frame[skip..])?;
