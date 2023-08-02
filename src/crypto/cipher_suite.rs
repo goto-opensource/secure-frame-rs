@@ -8,9 +8,12 @@
 #[cfg_attr(test, derive(strum_macros::Display))]
 pub enum CipherSuiteVariant {
     // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    // AesCtr128HmacSha256_80,
-    // AesCtr128HmacSha256_64,
-    // AesCtr128HmacSha256_32,
+    #[cfg(feature = "openssl")]
+    AesCtr128HmacSha256_80,
+    #[cfg(feature = "openssl")]
+    AesCtr128HmacSha256_64,
+    #[cfg(feature = "openssl")]
+    AesCtr128HmacSha256_32,
     /// encryption: AES GCM 128, key expansion: HKDF with SHA256
     AesGcm128Sha256,
     /// encryption: AES GCM 256, key expansion: HKDF with SHA512
@@ -29,9 +32,31 @@ pub struct CipherSuite {
 impl From<CipherSuiteVariant> for CipherSuite {
     fn from(variant: CipherSuiteVariant) -> Self {
         match variant {
-            // CipherSuiteVariant::AesCtr128HmacSha256_80 => unimplemented!(),
-            // CipherSuiteVariant::AesCtr128HmacSha256_64 => unimplemented!(),
-            // CipherSuiteVariant::AesCtr128HmacSha256_32 => unimplemented!(),
+            #[cfg(feature = "openssl")]
+            CipherSuiteVariant::AesCtr128HmacSha256_80 => CipherSuite {
+                variant,
+                hash_len: 32,
+                key_len: 16,
+                nonce_len: 12,
+                auth_tag_len: 10,
+            },
+
+            #[cfg(feature = "openssl")]
+            CipherSuiteVariant::AesCtr128HmacSha256_64 => CipherSuite {
+                variant,
+                hash_len: 32,
+                key_len: 16,
+                nonce_len: 12,
+                auth_tag_len: 8,
+            },
+            #[cfg(feature = "openssl")]
+            CipherSuiteVariant::AesCtr128HmacSha256_32 => CipherSuite {
+                variant,
+                hash_len: 32,
+                key_len: 16,
+                nonce_len: 12,
+                auth_tag_len: 4,
+            },
             CipherSuiteVariant::AesGcm128Sha256 => CipherSuite {
                 variant,
                 hash_len: 32,
@@ -46,6 +71,19 @@ impl From<CipherSuiteVariant> for CipherSuite {
                 nonce_len: 12,
                 auth_tag_len: 16,
             },
+        }
+    }
+}
+
+impl CipherSuite {
+    #[cfg(any(feature = "openssl", test))]
+    pub(crate) fn is_ctr_mode(&self) -> bool {
+        match self.variant {
+            #[cfg(feature = "openssl")]
+            CipherSuiteVariant::AesCtr128HmacSha256_80
+            | CipherSuiteVariant::AesCtr128HmacSha256_64
+            | CipherSuiteVariant::AesCtr128HmacSha256_32 => true,
+            CipherSuiteVariant::AesGcm128Sha256 | CipherSuiteVariant::AesGcm256Sha512 => false,
         }
     }
 }

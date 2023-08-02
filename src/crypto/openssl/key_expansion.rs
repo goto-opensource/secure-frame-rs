@@ -5,46 +5,87 @@ use crate::{
     crypto::{
         cipher_suite::{CipherSuite, CipherSuiteVariant},
         key_expansion::{
-            ExpandAsSecret, KeyMaterial, SFRAME_HDKF_SALT_EXPAND_INFO, SFRAME_HKDF_KEY_EXPAND_INFO,
-            SFRAME_HKDF_SALT,
+            KeyExpansion, SFRAME_HDKF_SALT_EXPAND_INFO, SFRAME_HDKF_SUB_AUTH_EXPAND_INFO,
+            SFRAME_HKDF_KEY_EXPAND_INFO, SFRAME_HKDF_SALT, SFRAME_HKDF_SUB_ENC_EXPAND_INFO,
+            SFRAME_HKDF_SUB_SALT,
         },
         secret::Secret,
     },
     error::{Result, SframeError},
 };
 
-impl ExpandAsSecret for KeyMaterial<'_> {
-    fn expand_as_secret(&self, cipher_suite: &CipherSuite) -> Result<Secret> {
+impl KeyExpansion for Secret {
+    fn expand_from<T>(cipher_suite: &CipherSuite, key_material: T) -> Result<Secret>
+    where
+        T: AsRef<[u8]>,
+    {
         let try_expand = || {
-            let prk = extract_prk(cipher_suite, self.0)?;
-            let key = expand_key(
-                cipher_suite,
-                &prk,
-                SFRAME_HKDF_KEY_EXPAND_INFO,
-                cipher_suite.key_len,
-            )?;
-            let salt = expand_key(
-                cipher_suite,
-                &prk,
-                SFRAME_HDKF_SALT_EXPAND_INFO,
-                cipher_suite.nonce_len,
-            )?;
+            let (base_key, salt) = expand_secret(cipher_suite, key_material.as_ref())?;
+            let (key, auth) = if cipher_suite.is_ctr_mode() {
+                let (key, auth) = expand_subsecret(cipher_suite, &base_key)?;
+                (key, Some(auth))
+            } else {
+                (base_key, None)
+            };
 
-            Ok(Secret { key, salt })
+            Ok(Secret { key, salt, auth })
         };
 
         try_expand().map_err(|_: openssl::error::ErrorStack| SframeError::KeyExpansion)
     }
 }
 
+fn expand_secret(
+    cipher_suite: &CipherSuite,
+    key_material: &[u8],
+) -> std::result::Result<(Vec<u8>, Vec<u8>), openssl::error::ErrorStack> {
+    let prk = extract_prk(cipher_suite, key_material, SFRAME_HKDF_SALT)?;
+    let key = expand_key(
+        cipher_suite,
+        &prk,
+        SFRAME_HKDF_KEY_EXPAND_INFO,
+        cipher_suite.key_len,
+    )?;
+    let salt = expand_key(
+        cipher_suite,
+        &prk,
+        SFRAME_HDKF_SALT_EXPAND_INFO,
+        cipher_suite.nonce_len,
+    )?;
+
+    Ok((key, salt))
+}
+
+fn expand_subsecret(
+    cipher_suite: &CipherSuite,
+    key: &[u8],
+) -> std::result::Result<(Vec<u8>, Vec<u8>), openssl::error::ErrorStack> {
+    let prk = extract_prk(cipher_suite, key, SFRAME_HKDF_SUB_SALT)?;
+    let key = expand_key(
+        cipher_suite,
+        &prk,
+        SFRAME_HKDF_SUB_ENC_EXPAND_INFO,
+        cipher_suite.key_len,
+    )?;
+    let auth = expand_key(
+        cipher_suite,
+        &prk,
+        SFRAME_HDKF_SUB_AUTH_EXPAND_INFO,
+        cipher_suite.hash_len,
+    )?;
+
+    Ok((key, auth))
+}
+
 fn extract_prk(
     cipher_suite: &CipherSuite,
     key_material: &[u8],
+    salt: &[u8],
 ) -> std::result::Result<Vec<u8>, openssl::error::ErrorStack> {
     let mut ctx = init_openssl_ctx(cipher_suite)?;
 
     ctx.set_hkdf_mode(openssl::pkey_ctx::HkdfMode::EXTRACT_ONLY)?;
-    ctx.set_hkdf_salt(SFRAME_HKDF_SALT)?;
+    ctx.set_hkdf_salt(salt)?;
     ctx.set_hkdf_key(key_material)?;
 
     let mut prk = vec![];
@@ -86,7 +127,10 @@ fn init_openssl_ctx(
 impl From<CipherSuiteVariant> for &'static openssl::md::MdRef {
     fn from(variant: CipherSuiteVariant) -> Self {
         match variant {
-            CipherSuiteVariant::AesGcm128Sha256 => openssl::md::Md::sha256(),
+            CipherSuiteVariant::AesGcm128Sha256
+            | CipherSuiteVariant::AesCtr128HmacSha256_80
+            | CipherSuiteVariant::AesCtr128HmacSha256_64
+            | CipherSuiteVariant::AesCtr128HmacSha256_32 => openssl::md::Md::sha256(),
             CipherSuiteVariant::AesGcm256Sha512 => openssl::md::Md::sha512(),
         }
     }

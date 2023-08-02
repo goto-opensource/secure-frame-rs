@@ -3,18 +3,15 @@ use crate::header::FrameCount;
 pub struct Secret {
     pub key: Vec<u8>,
     pub salt: Vec<u8>,
+    pub auth: Option<Vec<u8>>,
 }
 
 impl Secret {
     pub(crate) fn create_nonce<const LEN: usize>(&self, frame_count: &FrameCount) -> [u8; LEN] {
-        debug_assert!(
-            self.salt.len() >= LEN,
-            "Salt key is too short, is the cipher suite misconfigured?"
-        );
-
         let mut counter = frame_count.as_be_bytes().rev();
         let mut iv = [0u8; LEN];
-        for i in (0..LEN).rev() {
+        let n = self.salt.len().min(LEN);
+        for i in (0..n).rev() {
             iv[i] = self.salt[i];
             if let Some(counter_byte) = counter.next() {
                 iv[i] ^= counter_byte;
@@ -23,29 +20,37 @@ impl Secret {
 
         iv
     }
+
+    #[cfg(test)]
+    pub(crate) fn from_test_vector(test_vector: &crate::test_vectors::TestVector) -> Secret {
+        Secret {
+            key: test_vector.key.clone(),
+            salt: test_vector.salt.clone(),
+            auth: None,
+        }
+    }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::crypto::key_expansion::ExpandAsSecret;
+    use crate::crypto::cipher_suite::CipherSuite;
+    use crate::crypto::key_expansion::KeyExpansion;
     use crate::test_vectors::get_test_vector;
 
     use crate::{
-        crypto::{cipher_suite::CipherSuiteVariant, key_expansion::KeyMaterial},
-        header::FrameCount,
-        util::test::assert_bytes_eq,
+        crypto::cipher_suite::CipherSuiteVariant, header::FrameCount, util::test::assert_bytes_eq,
     };
+
+    use super::Secret;
 
     const NONCE_LEN: usize = 12;
 
-    fn test_nonce(cipher_suite_variant: CipherSuiteVariant) {
-        let tv = get_test_vector(&cipher_suite_variant.to_string());
-        let cipher_suite = cipher_suite_variant.into();
+    fn test_nonce(variant: CipherSuiteVariant) {
+        let tv = get_test_vector(&variant.to_string());
 
         for enc in &tv.encryptions {
-            let secret = KeyMaterial(&tv.key_material)
-                .expand_as_secret(&cipher_suite)
-                .unwrap();
+            let secret =
+                Secret::expand_from(&CipherSuite::from(variant), &tv.key_material).unwrap();
             let nonce: [u8; NONCE_LEN] = secret.create_nonce(&FrameCount::from(enc.frame_count));
             assert_bytes_eq(&nonce, &enc.nonce);
         }

@@ -5,7 +5,7 @@ use crate::{
     crypto::{
         aead::AeadEncrypt,
         cipher_suite::{CipherSuite, CipherSuiteVariant},
-        key_expansion::{ExpandAsSecret, KeyMaterial},
+        key_expansion::KeyExpansion,
         secret::Secret,
     },
     error::{Result, SframeError},
@@ -108,8 +108,7 @@ impl Sender {
     where
         KeyMaterial: AsRef<[u8]> + ?Sized,
     {
-        self.secret =
-            Some(KeyMaterial(key_material.as_ref()).expand_as_secret(&self.cipher_suite)?);
+        self.secret = Some(Secret::expand_from(&self.cipher_suite, key_material)?);
         Ok(())
     }
 }
