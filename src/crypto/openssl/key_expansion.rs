@@ -31,7 +31,10 @@ impl KeyExpansion for Secret {
             Ok(Secret { key, salt, auth })
         };
 
-        try_expand().map_err(|_: openssl::error::ErrorStack| SframeError::KeyExpansion)
+        try_expand().map_err(|err: openssl::error::ErrorStack| {
+            log::debug!("Key expansion failed, OpenSSL error stack: {}", err);
+            SframeError::KeyExpansion
+        })
     }
 }
 
