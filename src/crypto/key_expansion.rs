@@ -10,16 +10,16 @@ pub trait KeyExpansion {
         T: AsRef<[u8]>;
 }
 
-pub const SFRAME_HKDF_SALT: &[u8] = "SFrame10".as_bytes();
-pub const SFRAME_HKDF_KEY_EXPAND_INFO: &[u8] = "key".as_bytes();
-pub const SFRAME_HDKF_SALT_EXPAND_INFO: &[u8] = "salt".as_bytes();
+pub const SFRAME_HKDF_SALT: &[u8] = b"SFrame10";
+pub const SFRAME_HKDF_KEY_EXPAND_INFO: &[u8] = b"key";
+pub const SFRAME_HDKF_SALT_EXPAND_INFO: &[u8] = b"salt";
 
 #[cfg(feature = "openssl")]
-pub const SFRAME_HKDF_SUB_SALT: &[u8] = "SFrame10 AES CTR AEAD".as_bytes();
+pub const SFRAME_HKDF_SUB_SALT: &[u8] = b"SFrame10 AES CTR AEAD";
 #[cfg(feature = "openssl")]
-pub const SFRAME_HKDF_SUB_ENC_EXPAND_INFO: &[u8] = "enc".as_bytes();
+pub const SFRAME_HKDF_SUB_ENC_EXPAND_INFO: &[u8] = b"enc";
 #[cfg(feature = "openssl")]
-pub const SFRAME_HDKF_SUB_AUTH_EXPAND_INFO: &[u8] = "auth".as_bytes();
+pub const SFRAME_HDKF_SUB_AUTH_EXPAND_INFO: &[u8] = b"auth";
 
 #[cfg(test)]
 mod test {
