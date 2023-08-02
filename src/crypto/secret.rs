@@ -3,7 +3,6 @@ use crate::header::FrameCount;
 pub struct Secret {
     pub key: Vec<u8>,
     pub salt: Vec<u8>,
-    #[cfg(not(feature = "ring"))]
     pub auth: Option<Vec<u8>>,
 }
 
@@ -27,7 +26,6 @@ impl Secret {
         Secret {
             key: test_vector.key.clone(),
             salt: test_vector.salt.clone(),
-            #[cfg(not(feature = "ring"))]
             auth: None,
         }
     }

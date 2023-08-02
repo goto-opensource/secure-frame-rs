@@ -8,11 +8,11 @@
 #[cfg_attr(test, derive(strum_macros::Display))]
 pub enum CipherSuiteVariant {
     // /// counter mode is [not implemented in ring](https://github.com/briansmith/ring/issues/656)
-    #[cfg(not(feature = "ring"))]
+    #[cfg(feature = "openssl")]
     AesCtr128HmacSha256_80,
-    #[cfg(not(feature = "ring"))]
+    #[cfg(feature = "openssl")]
     AesCtr128HmacSha256_64,
-    #[cfg(not(feature = "ring"))]
+    #[cfg(feature = "openssl")]
     AesCtr128HmacSha256_32,
     /// encryption: AES GCM 128, key expansion: HKDF with SHA256
     AesGcm128Sha256,
@@ -32,7 +32,7 @@ pub struct CipherSuite {
 impl From<CipherSuiteVariant> for CipherSuite {
     fn from(variant: CipherSuiteVariant) -> Self {
         match variant {
-            #[cfg(not(feature = "ring"))]
+            #[cfg(feature = "openssl")]
             CipherSuiteVariant::AesCtr128HmacSha256_80 => CipherSuite {
                 variant,
                 hash_len: 32,
@@ -41,7 +41,7 @@ impl From<CipherSuiteVariant> for CipherSuite {
                 auth_tag_len: 10,
             },
 
-            #[cfg(not(feature = "ring"))]
+            #[cfg(feature = "openssl")]
             CipherSuiteVariant::AesCtr128HmacSha256_64 => CipherSuite {
                 variant,
                 hash_len: 32,
@@ -49,7 +49,7 @@ impl From<CipherSuiteVariant> for CipherSuite {
                 nonce_len: 12,
                 auth_tag_len: 8,
             },
-            #[cfg(not(feature = "ring"))]
+            #[cfg(feature = "openssl")]
             CipherSuiteVariant::AesCtr128HmacSha256_32 => CipherSuite {
                 variant,
                 hash_len: 32,
@@ -76,10 +76,10 @@ impl From<CipherSuiteVariant> for CipherSuite {
 }
 
 impl CipherSuite {
-    #[allow(dead_code)]
+    #[cfg(any(feature = "openssl", test))]
     pub(crate) fn is_ctr_mode(&self) -> bool {
         match self.variant {
-            #[cfg(not(feature = "ring"))]
+            #[cfg(feature = "openssl")]
             CipherSuiteVariant::AesCtr128HmacSha256_80
             | CipherSuiteVariant::AesCtr128HmacSha256_64
             | CipherSuiteVariant::AesCtr128HmacSha256_32 => true,

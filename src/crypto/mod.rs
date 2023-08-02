@@ -13,7 +13,7 @@ if #[cfg(all(not(feature = "openssl"), feature = "ring"))]{
 else if #[cfg(all(feature = "openssl", not(feature = "ring")))] {
     mod openssl;
 } else {
-    // fallback to ring
+    compile_error!("Cannot configure multiple crypto backends at the same time.");
     mod ring;
 }
 }

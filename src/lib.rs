@@ -8,7 +8,7 @@
 //! # Optional features
 //!
 //! Using optional features `sframe` allows to configure different crypto libraries.
-//! Be aware that those features are mutually exlusive, if multiple `sframe` falls back to using `ring`.
+//! Be aware that those features are mutually exlusive, if multiple are configured `sframe` issues a compiler error.
 //!
 //! - **`ring`** *(enabled by default)* — Uses the [ring](https://crates.io/crates/ring) library which allows compilation to Wasm32.
 //! AES-CTR mode ciphers are not supported.

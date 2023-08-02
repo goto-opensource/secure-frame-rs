@@ -14,11 +14,11 @@ pub const SFRAME_HKDF_SALT: &[u8] = "SFrame10".as_bytes();
 pub const SFRAME_HKDF_KEY_EXPAND_INFO: &[u8] = "key".as_bytes();
 pub const SFRAME_HDKF_SALT_EXPAND_INFO: &[u8] = "salt".as_bytes();
 
-#[cfg(not(feature = "ring"))]
+#[cfg(feature = "openssl")]
 pub const SFRAME_HKDF_SUB_SALT: &[u8] = "SFrame10 AES CTR AEAD".as_bytes();
-#[cfg(not(feature = "ring"))]
+#[cfg(feature = "openssl")]
 pub const SFRAME_HKDF_SUB_ENC_EXPAND_INFO: &[u8] = "enc".as_bytes();
-#[cfg(not(feature = "ring"))]
+#[cfg(feature = "openssl")]
 pub const SFRAME_HDKF_SUB_AUTH_EXPAND_INFO: &[u8] = "auth".as_bytes();
 
 #[cfg(test)]
@@ -50,7 +50,7 @@ mod test {
         derive_correct_base_keys(CipherSuiteVariant::AesGcm256Sha512);
     }
 
-    #[cfg(not(feature = "ring"))]
+    #[cfg(feature = "openssl")]
     mod aes_ctr {
         use super::*;
 

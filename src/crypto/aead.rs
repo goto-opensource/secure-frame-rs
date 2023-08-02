@@ -156,7 +156,7 @@ mod test {
                 decrypt_test_vector(CipherSuiteVariant::AesGcm256Sha512);
             }
 
-            #[cfg(not(feature = "ring"))]
+            #[cfg(feature = "openssl")]
             mod aes_ctr {
                 use crate::CipherSuiteVariant;
 

@@ -24,7 +24,11 @@ impl KeyExpansion for Secret {
         let key = expand_key(&prk, SFRAME_HKDF_KEY_EXPAND_INFO, cipher_suite.key_len)?;
         let salt = expand_key(&prk, SFRAME_HDKF_SALT_EXPAND_INFO, cipher_suite.nonce_len)?;
 
-        Ok(Secret { key, salt })
+        Ok(Secret {
+            key,
+            salt,
+            auth: None,
+        })
     }
 }
 
