@@ -75,10 +75,11 @@ mod test {
             derive_correct_sub_keys(CipherSuiteVariant::AesCtr128HmacSha256_32);
         }
 
+        #[test]
         // AesCtr128HmacSha256_80 is not available in the test vectors
-        // #[test]
-        // fn derive_correct_keys_aes_ctr_128_hmac_sha256_80() {
-        //     derive_correct_sub_keys(CipherSuiteVariant::AesCtr128HmacSha256_80);
-        // }
+        #[ignore]
+        fn derive_correct_keys_aes_ctr_128_hmac_sha256_80() {
+            derive_correct_sub_keys(CipherSuiteVariant::AesCtr128HmacSha256_80);
+        }
     }
 }

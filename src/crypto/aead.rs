@@ -181,6 +181,20 @@ mod test {
                 fn should_decrypt_test_vectors_aes_ctr_64_hmac_sha256_32() {
                     decrypt_test_vector(CipherSuiteVariant::AesCtr128HmacSha256_32);
                 }
+
+                #[test]
+                // AesCtr128HmacSha256_80 is not available in the test vectors
+                #[ignore]
+                fn should_encrypt_test_vectors_aes_ctr_64_hmac_sha256_80() {
+                    encrypt_test_vector(CipherSuiteVariant::AesCtr128HmacSha256_32);
+                }
+
+                #[test]
+                // AesCtr128HmacSha256_80 is not available in the test vectors
+                #[ignore]
+                fn should_decrypt_test_vectors_aes_ctr_64_hmac_sha256_80() {
+                    decrypt_test_vector(CipherSuiteVariant::AesCtr128HmacSha256_32);
+                }
             }
         }
     }
