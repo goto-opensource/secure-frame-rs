@@ -254,25 +254,23 @@ mod test {
 
     #[test]
     fn serialize_test_vectors() {
-        crate::test_vectors::get_test_vector(&AesGcm128Sha256.to_string())
-            .encryptions
+        crate::test_vectors::get_header_test_vectors()
             .iter()
             .for_each(|test_vector| {
                 let header = Header::with_frame_count(
                     KeyId::from(test_vector.key_id),
                     FrameCount::from(test_vector.frame_count),
                 );
-                assert_bytes_eq(Vec::from(&header).as_slice(), &test_vector.header);
+                assert_bytes_eq(Vec::from(&header).as_slice(), &test_vector.encoded);
             });
     }
 
     #[test]
     fn deserialize_test_vectors() {
-        crate::test_vectors::get_test_vector(&AesGcm256Sha512.to_string())
-            .encryptions
+        crate::test_vectors::get_header_test_vectors()
             .iter()
             .for_each(|test_vector| {
-                let header = Header::deserialize(&test_vector.header).unwrap();
+                let header = Header::deserialize(&test_vector.encoded).unwrap();
                 assert_eq!(header.key_id(), KeyId::from(test_vector.key_id));
                 assert_eq!(header.frame_count(), test_vector.frame_count);
             });

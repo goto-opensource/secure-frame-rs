@@ -23,46 +23,46 @@ pub const SFRAME_HDKF_SUB_AUTH_EXPAND_INFO: &[u8] = b"auth";
 
 #[cfg(test)]
 mod test {
+    use super::KeyExpansion;
     use crate::crypto::cipher_suite::CipherSuite;
     use crate::crypto::secret::Secret;
-    use crate::test_vectors::get_test_vector;
-
+    use crate::test_vectors::get_sframe_test_vector;
     use crate::{crypto::cipher_suite::CipherSuiteVariant, util::test::assert_bytes_eq};
 
-    use super::KeyExpansion;
+    mod aes_gcm {
+        use super::*;
 
-    fn derive_correct_base_keys(variant: CipherSuiteVariant) {
-        let test_vector = get_test_vector(&variant.to_string());
-        let secret =
-            Secret::expand_from(&CipherSuite::from(variant), &test_vector.key_material).unwrap();
+        use test_case::test_case;
 
-        assert_bytes_eq(&secret.key, &test_vector.key);
-        assert_bytes_eq(&secret.salt, &test_vector.salt);
-    }
+        #[test_case(CipherSuiteVariant::AesGcm128Sha256; "AesGcm128Sha256")]
+        #[test_case(CipherSuiteVariant::AesGcm256Sha512; "AesGcm256Sha512")]
+        fn derive_correct_base_keys(variant: CipherSuiteVariant) {
+            let test_vec = get_sframe_test_vector(&variant.to_string());
+            let secret =
+                Secret::expand_from(&CipherSuite::from(variant), &test_vec.key_material).unwrap();
 
-    #[test]
-    fn derive_correct_keys_aes_gcm_128_sha256() {
-        derive_correct_base_keys(CipherSuiteVariant::AesGcm128Sha256);
-    }
-
-    #[test]
-    fn derive_correct_keys_aes_gcm_256_sha512() {
-        derive_correct_base_keys(CipherSuiteVariant::AesGcm256Sha512);
+            assert_bytes_eq(&secret.key, &test_vec.sframe_key);
+            assert_bytes_eq(&secret.salt, &test_vec.sframe_salt);
+        }
     }
 
     #[cfg(feature = "openssl")]
     mod aes_ctr {
         use super::*;
+        use crate::test_vectors::get_aes_ctr_test_vector;
 
+        use test_case::test_case;
+
+        #[test_case(CipherSuiteVariant::AesCtr128HmacSha256_80; "AesCtr128HmacSha256_80")]
+        #[test_case(CipherSuiteVariant::AesCtr128HmacSha256_64; "AesCtr128HmacSha256_64")]
+        #[test_case(CipherSuiteVariant::AesCtr128HmacSha256_32; "AesCtr128HmacSha256_32")]
         fn derive_correct_sub_keys(variant: CipherSuiteVariant) {
-            let test_vector = get_test_vector(&variant.to_string());
+            let test_vec = get_aes_ctr_test_vector(&variant.to_string());
             let cipher_suite = CipherSuite::from(variant);
-            let secret = Secret::expand_from(&cipher_suite, &test_vector.key_material).unwrap();
+            let secret = Secret::expand_from(&cipher_suite, &test_vec.key_material).unwrap();
 
-            assert_bytes_eq(&secret.salt, &test_vector.salt);
-            // the subkeys stored in secret.key and secret.auth are not included in the test vectors
-            assert_eq!(secret.auth.unwrap().len(), cipher_suite.hash_len);
-            assert_eq!(secret.key.len(), cipher_suite.key_len);
+            assert_bytes_eq(&secret.auth.unwrap(), &test_vec.auth_key);
+            assert_bytes_eq(&secret.key, &test_vec.enc_key);
         }
 
         #[test]
