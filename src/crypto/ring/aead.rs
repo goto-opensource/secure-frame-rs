@@ -47,7 +47,7 @@ impl From<CipherSuiteVariant> for &'static ring::aead::Algorithm {
 impl CipherSuite {
     fn unbound_encryption_key(&self, secret: &Secret) -> Result<ring::aead::UnboundKey> {
         ring::aead::UnboundKey::new(self.variant.into(), secret.key.as_slice())
-            .map_err(|_| SframeError::KeyExpansion)
+            .map_err(|_| SframeError::KeyDerivation)
     }
 }
 

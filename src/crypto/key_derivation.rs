@@ -4,7 +4,7 @@
 use super::{cipher_suite::CipherSuite, secret::Secret};
 use crate::error::Result;
 
-pub trait KeyExpansion {
+pub trait KeyDerivation {
     fn expand_from<M, K>(cipher_suite: &CipherSuite, key_material: M, key_id: K) -> Result<Secret>
     where
         M: AsRef<[u8]>,
@@ -59,14 +59,14 @@ cfg_if::cfg_if! {
 #[cfg(feature = "openssl")]
 #[cfg(test)]
 mod test {
-    use super::KeyExpansion;
+    use super::KeyDerivation;
     use crate::crypto::cipher_suite::CipherSuite;
     use crate::crypto::secret::Secret;
     use crate::test_vectors::get_sframe_test_vector;
     use crate::{crypto::cipher_suite::CipherSuiteVariant, util::test::assert_bytes_eq};
 
     mod aes_gcm {
-        use crate::crypto::key_expansion::SFRAME_LABEL;
+        use crate::crypto::key_derivation::SFRAME_LABEL;
 
         use super::*;
 

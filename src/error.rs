@@ -27,7 +27,7 @@ pub enum SframeError {
 
     /// Could not expand encryption key for [`Sender`] or decryption key for [`Receiver`] with HKDF
     #[error("Unable to create unbound encryption key")]
-    KeyExpansion,
+    KeyDerivation,
 
     /// frame validation failed in the [`Receiver`] before decryption
     #[error("{0}")]

@@ -34,7 +34,7 @@ pub trait AeadDecrypt {
 #[cfg(test)]
 mod test {
 
-    use crate::crypto::key_expansion::KeyExpansion;
+    use crate::crypto::key_derivation::KeyDerivation;
     use crate::header::{FrameCount, KeyId};
     use crate::test_vectors::{get_sframe_test_vector, SframeTest};
     use crate::util::test::assert_bytes_eq;

@@ -4,13 +4,13 @@
 use crate::{
     crypto::{
         cipher_suite::{CipherSuite, CipherSuiteVariant},
-        key_expansion::{get_hkdf_key_expand_info, get_hkdf_salt_expand_info, KeyExpansion},
+        key_derivation::{get_hkdf_key_expand_info, get_hkdf_salt_expand_info, KeyDerivation},
         secret::Secret,
     },
     error::{Result, SframeError},
 };
 
-impl KeyExpansion for Secret {
+impl KeyDerivation for Secret {
     fn expand_from<M, K>(cipher_suite: &CipherSuite, key_material: M, key_id: K) -> Result<Secret>
     where
         M: AsRef<[u8]>,
@@ -63,7 +63,7 @@ fn expand_key(prk: &ring::hkdf::Prk, info: &[u8], key_len: usize) -> Result<Vec<
 
     prk.expand(&[info], OkmKeyLength(key_len))
         .and_then(|okm| okm.fill(sframe_key.as_mut_slice()))
-        .map_err(|_| SframeError::KeyExpansion)?;
+        .map_err(|_| SframeError::KeyDerivation)?;
 
     Ok(sframe_key)
 }

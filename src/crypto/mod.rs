@@ -3,7 +3,7 @@
 
 pub mod aead;
 pub mod cipher_suite;
-pub mod key_expansion;
+pub mod key_derivation;
 pub mod secret;
 
 cfg_if::cfg_if! {

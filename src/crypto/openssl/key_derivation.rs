@@ -4,16 +4,16 @@
 use crate::{
     crypto::{
         cipher_suite::{CipherSuite, CipherSuiteVariant},
-        key_expansion::{
-            get_hkdf_aead_label, get_hkdf_key_expand_info, get_hkdf_salt_expand_info, KeyExpansion,
-            SFRAME_HDKF_SUB_AUTH_EXPAND_INFO, SFRAME_HKDF_SUB_ENC_EXPAND_INFO,
+        key_derivation::{
+            get_hkdf_aead_label, get_hkdf_key_expand_info, get_hkdf_salt_expand_info,
+            KeyDerivation, SFRAME_HDKF_SUB_AUTH_EXPAND_INFO, SFRAME_HKDF_SUB_ENC_EXPAND_INFO,
         },
         secret::Secret,
     },
     error::{Result, SframeError},
 };
 
-impl KeyExpansion for Secret {
+impl KeyDerivation for Secret {
     fn expand_from<M, K>(cipher_suite: &CipherSuite, key_material: M, key_id: K) -> Result<Secret>
     where
         M: AsRef<[u8]>,
@@ -32,7 +32,7 @@ impl KeyExpansion for Secret {
             Ok(Secret { key, salt, auth })
         };
 
-        try_expand().map_err(|_: openssl::error::ErrorStack| SframeError::KeyExpansion)
+        try_expand().map_err(|_: openssl::error::ErrorStack| SframeError::KeyDerivation)
     }
 }
 

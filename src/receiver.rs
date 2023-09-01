@@ -7,7 +7,7 @@ use crate::{
     crypto::{
         aead::AeadDecrypt,
         cipher_suite::{CipherSuite, CipherSuiteVariant},
-        key_expansion::KeyExpansion,
+        key_derivation::KeyDerivation,
         secret::Secret,
     },
     error::{Result, SframeError},
