@@ -60,7 +60,8 @@ mod test {
         thread_rng().fill(data.as_mut_slice());
         let header = Header::default();
         let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
-        let secret = Secret::expand_from(&cipher_suite, KEY_MATERIAL.as_bytes()).unwrap();
+        let secret =
+            Secret::expand_from(&cipher_suite, KEY_MATERIAL.as_bytes(), KeyId::default()).unwrap();
 
         let _tag = cipher_suite
             .encrypt(
@@ -138,7 +139,7 @@ mod test {
     fn prepare_secret(cipher_suite: &CipherSuite, test_vec: &SframeTest) -> Secret {
         if cipher_suite.is_ctr_mode() {
             // the test vectors do not provide the auth key, so we have to expand here
-            Secret::expand_from(cipher_suite, &test_vec.key_material).unwrap()
+            Secret::expand_from(cipher_suite, &test_vec.key_material, test_vec.key_id).unwrap()
         } else {
             Secret {
                 key: test_vec.sframe_key.clone(),

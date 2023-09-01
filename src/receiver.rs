@@ -107,9 +107,10 @@ impl Receiver {
         Id: Into<KeyId>,
         KeyMaterial: AsRef<[u8]> + ?Sized,
     {
+        let key_id = key_id.into();
         self.secrets.insert(
-            key_id.into(),
-            Secret::expand_from(&self.options.cipher_suite, key_material)?,
+            key_id,
+            Secret::expand_from(&self.options.cipher_suite, key_material, key_id)?,
         );
         Ok(())
     }

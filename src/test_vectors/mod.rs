@@ -86,13 +86,11 @@ pub struct AesCtrHmacTest {
     #[serde(deserialize_with = "vec_from_hex_str")]
     pub aad: Vec<u8>,
 
-    // TODO rename
-    #[serde(deserialize_with = "vec_from_hex_str")]
-    pub pt: Vec<u8>,
+    #[serde(rename = "pt", deserialize_with = "vec_from_hex_str")]
+    pub plain_text: Vec<u8>,
 
-    // TODO rename
-    #[serde(deserialize_with = "vec_from_hex_str")]
-    pub ct: Vec<u8>,
+    #[serde(rename = "ct", deserialize_with = "vec_from_hex_str")]
+    pub cipher_text: Vec<u8>,
 }
 
 #[derive(serde::Deserialize, Debug, Clone)]
