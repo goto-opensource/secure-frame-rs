@@ -17,7 +17,7 @@ pub fn get_header_test_vectors() -> &'static Vec<HeaderTest> {
 }
 
 pub fn get_aes_ctr_test_vector(cipher_suite_variant: &str) -> &'static AesCtrHmacTest {
-    &TEST_VECTORS
+    TEST_VECTORS
         .aes_ctr_hmac
         .iter()
         .find(|v| v.cipher_suite_variant == cipher_suite_variant)
@@ -25,7 +25,7 @@ pub fn get_aes_ctr_test_vector(cipher_suite_variant: &str) -> &'static AesCtrHma
 }
 
 pub fn get_sframe_test_vector(cipher_suite_variant: &str) -> &'static SframeTest {
-    &TEST_VECTORS
+    TEST_VECTORS
         .sframe
         .iter()
         .find(|v| v.cipher_suite_variant == cipher_suite_variant)
@@ -111,7 +111,10 @@ pub struct SframeTest {
     pub key_material: Vec<u8>,
 
     #[serde(deserialize_with = "vec_from_hex_str")]
-    pub sframe_label: Vec<u8>,
+    pub sframe_key_label: Vec<u8>,
+
+    #[serde(deserialize_with = "vec_from_hex_str")]
+    pub sframe_salt_label: Vec<u8>,
 
     #[serde(deserialize_with = "vec_from_hex_str")]
     pub sframe_secret: Vec<u8>,

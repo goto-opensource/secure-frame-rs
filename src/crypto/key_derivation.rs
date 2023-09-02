@@ -31,23 +31,14 @@ pub fn get_hkdf_salt_expand_info(key_id: u64) -> Vec<u8> {
 
 const SFRAME_LABEL: &[u8] = b"SFrame 1.0 ";
 
-// For the current test vectors different labels than specified were used
-// see https://github.com/sframe-wg/sframe/issues/137
-cfg_if::cfg_if! {
-    if #[cfg(test)] {
-        const SFRAME_HKDF_KEY_EXPAND_INFO: &[u8] = b"key ";
-        const SFRAME_HDKF_SALT_EXPAND_INFO: &[u8] = b"salt ";
-    } else {
-        const SFRAME_HKDF_KEY_EXPAND_INFO: &[u8] = b"Secret key ";
-        const SFRAME_HDKF_SALT_EXPAND_INFO: &[u8] = b"Secret salt ";
-    }
-}
+const SFRAME_HKDF_KEY_EXPAND_INFO: &[u8] = b"Secret key ";
+const SFRAME_HDKF_SALT_EXPAND_INFO: &[u8] = b"Secret salt ";
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "openssl")] {
         pub fn get_hkdf_aead_label(tag_len: usize) -> Vec<u8> {
             // for current platforms there is no issue casting from usize to u64
-            return [SFRAME_HDKF_SUB_AEAD_LABEL, &(tag_len).to_be_bytes()].concat()
+            [SFRAME_HDKF_SUB_AEAD_LABEL, &(tag_len).to_be_bytes()].concat()
         }
 
         pub const SFRAME_HDKF_SUB_AEAD_LABEL: &[u8] = b"SFrame 1.0 AES CTR AEAD ";
@@ -56,7 +47,6 @@ cfg_if::cfg_if! {
     }
 }
 
-#[cfg(feature = "openssl")]
 #[cfg(test)]
 mod test {
     use super::KeyDerivation;
@@ -66,7 +56,7 @@ mod test {
     use crate::{crypto::cipher_suite::CipherSuiteVariant, util::test::assert_bytes_eq};
 
     mod aes_gcm {
-        use crate::crypto::key_derivation::SFRAME_LABEL;
+        use crate::crypto::key_derivation::{get_hkdf_key_expand_info, get_hkdf_salt_expand_info};
 
         use super::*;
 
@@ -78,7 +68,14 @@ mod test {
         fn derive_correct_base_keys(variant: CipherSuiteVariant) {
             let test_vec = get_sframe_test_vector(&variant.to_string());
 
-            assert_bytes_eq(SFRAME_LABEL, &test_vec.sframe_label);
+            assert_bytes_eq(
+                &get_hkdf_key_expand_info(test_vec.key_id),
+                &test_vec.sframe_key_label,
+            );
+            assert_bytes_eq(
+                &get_hkdf_salt_expand_info(test_vec.key_id),
+                &test_vec.sframe_salt_label,
+            );
 
             let secret = Secret::expand_from(
                 &CipherSuite::from(variant),
