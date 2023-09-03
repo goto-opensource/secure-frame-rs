@@ -100,7 +100,7 @@ mod test {
 
         let full_frame: Vec<u8> = header_buffer
             .into_iter()
-            .chain(data_buffer.into_iter())
+            .chain(data_buffer)
             .chain(tag.as_ref().iter().cloned())
             .collect();
 
