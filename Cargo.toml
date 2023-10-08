@@ -24,11 +24,11 @@ log = "0.4"
 thiserror = "1.0"
 
 [dependencies.ring]
-version = "0.16"
+version = "0.17"
 optional = true
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-ring = { version = "0.16", features = ["wasm32_c"], optional = true }
+ring = { version = "0.17", features = ["wasm32_unknown_unknown_js"], optional = true }
 
 [dependencies.openssl]
 version = "0.10"
@@ -48,8 +48,6 @@ strum_macros = "0.25"
 
 [features]
 default = ["ring"]
-openssl = ["dep:openssl"]
-ring = ["dep:ring"]
 
 [[bench]]
 name = "bench_main"
