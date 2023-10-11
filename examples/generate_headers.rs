@@ -5,9 +5,13 @@ use sframe::{
     header::Header,
     header::{Deserialization, Serialization},
 };
+use std::fmt::Write;
 
 fn bin2string(bin: &[u8]) -> String {
-    bin.iter().map(|x| format!("{x:08b} ")).collect()
+    bin.iter().fold(String::new(), |mut output, x| {
+        let _ = write!(output, "{x:08b} ");
+        output
+    })
 }
 
 fn main() {

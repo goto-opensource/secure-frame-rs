@@ -2,8 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0 AND MIT
 
 #[cfg(test)]
+use std::fmt::Write;
+
+#[cfg(test)]
 pub(crate) fn bin2string(bin: &[u8]) -> String {
-    bin.iter().map(|x| format!("{x:08b} ")).collect()
+    bin.iter().fold(String::new(), |mut output, x| {
+        let _ = write!(output, "{x:08b} ");
+        output
+    })
 }
 
 #[cfg(test)]
