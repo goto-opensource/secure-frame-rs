@@ -108,6 +108,12 @@ fn crypto_benches(c: &mut Criterion) {
     for variant in [
         CipherSuiteVariant::AesGcm128Sha256,
         CipherSuiteVariant::AesGcm256Sha512,
+        #[cfg(feature = "openssl")]
+        CipherSuiteVariant::AesCtr128HmacSha256_80,
+        #[cfg(feature = "openssl")]
+        CipherSuiteVariant::AesCtr128HmacSha256_64,
+        #[cfg(feature = "openssl")]
+        CipherSuiteVariant::AesCtr128HmacSha256_32,
     ] {
         let mut ctx = CryptoBenches::from(variant);
         ctx.run_benches(c);
