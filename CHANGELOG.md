@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2023-10-28
+
+### Features
+
+- Update key derivation / tag computation to draft-03
+
 ## [0.2.2] - 2023-08-02
 
 ### Features
