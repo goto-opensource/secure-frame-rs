@@ -1,234 +1,1569 @@
-[
-  {
-    "cipher_suite": 1,
-    "base_key": "101112131415161718191a1b1c1d1e1f",
-    "key": "343d3290f5c0b936415bea9a43c6f5a2",
-    "salt": "42d662fbad5cd81eb3aad79a",
-    "plaintext": "46726f6d2068656176656e6c79206861726d6f6e79202f2f205468697320756e6976657273616c206672616d6520626567616e",
-    "encryptions": [
-      {
-        "kid": 7,
-        "ctr": 0,
-        "header": "0700",
-        "nonce": "42d662fbad5cd81eb3aad79a",
-        "ciphertext": "0700c5095af9dbbbed6a952de114ea7b42768509f1ffc9749abb1e95bf4514d8d82a0eef4b5ecac16fa193977fa1aa1c9fa5c7e730b934669c"
-      },
-      {
-        "kid": 7,
-        "ctr": 1,
-        "header": "0701",
-        "nonce": "42d662fbad5cd81eb3aad79b",
-        "ciphertext": "0701559e262525382885c6c93be8f61a9064db2dd1e1e96ab1dbd829ca4af4f45f2b97a4889217a3f8a2159fb8201b7d71db01702b9caf8df6"
-      },
-      {
-        "kid": 7,
-        "ctr": 2,
-        "header": "0702",
-        "nonce": "42d662fbad5cd81eb3aad798",
-        "ciphertext": "07020a8f21e052eaa09e50da0a909d156cc55b9ef2f2abbcca765f7af3cfb1af234e3eac1dbc376631c83cf1ff1f8ab339dbc41044742c668d"
-      },
-      {
-        "kid": 15,
-        "ctr": 170,
-        "header": "080faa",
-        "nonce": "42d662fbad5cd81eb3aad730",
-        "ciphertext": "080faa9c65aa5b167873f25827f17bc34879a4aaa6b38dd9584472e1849d5da51555f288d08f03166a5f26af01794006255c88b589861e2f8e3e"
-      },
-      {
-        "kid": 511,
-        "ctr": 170,
-        "header": "0901ffaa",
-        "nonce": "42d662fbad5cd81eb3aad730",
-        "ciphertext": "0901ffaa9c65aa5b167873f25827f17bc34879a4aaa6b38dd9584472e1849d5da51555f288d08f03166a5f26af01794006255c88b58986ca1ead10"
-      },
-      {
-        "kid": 511,
-        "ctr": 43690,
-        "header": "1901ffaaaa",
-        "nonce": "42d662fbad5cd81eb3aa7d30",
-        "ciphertext": "1901ffaaaa990cbeb4ae2e3a76be8bb954b62591e791d0fa53c0553bc1d1e021d270b1a10688cd89195203b01978925373b04f9c08c3a4e563e2f6b9"
-      },
-      {
-        "kid": 72057594037927935,
-        "ctr": 72057594037927935,
-        "header": "6effffffffffffffffffffffffffff",
-        "nonce": "42d662fbada327e14c552865",
-        "ciphertext": "6effffffffffffffffffffffffffff412c43c8077c286f7df3dd9988d1bd033f1067493e09421e5bfc363e50a3c803b4da9239514cb924dbcb5f33e33112083e99108de2ecd6"
-      }
-    ]
-  },
-  {
-    "cipher_suite": 2,
-    "base_key": "202122232425262728292a2b2c2d2e2f",
-    "key": "3fce747d505e46ec9b92d9f58ee7a5d4",
-    "salt": "77fbf5f1d82c73f6d2b353c9",
-    "plaintext": "46726f6d2068656176656e6c79206861726d6f6e79202f2f205468697320756e6976657273616c206672616d6520626567616e",
-    "encryptions": [
-      {
-        "kid": 7,
-        "ctr": 0,
-        "header": "0700",
-        "nonce": "77fbf5f1d82c73f6d2b353c9",
-        "ciphertext": "07009d89e5753e06edf3025f1ccd70b095ebaf10c250e11da740f50f57b6ce860d7321dfa49688a2cd6c6d9a71ae9d5c14ad0978efdd719a7f18c48f07"
-      },
-      {
-        "kid": 7,
-        "ctr": 1,
-        "header": "0701",
-        "nonce": "77fbf5f1d82c73f6d2b353c8",
-        "ciphertext": "0701becd2e9d10e3eed586491b3e0ecedba89407ae2151787c5117b55707d6b8a0754f4dc937e30ebdf7cafbd3769d6585d7991b1a6bd31e8bddb1adec"
-      },
-      {
-        "kid": 7,
-        "ctr": 2,
-        "header": "0702",
-        "nonce": "77fbf5f1d82c73f6d2b353cb",
-        "ciphertext": "070298508be6b16d034f15b504ced45a86d1bb43ed7cd3a62bf25557d1b082b04e8e6ba6fe76160835dd8953e1be9640c988627ea447127ae4c103eabd"
-      },
-      {
-        "kid": 15,
-        "ctr": 170,
-        "header": "080faa",
-        "nonce": "77fbf5f1d82c73f6d2b35363",
-        "ciphertext": "080faae7eec4b0556ddfb8068998351cd670ce95f0ce9cd4c6dca2eeee73fb14d20a0d0fd487337ed43fa7f98dad0995b8b870325aa35a105af9b1004b22"
-      },
-      {
-        "kid": 511,
-        "ctr": 170,
-        "header": "0901ffaa",
-        "nonce": "77fbf5f1d82c73f6d2b35363",
-        "ciphertext": "0901ffaae7eec4b0556ddfb8068998351cd670ce95f0ce9cd4c6dca2eeee73fb14d20a0d0fd487337ed43fa7f98dad0995b8b870325aa3437cce05a6e67ee8"
-      },
-      {
-        "kid": 511,
-        "ctr": 43690,
-        "header": "1901ffaaaa",
-        "nonce": "77fbf5f1d82c73f6d2b3f963",
-        "ciphertext": "1901ffaaaa8c1789aa0abcd6abc27006aae4df5cba4ba07f8113080e9726baacd16c18539974a6204a36b9dc3dcd36ed9ab48e590d95d4adfb4290f4cb1ba184"
-      },
-      {
-        "kid": 72057594037927935,
-        "ctr": 72057594037927935,
-        "header": "6effffffffffffffffffffffffffff",
-        "nonce": "77fbf5f1d8d38c092d4cac36",
-        "ciphertext": "6effffffffffffffffffffffffffffa9bc6c7edde0fdfd13255a5b145c5ce84db8f8960858eb998b8ea8f3e770160150813c5806441b64251bdd2be9e8cec1386b6f8e3b1982bcd16c84"
-      }
-    ]
-  },
-  {
-    "cipher_suite": 3,
-    "base_key": "303132333435363738393a3b3c3d3e3f",
-    "key": "2ea2e8163ff56c0613e6fa9f20a213da",
-    "salt": "a80478b3f6fba19983d540d5",
-    "plaintext": "46726f6d2068656176656e6c79206861726d6f6e79202f2f205468697320756e6976657273616c206672616d6520626567616e",
-    "encryptions": [
-      {
-        "kid": 7,
-        "ctr": 0,
-        "header": "0700",
-        "nonce": "a80478b3f6fba19983d540d5",
-        "ciphertext": "07000e426255e47ed70dd7d15d69d759bf459032ca15f5e8b2a91e7d348aa7c186d403f620801c495b1717a35097411aa97cbb1406afd9f4e5215b46e4a39dc40c27fd6bc7"
-      },
-      {
-        "kid": 7,
-        "ctr": 1,
-        "header": "0701",
-        "nonce": "a80478b3f6fba19983d540d4",
-        "ciphertext": "070103bbafa34ada8a6b9f2066bc34a1959d87384c9f4b1ce34fed58e938bde143393910b1aeb55b48d91d5b0db3ea67e3d0e02b84e4cf8ecf81f8386f86cda48fcd754191"
-      },
-      {
-        "kid": 7,
-        "ctr": 2,
-        "header": "0702",
-        "nonce": "a80478b3f6fba19983d540d7",
-        "ciphertext": "070258d58adebd8bf6f3cc0c1fcacf34ba4d7a763b2683fe302a57f1be7f2a274bf81b2236995fec1203cadb146cd402e1c52d5e6aceaa5252822d25acd0ce4ba14e31fa24"
-      },
-      {
-        "kid": 15,
-        "ctr": 170,
-        "header": "080faa",
-        "nonce": "a80478b3f6fba19983d5407f",
-        "ciphertext": "080faad0b1743bf5248f90869c9456366d55724d16bbe08060875815565e90b114f9ccbdba192422b33848a1ae1e3bd266a001b2f5bb64c0f1216bba82ab24b1ebd677c2ca29"
-      },
-      {
-        "kid": 511,
-        "ctr": 170,
-        "header": "0901ffaa",
-        "nonce": "a80478b3f6fba19983d5407f",
-        "ciphertext": "0901ffaad0b1743bf5248f90869c9456366d55724d16bbe08060875815565e90b114f9ccbdba192422b33848a1ae1e3bd266a001b2f5bb8c718170432b6f922c1f0fb307514a0e"
-      },
-      {
-        "kid": 511,
-        "ctr": 43690,
-        "header": "1901ffaaaa",
-        "nonce": "a80478b3f6fba19983d5ea7f",
-        "ciphertext": "1901ffaaaa9de65e21e4f1ca2247b87943c03c5cb7b182090e93d508dcfb76e08174c6397356e682d2eaddabc0b3c1018d2c13c3570f61c185789dff3cb4469cf471ca71ceb025a5"
-      },
-      {
-        "kid": 72057594037927935,
-        "ctr": 72057594037927935,
-        "header": "6effffffffffffffffffffffffffff",
-        "nonce": "a80478b3f6045e667c2abf2a",
-        "ciphertext": "6effffffffffffffffffffffffffff09981bdcdad80e380b6f74cf6afdbce946839bedadd57578bfcd809dbcea535546cc24660613d2761adea852155785011e633522450f95fd9f8ccc96fa3de9a247cfd3"
-      }
-    ]
-  },
-  {
-    "cipher_suite": 4,
-    "base_key": "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
-    "key": "436774b0b5ae45633d96547f8f3cb06c8e6628eff2e4255b5c4d77e721aa3355",
-    "salt": "31ed26f90a072e6aee646298",
-    "plaintext": "46726f6d2068656176656e6c79206861726d6f6e79202f2f205468697320756e6976657273616c206672616d6520626567616e",
-    "encryptions": [
-      {
-        "kid": 7,
-        "ctr": 0,
-        "header": "0700",
-        "nonce": "31ed26f90a072e6aee646298",
-        "ciphertext": "0700f3e297c1e95207710bd31ccc4ba396fbef7b257440bde638ff0f3c8911540136df61b26220249d6c432c245ae8d55ef45bfccf3afe18dd36d64d8e341653e1a0f10be2"
-      },
-      {
-        "kid": 7,
-        "ctr": 1,
-        "header": "0701",
-        "nonce": "31ed26f90a072e6aee646299",
-        "ciphertext": "070193268b0bf030071bff443bb6b4471bdfb1cc81bc9625f4697b0336ff4665d15f152f02169448d8a967fb06359a87d2145398de044ee92acfcc27b7a98f38712b60c28c"
-      },
-      {
-        "kid": 7,
-        "ctr": 2,
-        "header": "0702",
-        "nonce": "31ed26f90a072e6aee64629a",
-        "ciphertext": "0702649691ba27c4c01a41280fba4657c03fa7fe21c8f5c862e9094227c3ca3ec0d9468b1a2cb060ff0978f25a24e6b106f5a6e10534b69d975605f31534caea88b33b455a"
-      },
-      {
-        "kid": 15,
-        "ctr": 170,
-        "header": "080faa",
-        "nonce": "31ed26f90a072e6aee646232",
-        "ciphertext": "080faa2858c10b5ddd231c1f26819490521678603a050448d563c503b1fd890d02ead01d754f074ecb6f32da9b2f3859f380b4f47d4ed539d6103e61580a82c014b28eb48b4a"
-      },
-      {
-        "kid": 511,
-        "ctr": 170,
-        "header": "0901ffaa",
-        "nonce": "31ed26f90a072e6aee646232",
-        "ciphertext": "0901ffaa2858c10b5ddd231c1f26819490521678603a050448d563c503b1fd890d02ead01d754f074ecb6f32da9b2f3859f380b4f47d4e32c565b3b3fa20fc7ecff21a1cee3eec"
-      },
-      {
-        "kid": 511,
-        "ctr": 43690,
-        "header": "1901ffaaaa",
-        "nonce": "31ed26f90a072e6aee64c832",
-        "ciphertext": "1901ffaaaad9bc6a258a07d210a814d545eca70321c0e87498ada6e5c708b7ead162ffcf4fbaba1eb82650590a87122b4d95fe36bd88b278994922fe5c09f14c728521333297f84f"
-      },
-      {
-        "kid": 72057594037927935,
-        "ctr": 72057594037927935,
-        "header": "6effffffffffffffffffffffffffff",
-        "nonce": "31ed26f90af8d195119b9d67",
-        "ciphertext": "6effffffffffffffffffffffffffffaf480d4779ce0c02b5137ee6a61e026c04ac999cb0c97319feceeb258d58df23bce14979e5c67a431777b34498062e72f939ca4acb471bad80259bb44f78a152487e67"
-      }
-    ]
-  }
-]
+{
+  "header": [
+    {
+      "kid": 0,
+      "ctr": 0,
+      "encoded": "0000"
+    },
+    {
+      "kid": 0,
+      "ctr": 1,
+      "encoded": "0001"
+    },
+    {
+      "kid": 0,
+      "ctr": 255,
+      "encoded": "00ff"
+    },
+    {
+      "kid": 0,
+      "ctr": 256,
+      "encoded": "100100"
+    },
+    {
+      "kid": 0,
+      "ctr": 65535,
+      "encoded": "10ffff"
+    },
+    {
+      "kid": 0,
+      "ctr": 65536,
+      "encoded": "20010000"
+    },
+    {
+      "kid": 0,
+      "ctr": 16777215,
+      "encoded": "20ffffff"
+    },
+    {
+      "kid": 0,
+      "ctr": 16777216,
+      "encoded": "3001000000"
+    },
+    {
+      "kid": 0,
+      "ctr": 4294967295,
+      "encoded": "30ffffffff"
+    },
+    {
+      "kid": 0,
+      "ctr": 4294967296,
+      "encoded": "400100000000"
+    },
+    {
+      "kid": 0,
+      "ctr": 1099511627775,
+      "encoded": "40ffffffffff"
+    },
+    {
+      "kid": 0,
+      "ctr": 1099511627776,
+      "encoded": "50010000000000"
+    },
+    {
+      "kid": 0,
+      "ctr": 281474976710655,
+      "encoded": "50ffffffffffff"
+    },
+    {
+      "kid": 0,
+      "ctr": 281474976710656,
+      "encoded": "6001000000000000"
+    },
+    {
+      "kid": 0,
+      "ctr": 72057594037927935,
+      "encoded": "60ffffffffffffff"
+    },
+    {
+      "kid": 0,
+      "ctr": 72057594037927936,
+      "encoded": "700100000000000000"
+    },
+    {
+      "kid": 0,
+      "ctr": 18446744073709551615,
+      "encoded": "70ffffffffffffffff"
+    },
+    {
+      "kid": 1,
+      "ctr": 0,
+      "encoded": "0100"
+    },
+    {
+      "kid": 1,
+      "ctr": 1,
+      "encoded": "0101"
+    },
+    {
+      "kid": 1,
+      "ctr": 255,
+      "encoded": "01ff"
+    },
+    {
+      "kid": 1,
+      "ctr": 256,
+      "encoded": "110100"
+    },
+    {
+      "kid": 1,
+      "ctr": 65535,
+      "encoded": "11ffff"
+    },
+    {
+      "kid": 1,
+      "ctr": 65536,
+      "encoded": "21010000"
+    },
+    {
+      "kid": 1,
+      "ctr": 16777215,
+      "encoded": "21ffffff"
+    },
+    {
+      "kid": 1,
+      "ctr": 16777216,
+      "encoded": "3101000000"
+    },
+    {
+      "kid": 1,
+      "ctr": 4294967295,
+      "encoded": "31ffffffff"
+    },
+    {
+      "kid": 1,
+      "ctr": 4294967296,
+      "encoded": "410100000000"
+    },
+    {
+      "kid": 1,
+      "ctr": 1099511627775,
+      "encoded": "41ffffffffff"
+    },
+    {
+      "kid": 1,
+      "ctr": 1099511627776,
+      "encoded": "51010000000000"
+    },
+    {
+      "kid": 1,
+      "ctr": 281474976710655,
+      "encoded": "51ffffffffffff"
+    },
+    {
+      "kid": 1,
+      "ctr": 281474976710656,
+      "encoded": "6101000000000000"
+    },
+    {
+      "kid": 1,
+      "ctr": 72057594037927935,
+      "encoded": "61ffffffffffffff"
+    },
+    {
+      "kid": 1,
+      "ctr": 72057594037927936,
+      "encoded": "710100000000000000"
+    },
+    {
+      "kid": 1,
+      "ctr": 18446744073709551615,
+      "encoded": "71ffffffffffffffff"
+    },
+    {
+      "kid": 255,
+      "ctr": 0,
+      "encoded": "08ff00"
+    },
+    {
+      "kid": 255,
+      "ctr": 1,
+      "encoded": "08ff01"
+    },
+    {
+      "kid": 255,
+      "ctr": 255,
+      "encoded": "08ffff"
+    },
+    {
+      "kid": 255,
+      "ctr": 256,
+      "encoded": "18ff0100"
+    },
+    {
+      "kid": 255,
+      "ctr": 65535,
+      "encoded": "18ffffff"
+    },
+    {
+      "kid": 255,
+      "ctr": 65536,
+      "encoded": "28ff010000"
+    },
+    {
+      "kid": 255,
+      "ctr": 16777215,
+      "encoded": "28ffffffff"
+    },
+    {
+      "kid": 255,
+      "ctr": 16777216,
+      "encoded": "38ff01000000"
+    },
+    {
+      "kid": 255,
+      "ctr": 4294967295,
+      "encoded": "38ffffffffff"
+    },
+    {
+      "kid": 255,
+      "ctr": 4294967296,
+      "encoded": "48ff0100000000"
+    },
+    {
+      "kid": 255,
+      "ctr": 1099511627775,
+      "encoded": "48ffffffffffff"
+    },
+    {
+      "kid": 255,
+      "ctr": 1099511627776,
+      "encoded": "58ff010000000000"
+    },
+    {
+      "kid": 255,
+      "ctr": 281474976710655,
+      "encoded": "58ffffffffffffff"
+    },
+    {
+      "kid": 255,
+      "ctr": 281474976710656,
+      "encoded": "68ff01000000000000"
+    },
+    {
+      "kid": 255,
+      "ctr": 72057594037927935,
+      "encoded": "68ffffffffffffffff"
+    },
+    {
+      "kid": 255,
+      "ctr": 72057594037927936,
+      "encoded": "78ff0100000000000000"
+    },
+    {
+      "kid": 255,
+      "ctr": 18446744073709551615,
+      "encoded": "78ffffffffffffffffff"
+    },
+    {
+      "kid": 256,
+      "ctr": 0,
+      "encoded": "09010000"
+    },
+    {
+      "kid": 256,
+      "ctr": 1,
+      "encoded": "09010001"
+    },
+    {
+      "kid": 256,
+      "ctr": 255,
+      "encoded": "090100ff"
+    },
+    {
+      "kid": 256,
+      "ctr": 256,
+      "encoded": "1901000100"
+    },
+    {
+      "kid": 256,
+      "ctr": 65535,
+      "encoded": "190100ffff"
+    },
+    {
+      "kid": 256,
+      "ctr": 65536,
+      "encoded": "290100010000"
+    },
+    {
+      "kid": 256,
+      "ctr": 16777215,
+      "encoded": "290100ffffff"
+    },
+    {
+      "kid": 256,
+      "ctr": 16777216,
+      "encoded": "39010001000000"
+    },
+    {
+      "kid": 256,
+      "ctr": 4294967295,
+      "encoded": "390100ffffffff"
+    },
+    {
+      "kid": 256,
+      "ctr": 4294967296,
+      "encoded": "4901000100000000"
+    },
+    {
+      "kid": 256,
+      "ctr": 1099511627775,
+      "encoded": "490100ffffffffff"
+    },
+    {
+      "kid": 256,
+      "ctr": 1099511627776,
+      "encoded": "590100010000000000"
+    },
+    {
+      "kid": 256,
+      "ctr": 281474976710655,
+      "encoded": "590100ffffffffffff"
+    },
+    {
+      "kid": 256,
+      "ctr": 281474976710656,
+      "encoded": "69010001000000000000"
+    },
+    {
+      "kid": 256,
+      "ctr": 72057594037927935,
+      "encoded": "690100ffffffffffffff"
+    },
+    {
+      "kid": 256,
+      "ctr": 72057594037927936,
+      "encoded": "7901000100000000000000"
+    },
+    {
+      "kid": 256,
+      "ctr": 18446744073709551615,
+      "encoded": "790100ffffffffffffffff"
+    },
+    {
+      "kid": 65535,
+      "ctr": 0,
+      "encoded": "09ffff00"
+    },
+    {
+      "kid": 65535,
+      "ctr": 1,
+      "encoded": "09ffff01"
+    },
+    {
+      "kid": 65535,
+      "ctr": 255,
+      "encoded": "09ffffff"
+    },
+    {
+      "kid": 65535,
+      "ctr": 256,
+      "encoded": "19ffff0100"
+    },
+    {
+      "kid": 65535,
+      "ctr": 65535,
+      "encoded": "19ffffffff"
+    },
+    {
+      "kid": 65535,
+      "ctr": 65536,
+      "encoded": "29ffff010000"
+    },
+    {
+      "kid": 65535,
+      "ctr": 16777215,
+      "encoded": "29ffffffffff"
+    },
+    {
+      "kid": 65535,
+      "ctr": 16777216,
+      "encoded": "39ffff01000000"
+    },
+    {
+      "kid": 65535,
+      "ctr": 4294967295,
+      "encoded": "39ffffffffffff"
+    },
+    {
+      "kid": 65535,
+      "ctr": 4294967296,
+      "encoded": "49ffff0100000000"
+    },
+    {
+      "kid": 65535,
+      "ctr": 1099511627775,
+      "encoded": "49ffffffffffffff"
+    },
+    {
+      "kid": 65535,
+      "ctr": 1099511627776,
+      "encoded": "59ffff010000000000"
+    },
+    {
+      "kid": 65535,
+      "ctr": 281474976710655,
+      "encoded": "59ffffffffffffffff"
+    },
+    {
+      "kid": 65535,
+      "ctr": 281474976710656,
+      "encoded": "69ffff01000000000000"
+    },
+    {
+      "kid": 65535,
+      "ctr": 72057594037927935,
+      "encoded": "69ffffffffffffffffff"
+    },
+    {
+      "kid": 65535,
+      "ctr": 72057594037927936,
+      "encoded": "79ffff0100000000000000"
+    },
+    {
+      "kid": 65535,
+      "ctr": 18446744073709551615,
+      "encoded": "79ffffffffffffffffffff"
+    },
+    {
+      "kid": 65536,
+      "ctr": 0,
+      "encoded": "0a01000000"
+    },
+    {
+      "kid": 65536,
+      "ctr": 1,
+      "encoded": "0a01000001"
+    },
+    {
+      "kid": 65536,
+      "ctr": 255,
+      "encoded": "0a010000ff"
+    },
+    {
+      "kid": 65536,
+      "ctr": 256,
+      "encoded": "1a0100000100"
+    },
+    {
+      "kid": 65536,
+      "ctr": 65535,
+      "encoded": "1a010000ffff"
+    },
+    {
+      "kid": 65536,
+      "ctr": 65536,
+      "encoded": "2a010000010000"
+    },
+    {
+      "kid": 65536,
+      "ctr": 16777215,
+      "encoded": "2a010000ffffff"
+    },
+    {
+      "kid": 65536,
+      "ctr": 16777216,
+      "encoded": "3a01000001000000"
+    },
+    {
+      "kid": 65536,
+      "ctr": 4294967295,
+      "encoded": "3a010000ffffffff"
+    },
+    {
+      "kid": 65536,
+      "ctr": 4294967296,
+      "encoded": "4a0100000100000000"
+    },
+    {
+      "kid": 65536,
+      "ctr": 1099511627775,
+      "encoded": "4a010000ffffffffff"
+    },
+    {
+      "kid": 65536,
+      "ctr": 1099511627776,
+      "encoded": "5a010000010000000000"
+    },
+    {
+      "kid": 65536,
+      "ctr": 281474976710655,
+      "encoded": "5a010000ffffffffffff"
+    },
+    {
+      "kid": 65536,
+      "ctr": 281474976710656,
+      "encoded": "6a01000001000000000000"
+    },
+    {
+      "kid": 65536,
+      "ctr": 72057594037927935,
+      "encoded": "6a010000ffffffffffffff"
+    },
+    {
+      "kid": 65536,
+      "ctr": 72057594037927936,
+      "encoded": "7a0100000100000000000000"
+    },
+    {
+      "kid": 65536,
+      "ctr": 18446744073709551615,
+      "encoded": "7a010000ffffffffffffffff"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 0,
+      "encoded": "0affffff00"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 1,
+      "encoded": "0affffff01"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 255,
+      "encoded": "0affffffff"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 256,
+      "encoded": "1affffff0100"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 65535,
+      "encoded": "1affffffffff"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 65536,
+      "encoded": "2affffff010000"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 16777215,
+      "encoded": "2affffffffffff"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 16777216,
+      "encoded": "3affffff01000000"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 4294967295,
+      "encoded": "3affffffffffffff"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 4294967296,
+      "encoded": "4affffff0100000000"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 1099511627775,
+      "encoded": "4affffffffffffffff"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 1099511627776,
+      "encoded": "5affffff010000000000"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 281474976710655,
+      "encoded": "5affffffffffffffffff"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 281474976710656,
+      "encoded": "6affffff01000000000000"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 72057594037927935,
+      "encoded": "6affffffffffffffffffff"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 72057594037927936,
+      "encoded": "7affffff0100000000000000"
+    },
+    {
+      "kid": 16777215,
+      "ctr": 18446744073709551615,
+      "encoded": "7affffffffffffffffffffff"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 0,
+      "encoded": "0b0100000000"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 1,
+      "encoded": "0b0100000001"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 255,
+      "encoded": "0b01000000ff"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 256,
+      "encoded": "1b010000000100"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 65535,
+      "encoded": "1b01000000ffff"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 65536,
+      "encoded": "2b01000000010000"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 16777215,
+      "encoded": "2b01000000ffffff"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 16777216,
+      "encoded": "3b0100000001000000"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 4294967295,
+      "encoded": "3b01000000ffffffff"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 4294967296,
+      "encoded": "4b010000000100000000"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 1099511627775,
+      "encoded": "4b01000000ffffffffff"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 1099511627776,
+      "encoded": "5b01000000010000000000"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 281474976710655,
+      "encoded": "5b01000000ffffffffffff"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 281474976710656,
+      "encoded": "6b0100000001000000000000"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 72057594037927935,
+      "encoded": "6b01000000ffffffffffffff"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 72057594037927936,
+      "encoded": "7b010000000100000000000000"
+    },
+    {
+      "kid": 16777216,
+      "ctr": 18446744073709551615,
+      "encoded": "7b01000000ffffffffffffffff"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 0,
+      "encoded": "0bffffffff00"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 1,
+      "encoded": "0bffffffff01"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 255,
+      "encoded": "0bffffffffff"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 256,
+      "encoded": "1bffffffff0100"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 65535,
+      "encoded": "1bffffffffffff"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 65536,
+      "encoded": "2bffffffff010000"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 16777215,
+      "encoded": "2bffffffffffffff"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 16777216,
+      "encoded": "3bffffffff01000000"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 4294967295,
+      "encoded": "3bffffffffffffffff"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 4294967296,
+      "encoded": "4bffffffff0100000000"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 1099511627775,
+      "encoded": "4bffffffffffffffffff"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 1099511627776,
+      "encoded": "5bffffffff010000000000"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 281474976710655,
+      "encoded": "5bffffffffffffffffffff"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 281474976710656,
+      "encoded": "6bffffffff01000000000000"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 72057594037927935,
+      "encoded": "6bffffffffffffffffffffff"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 72057594037927936,
+      "encoded": "7bffffffff0100000000000000"
+    },
+    {
+      "kid": 4294967295,
+      "ctr": 18446744073709551615,
+      "encoded": "7bffffffffffffffffffffffff"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 0,
+      "encoded": "0c010000000000"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 1,
+      "encoded": "0c010000000001"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 255,
+      "encoded": "0c0100000000ff"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 256,
+      "encoded": "1c01000000000100"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 65535,
+      "encoded": "1c0100000000ffff"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 65536,
+      "encoded": "2c0100000000010000"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 16777215,
+      "encoded": "2c0100000000ffffff"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 16777216,
+      "encoded": "3c010000000001000000"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 4294967295,
+      "encoded": "3c0100000000ffffffff"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 4294967296,
+      "encoded": "4c01000000000100000000"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 1099511627775,
+      "encoded": "4c0100000000ffffffffff"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 1099511627776,
+      "encoded": "5c0100000000010000000000"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 281474976710655,
+      "encoded": "5c0100000000ffffffffffff"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 281474976710656,
+      "encoded": "6c010000000001000000000000"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 72057594037927935,
+      "encoded": "6c0100000000ffffffffffffff"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 72057594037927936,
+      "encoded": "7c01000000000100000000000000"
+    },
+    {
+      "kid": 4294967296,
+      "ctr": 18446744073709551615,
+      "encoded": "7c0100000000ffffffffffffffff"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 0,
+      "encoded": "0cffffffffff00"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 1,
+      "encoded": "0cffffffffff01"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 255,
+      "encoded": "0cffffffffffff"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 256,
+      "encoded": "1cffffffffff0100"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 65535,
+      "encoded": "1cffffffffffffff"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 65536,
+      "encoded": "2cffffffffff010000"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 16777215,
+      "encoded": "2cffffffffffffffff"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 16777216,
+      "encoded": "3cffffffffff01000000"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 4294967295,
+      "encoded": "3cffffffffffffffffff"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 4294967296,
+      "encoded": "4cffffffffff0100000000"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 1099511627775,
+      "encoded": "4cffffffffffffffffffff"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 1099511627776,
+      "encoded": "5cffffffffff010000000000"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 281474976710655,
+      "encoded": "5cffffffffffffffffffffff"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 281474976710656,
+      "encoded": "6cffffffffff01000000000000"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 72057594037927935,
+      "encoded": "6cffffffffffffffffffffffff"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 72057594037927936,
+      "encoded": "7cffffffffff0100000000000000"
+    },
+    {
+      "kid": 1099511627775,
+      "ctr": 18446744073709551615,
+      "encoded": "7cffffffffffffffffffffffffff"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 0,
+      "encoded": "0d01000000000000"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 1,
+      "encoded": "0d01000000000001"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 255,
+      "encoded": "0d010000000000ff"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 256,
+      "encoded": "1d0100000000000100"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 65535,
+      "encoded": "1d010000000000ffff"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 65536,
+      "encoded": "2d010000000000010000"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 16777215,
+      "encoded": "2d010000000000ffffff"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 16777216,
+      "encoded": "3d01000000000001000000"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 4294967295,
+      "encoded": "3d010000000000ffffffff"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 4294967296,
+      "encoded": "4d0100000000000100000000"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 1099511627775,
+      "encoded": "4d010000000000ffffffffff"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 1099511627776,
+      "encoded": "5d010000000000010000000000"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 281474976710655,
+      "encoded": "5d010000000000ffffffffffff"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 281474976710656,
+      "encoded": "6d01000000000001000000000000"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 72057594037927935,
+      "encoded": "6d010000000000ffffffffffffff"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 72057594037927936,
+      "encoded": "7d0100000000000100000000000000"
+    },
+    {
+      "kid": 1099511627776,
+      "ctr": 18446744073709551615,
+      "encoded": "7d010000000000ffffffffffffffff"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 0,
+      "encoded": "0dffffffffffff00"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 1,
+      "encoded": "0dffffffffffff01"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 255,
+      "encoded": "0dffffffffffffff"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 256,
+      "encoded": "1dffffffffffff0100"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 65535,
+      "encoded": "1dffffffffffffffff"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 65536,
+      "encoded": "2dffffffffffff010000"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 16777215,
+      "encoded": "2dffffffffffffffffff"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 16777216,
+      "encoded": "3dffffffffffff01000000"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 4294967295,
+      "encoded": "3dffffffffffffffffffff"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 4294967296,
+      "encoded": "4dffffffffffff0100000000"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 1099511627775,
+      "encoded": "4dffffffffffffffffffffff"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 1099511627776,
+      "encoded": "5dffffffffffff010000000000"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 281474976710655,
+      "encoded": "5dffffffffffffffffffffffff"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 281474976710656,
+      "encoded": "6dffffffffffff01000000000000"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 72057594037927935,
+      "encoded": "6dffffffffffffffffffffffffff"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 72057594037927936,
+      "encoded": "7dffffffffffff0100000000000000"
+    },
+    {
+      "kid": 281474976710655,
+      "ctr": 18446744073709551615,
+      "encoded": "7dffffffffffffffffffffffffffff"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 0,
+      "encoded": "0e0100000000000000"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 1,
+      "encoded": "0e0100000000000001"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 255,
+      "encoded": "0e01000000000000ff"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 256,
+      "encoded": "1e010000000000000100"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 65535,
+      "encoded": "1e01000000000000ffff"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 65536,
+      "encoded": "2e01000000000000010000"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 16777215,
+      "encoded": "2e01000000000000ffffff"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 16777216,
+      "encoded": "3e0100000000000001000000"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 4294967295,
+      "encoded": "3e01000000000000ffffffff"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 4294967296,
+      "encoded": "4e010000000000000100000000"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 1099511627775,
+      "encoded": "4e01000000000000ffffffffff"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 1099511627776,
+      "encoded": "5e01000000000000010000000000"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 281474976710655,
+      "encoded": "5e01000000000000ffffffffffff"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 281474976710656,
+      "encoded": "6e0100000000000001000000000000"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 72057594037927935,
+      "encoded": "6e01000000000000ffffffffffffff"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 72057594037927936,
+      "encoded": "7e010000000000000100000000000000"
+    },
+    {
+      "kid": 281474976710656,
+      "ctr": 18446744073709551615,
+      "encoded": "7e01000000000000ffffffffffffffff"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 0,
+      "encoded": "0effffffffffffff00"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 1,
+      "encoded": "0effffffffffffff01"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 255,
+      "encoded": "0effffffffffffffff"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 256,
+      "encoded": "1effffffffffffff0100"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 65535,
+      "encoded": "1effffffffffffffffff"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 65536,
+      "encoded": "2effffffffffffff010000"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 16777215,
+      "encoded": "2effffffffffffffffffff"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 16777216,
+      "encoded": "3effffffffffffff01000000"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 4294967295,
+      "encoded": "3effffffffffffffffffffff"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 4294967296,
+      "encoded": "4effffffffffffff0100000000"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 1099511627775,
+      "encoded": "4effffffffffffffffffffffff"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 1099511627776,
+      "encoded": "5effffffffffffff010000000000"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 281474976710655,
+      "encoded": "5effffffffffffffffffffffffff"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 281474976710656,
+      "encoded": "6effffffffffffff01000000000000"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 72057594037927935,
+      "encoded": "6effffffffffffffffffffffffffff"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 72057594037927936,
+      "encoded": "7effffffffffffff0100000000000000"
+    },
+    {
+      "kid": 72057594037927935,
+      "ctr": 18446744073709551615,
+      "encoded": "7effffffffffffffffffffffffffffff"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 0,
+      "encoded": "0f010000000000000000"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 1,
+      "encoded": "0f010000000000000001"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 255,
+      "encoded": "0f0100000000000000ff"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 256,
+      "encoded": "1f01000000000000000100"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 65535,
+      "encoded": "1f0100000000000000ffff"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 65536,
+      "encoded": "2f0100000000000000010000"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 16777215,
+      "encoded": "2f0100000000000000ffffff"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 16777216,
+      "encoded": "3f010000000000000001000000"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 4294967295,
+      "encoded": "3f0100000000000000ffffffff"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 4294967296,
+      "encoded": "4f01000000000000000100000000"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 1099511627775,
+      "encoded": "4f0100000000000000ffffffffff"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 1099511627776,
+      "encoded": "5f0100000000000000010000000000"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 281474976710655,
+      "encoded": "5f0100000000000000ffffffffffff"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 281474976710656,
+      "encoded": "6f010000000000000001000000000000"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 72057594037927935,
+      "encoded": "6f0100000000000000ffffffffffffff"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 72057594037927936,
+      "encoded": "7f01000000000000000100000000000000"
+    },
+    {
+      "kid": 72057594037927936,
+      "ctr": 18446744073709551615,
+      "encoded": "7f0100000000000000ffffffffffffffff"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 0,
+      "encoded": "0fffffffffffffffff00"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 1,
+      "encoded": "0fffffffffffffffff01"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 255,
+      "encoded": "0fffffffffffffffffff"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 256,
+      "encoded": "1fffffffffffffffff0100"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 65535,
+      "encoded": "1fffffffffffffffffffff"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 65536,
+      "encoded": "2fffffffffffffffff010000"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 16777215,
+      "encoded": "2fffffffffffffffffffffff"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 16777216,
+      "encoded": "3fffffffffffffffff01000000"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 4294967295,
+      "encoded": "3fffffffffffffffffffffffff"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 4294967296,
+      "encoded": "4fffffffffffffffff0100000000"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 1099511627775,
+      "encoded": "4fffffffffffffffffffffffffff"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 1099511627776,
+      "encoded": "5fffffffffffffffff010000000000"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 281474976710655,
+      "encoded": "5fffffffffffffffffffffffffffff"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 281474976710656,
+      "encoded": "6fffffffffffffffff01000000000000"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 72057594037927935,
+      "encoded": "6fffffffffffffffffffffffffffffff"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 72057594037927936,
+      "encoded": "7fffffffffffffffff0100000000000000"
+    },
+    {
+      "kid": 18446744073709551615,
+      "ctr": 18446744073709551615,
+      "encoded": "7fffffffffffffffffffffffffffffffff"
+    }
+  ],
+  "aes_ctr_hmac": [
+    {
+      "cipher_suite": 1,
+      "key": "000102030405060708090a0b0c0d0e0f",
+      "aead_label": "534672616d6520312e302041455320435452204145414420000000000000000a",
+      "aead_secret": "fda0fef7af62639ae1c6440f430395f54623f9a49db659201312ed6d9999a580",
+      "enc_key": "d6a61ca11fe8397b24954cda8b9543cf",
+      "auth_key": "0a43277c91120b7c7b6584bede06fcdfe0d07f9d1c9f15fcf0cad50aaecdd585",
+      "nonce": "101112131415161718191a1b",
+      "aad": "4945544620534672616d65205747",
+      "pt": "64726166742d696574662d736672616d652d656e63",
+      "ct": "1075c7114e10c12f20a709450ef8a891e9f070d4fae7b01f558599c929fdfd"
+    },
+    {
+      "cipher_suite": 2,
+      "key": "000102030405060708090a0b0c0d0e0f",
+      "aead_label": "534672616d6520312e3020414553204354522041454144200000000000000008",
+      "aead_secret": "a0d71a69b2033a5a246eefbed19d95aee712a7639a752e5ad3a2b44c9f331caa",
+      "enc_key": "0ef75d1dd74b81e4d2252e6daa7226da",
+      "auth_key": "5584d32db18ede79fe8071a334ff31eb2ca0249a7845a61965d2ec620a50c59e",
+      "nonce": "101112131415161718191a1b",
+      "aad": "4945544620534672616d65205747",
+      "pt": "64726166742d696574662d736672616d652d656e63",
+      "ct": "f8551395579efc8dfdda575ed1a048f8b6cbf0e85653f0a514dea191e4"
+    },
+    {
+      "cipher_suite": 3,
+      "key": "000102030405060708090a0b0c0d0e0f",
+      "aead_label": "534672616d6520312e3020414553204354522041454144200000000000000004",
+      "aead_secret": "ff69640f46d50930ce38bcf5aa5f6417a5bff98a991c79da06a0be460211dd36",
+      "enc_key": "96a673a94981bd85e71fcf05c79f2a01",
+      "auth_key": "bbf3b39da1eb8ed31fc5e0b26896a070f1a43e5ad3009b4c9d6c32e77ac68fce",
+      "nonce": "101112131415161718191a1b",
+      "aad": "4945544620534672616d65205747",
+      "pt": "64726166742d696574662d736672616d652d656e63",
+      "ct": "d6455bdbe7b5e8cdda861a8e90835637c0f7990349ce9052e6"
+    }
+  ],
+  "sframe": [
+    {
+      "cipher_suite": 1,
+      "kid": 291,
+      "ctr": 17767,
+      "base_key": "000102030405060708090a0b0c0d0e0f",
+      "sframe_key_label": "534672616d6520312e3020536563726574206b6579200000000000000123",
+      "sframe_salt_label": "534672616d6520312e30205365637265742073616c74200000000000000123",
+      "sframe_secret": "d926952ca8b7ec4a95941d1ada3a5203ceff8cceee34f574d23909eb314c40c0",
+      "sframe_key": "73bb177a9fe6c02597132fe430ca2d99",
+      "sframe_salt": "55582aa5aaced36a74544d91",
+      "metadata": "4945544620534672616d65205747",
+      "nonce": "55582aa5aaced36a745408f6",
+      "aad": "19012345674945544620534672616d65205747",
+      "pt": "64726166742d696574662d736672616d652d656e63",
+      "ct": "190123456740043f25262c0ca52e9374b070f24b02764715c2e303388c9495324037d043"
+    },
+    {
+      "cipher_suite": 2,
+      "kid": 291,
+      "ctr": 17767,
+      "base_key": "000102030405060708090a0b0c0d0e0f",
+      "sframe_key_label": "534672616d6520312e3020536563726574206b6579200000000000000123",
+      "sframe_salt_label": "534672616d6520312e30205365637265742073616c74200000000000000123",
+      "sframe_secret": "d926952ca8b7ec4a95941d1ada3a5203ceff8cceee34f574d23909eb314c40c0",
+      "sframe_key": "73bb177a9fe6c02597132fe430ca2d99",
+      "sframe_salt": "55582aa5aaced36a74544d91",
+      "metadata": "4945544620534672616d65205747",
+      "nonce": "55582aa5aaced36a745408f6",
+      "aad": "19012345674945544620534672616d65205747",
+      "pt": "64726166742d696574662d736672616d652d656e63",
+      "ct": "1901234567729eef4910d734abfd392cdff0f67d2a8d06041eef5f895e4cecc03a6d"
+    },
+    {
+      "cipher_suite": 3,
+      "kid": 291,
+      "ctr": 17767,
+      "base_key": "000102030405060708090a0b0c0d0e0f",
+      "sframe_key_label": "534672616d6520312e3020536563726574206b6579200000000000000123",
+      "sframe_salt_label": "534672616d6520312e30205365637265742073616c74200000000000000123",
+      "sframe_secret": "d926952ca8b7ec4a95941d1ada3a5203ceff8cceee34f574d23909eb314c40c0",
+      "sframe_key": "73bb177a9fe6c02597132fe430ca2d99",
+      "sframe_salt": "55582aa5aaced36a74544d91",
+      "metadata": "4945544620534672616d65205747",
+      "nonce": "55582aa5aaced36a745408f6",
+      "aad": "19012345674945544620534672616d65205747",
+      "pt": "64726166742d696574662d736672616d652d656e63",
+      "ct": "190123456717fd0a325fdcd5f0d68089ee5bd17df6296b69b6b0e70c8d73"
+    },
+    {
+      "cipher_suite": 4,
+      "kid": 291,
+      "ctr": 17767,
+      "base_key": "000102030405060708090a0b0c0d0e0f",
+      "sframe_key_label": "534672616d6520312e3020536563726574206b6579200000000000000123",
+      "sframe_salt_label": "534672616d6520312e30205365637265742073616c74200000000000000123",
+      "sframe_secret": "d926952ca8b7ec4a95941d1ada3a5203ceff8cceee34f574d23909eb314c40c0",
+      "sframe_key": "73bb177a9fe6c02597132fe430ca2d99",
+      "sframe_salt": "55582aa5aaced36a74544d91",
+      "metadata": "4945544620534672616d65205747",
+      "nonce": "55582aa5aaced36a745408f6",
+      "aad": "19012345674945544620534672616d65205747",
+      "pt": "64726166742d696574662d736672616d652d656e63",
+      "ct": "1901234567b8bf87709717f709a35b4e91b2109e5c1ca4f76179415f8bb15d70a9be7eb89c7adb76d300"
+    },
+    {
+      "cipher_suite": 5,
+      "kid": 291,
+      "ctr": 17767,
+      "base_key": "000102030405060708090a0b0c0d0e0f",
+      "sframe_key_label": "534672616d6520312e3020536563726574206b6579200000000000000123",
+      "sframe_salt_label": "534672616d6520312e30205365637265742073616c74200000000000000123",
+      "sframe_secret": "0fc3ea6de6aac97a35f194cf9bed94d4b5230f1cb45a785c9fe5dce9c188938ab6ba005bc4c0a19181599e9d1bcf7b74aca48b60bf5e254e546d809313e083a3",
+      "sframe_key": "e9e405efb7cd325030760935bf49fd5669d7c19eb84ca74b419a1487cf835107",
+      "sframe_salt": "11007b537a1cf728a4c544c1",
+      "metadata": "4945544620534672616d65205747",
+      "nonce": "11007b537a1cf728a4c501a6",
+      "aad": "19012345674945544620534672616d65205747",
+      "pt": "64726166742d696574662d736672616d652d656e63",
+      "ct": "19012345671e11c62748536fd55fdbc9560daea4825bfecbb05489cd41cb7a1556e001989a4485e8a02f"
+    }
+  ]
+}

@@ -4,25 +4,34 @@
 use crate::{
     crypto::{
         cipher_suite::{CipherSuite, CipherSuiteVariant},
-        key_expansion::{
-            KeyExpansion, SFRAME_HDKF_SALT_EXPAND_INFO, SFRAME_HKDF_KEY_EXPAND_INFO,
-            SFRAME_HKDF_SALT,
-        },
+        key_derivation::{get_hkdf_key_expand_info, get_hkdf_salt_expand_info, KeyDerivation},
         secret::Secret,
     },
     error::{Result, SframeError},
 };
 
-impl KeyExpansion for Secret {
-    fn expand_from<T>(cipher_suite: &CipherSuite, key_material: T) -> Result<Secret>
+impl KeyDerivation for Secret {
+    fn expand_from<M, K>(cipher_suite: &CipherSuite, key_material: M, key_id: K) -> Result<Secret>
     where
-        T: AsRef<[u8]>,
+        M: AsRef<[u8]>,
+        K: Into<u64>,
     {
+        let key_id = key_id.into();
         let algorithm = cipher_suite.variant.into();
-        let prk = ring::hkdf::Salt::new(algorithm, SFRAME_HKDF_SALT).extract(key_material.as_ref());
+        // No salt used for the extraction: https://www.ietf.org/archive/id/draft-ietf-sframe-enc-03.html#name-key-derivation
+        let pseudo_random_key =
+            ring::hkdf::Salt::new(algorithm, b"").extract(key_material.as_ref());
 
-        let key = expand_key(&prk, SFRAME_HKDF_KEY_EXPAND_INFO, cipher_suite.key_len)?;
-        let salt = expand_key(&prk, SFRAME_HDKF_SALT_EXPAND_INFO, cipher_suite.nonce_len)?;
+        let key = expand_key(
+            &pseudo_random_key,
+            &get_hkdf_key_expand_info(key_id),
+            cipher_suite.key_len,
+        )?;
+        let salt = expand_key(
+            &pseudo_random_key,
+            &get_hkdf_salt_expand_info(key_id),
+            cipher_suite.nonce_len,
+        )?;
 
         Ok(Secret {
             key,
@@ -54,7 +63,7 @@ fn expand_key(prk: &ring::hkdf::Prk, info: &[u8], key_len: usize) -> Result<Vec<
 
     prk.expand(&[info], OkmKeyLength(key_len))
         .and_then(|okm| okm.fill(sframe_key.as_mut_slice()))
-        .map_err(|_| SframeError::KeyExpansion)?;
+        .map_err(|_| SframeError::KeyDerivation)?;
 
     Ok(sframe_key)
 }

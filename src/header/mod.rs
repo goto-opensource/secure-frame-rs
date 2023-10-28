@@ -44,7 +44,7 @@ pub trait HeaderFields {
 }
 
 /// Sframe header with a KID with a length of up to 3bits
-/// modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-01#name-sframe-header)
+/// modeled after [sframe draft 03 4.3](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-03#name-sframe-header)
 /// ```txt
 ///  0 1 2 3 4 5 6 7
 /// +-+-+-+-+-+-+-+-+---------------------------------+
@@ -73,7 +73,7 @@ impl BasicHeader {
     }
 }
 /// Extended sframe header with a KID with a length of up to 8 bytes
-/// modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-01#name-sframe-header)
+/// modeled after [sframe draft 03 4.3](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-03#name-sframe-header)
 /// ```txt
 ///  0 1 2 3 4 5 6 7
 /// +-+-+-+-+-+-+-+-+---------------------------+---------------------------+
@@ -102,7 +102,7 @@ impl ExtendedHeader {
 }
 
 #[derive(Copy, Clone, Debug)]
-/// Represents an Sframe header modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-01#name-sframe-header)
+/// Represents an Sframe header modeled after [sframe draft 03 4.3](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-03#name-sframe-header)
 /// containing the key id of the sender (KID) and the current frame count (CTR).
 /// There are two variants, either with a KID represented by 3 bits (Basic) and an extended version with a KID of up to 8 bytes (Extended).
 /// The CTR field has a variable length of up to 8 bytes where the size is represented with LEN. Here LEN=0 represents a length of 1.
@@ -218,7 +218,6 @@ mod test {
     use super::{frame_count::FrameCount, keyid::KeyId, Header};
     use crate::header::{Deserialization, HeaderFields};
     use crate::util::test::assert_bytes_eq;
-    use crate::CipherSuiteVariant::{AesGcm128Sha256, AesGcm256Sha512};
 
     use pretty_assertions::assert_eq;
 
@@ -254,25 +253,23 @@ mod test {
 
     #[test]
     fn serialize_test_vectors() {
-        crate::test_vectors::get_test_vector(&AesGcm128Sha256.to_string())
-            .encryptions
+        crate::test_vectors::get_header_test_vectors()
             .iter()
             .for_each(|test_vector| {
                 let header = Header::with_frame_count(
                     KeyId::from(test_vector.key_id),
                     FrameCount::from(test_vector.frame_count),
                 );
-                assert_bytes_eq(Vec::from(&header).as_slice(), &test_vector.header);
+                assert_bytes_eq(Vec::from(&header).as_slice(), &test_vector.encoded);
             });
     }
 
     #[test]
     fn deserialize_test_vectors() {
-        crate::test_vectors::get_test_vector(&AesGcm256Sha512.to_string())
-            .encryptions
+        crate::test_vectors::get_header_test_vectors()
             .iter()
             .for_each(|test_vector| {
-                let header = Header::deserialize(&test_vector.header).unwrap();
+                let header = Header::deserialize(&test_vector.encoded).unwrap();
                 assert_eq!(header.key_id(), KeyId::from(test_vector.key_id));
                 assert_eq!(header.frame_count(), test_vector.frame_count);
             });

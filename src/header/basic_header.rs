@@ -11,7 +11,7 @@ use super::{
 };
 
 bitfield! {
-    /// Modeled after [sframe draft 00 4.2](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-01#name-sframe-header)
+    /// Modeled after [sframe draft 03 4.3](https://datatracker.ietf.org/doc/html/draft-ietf-sframe-enc-03#name-sframe-header)
     /// ```txt
     ///  0 1 2 3 4 5 6 7
     /// +-+-+-+-+-+-+-+-+---------------------------------+

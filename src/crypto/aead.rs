@@ -34,167 +34,117 @@ pub trait AeadDecrypt {
 #[cfg(test)]
 mod test {
 
-    mod aes_gcm {
-        use crate::{
-            crypto::{
-                aead::AeadEncrypt,
-                cipher_suite::{CipherSuite, CipherSuiteVariant},
-                key_expansion::KeyExpansion,
-                secret::Secret,
-            },
-            header::{Header, HeaderFields},
-        };
-        use rand::{thread_rng, Rng};
-        const KEY_MATERIAL: &str = "THIS_IS_RANDOM";
+    use crate::crypto::key_derivation::KeyDerivation;
+    use crate::header::{FrameCount, KeyId};
+    use crate::test_vectors::{get_sframe_test_vector, SframeTest};
+    use crate::util::test::assert_bytes_eq;
+    use crate::{
+        crypto::{
+            aead::AeadDecrypt,
+            aead::AeadEncrypt,
+            cipher_suite::{CipherSuite, CipherSuiteVariant},
+            secret::Secret,
+        },
+        header::{Header, HeaderFields},
+    };
 
-        #[test]
-        fn encrypt_random_frame() {
-            let mut data = vec![0u8; 1024];
-            thread_rng().fill(data.as_mut_slice());
-            let header = Header::default();
-            let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
-            let secret = Secret::expand_from(&cipher_suite, KEY_MATERIAL.as_bytes()).unwrap();
+    use test_case::test_case;
 
-            let _tag = cipher_suite
-                .encrypt(
-                    &mut data,
-                    &secret,
-                    &Vec::from(&header),
-                    header.frame_count(),
-                )
-                .unwrap();
-        }
+    use rand::{thread_rng, Rng};
 
-        mod test_vectors {
+    const KEY_MATERIAL: &str = "THIS_IS_RANDOM";
 
-            use crate::crypto::key_expansion::KeyExpansion;
-            use crate::test_vectors::{get_test_vector, TestVector};
+    #[test]
+    fn encrypt_random_frame() {
+        let mut data = vec![0u8; 1024];
+        thread_rng().fill(data.as_mut_slice());
+        let header = Header::default();
+        let cipher_suite = CipherSuite::from(CipherSuiteVariant::AesGcm256Sha512);
+        let secret =
+            Secret::expand_from(&cipher_suite, KEY_MATERIAL.as_bytes(), KeyId::default()).unwrap();
 
-            use crate::{
-                crypto::{
-                    aead::{AeadDecrypt, AeadEncrypt},
-                    cipher_suite::{CipherSuite, CipherSuiteVariant},
-                    secret::Secret,
-                },
-                header::{FrameCount, Header, HeaderFields, KeyId},
-                util::test::assert_bytes_eq,
-            };
+        let _tag = cipher_suite
+            .encrypt(
+                &mut data,
+                &secret,
+                &Vec::from(&header),
+                header.frame_count(),
+            )
+            .unwrap();
+    }
 
-            fn encrypt_test_vector(variant: CipherSuiteVariant) {
-                let test_vector = get_test_vector(&variant.to_string());
-                let cipher_suite = CipherSuite::from(variant);
+    #[test_case(CipherSuiteVariant::AesGcm128Sha256; "AesGcm128Sha256")]
+    #[test_case(CipherSuiteVariant::AesGcm256Sha512; "AesGcm256Sha512")]
+    #[cfg_attr(feature = "openssl", test_case(CipherSuiteVariant::AesCtr128HmacSha256_80; "AesCtr128HmacSha256_80"))]
+    #[cfg_attr(feature = "openssl", test_case(CipherSuiteVariant::AesCtr128HmacSha256_64; "AesCtr128HmacSha256_64"))]
+    #[cfg_attr(feature = "openssl", test_case(CipherSuiteVariant::AesCtr128HmacSha256_32; "AesCtr128HmacSha256_32"))]
+    fn encrypt_test_vector(variant: CipherSuiteVariant) {
+        let test_vec = get_sframe_test_vector(&variant.to_string());
+        let cipher_suite = CipherSuite::from(variant);
 
-                let secret = prepare_secret(&cipher_suite, test_vector);
+        let secret = prepare_secret(&cipher_suite, test_vec);
 
-                for enc in &test_vector.encryptions {
-                    let mut data = test_vector.plain_text.clone();
-                    let header = Header::with_frame_count(
-                        KeyId::from(enc.key_id),
-                        FrameCount::from(enc.frame_count),
-                    );
-                    let header_buffer = Vec::from(&header);
-                    let tag = cipher_suite
-                        .encrypt(&mut data, &secret, &header_buffer, header.frame_count())
-                        .unwrap();
-                    let full_frame: Vec<u8> = header_buffer
-                        .into_iter()
-                        .chain(data.into_iter())
-                        .chain(tag.as_ref().iter().cloned())
-                        .collect();
+        let mut data_buffer = test_vec.plain_text.clone();
 
-                    assert_bytes_eq(&full_frame, &enc.cipher_text);
-                }
-            }
+        let header = Header::with_frame_count(
+            KeyId::from(test_vec.key_id),
+            FrameCount::from(test_vec.frame_count),
+        );
+        let header_buffer = Vec::from(&header);
 
-            fn decrypt_test_vector(variant: CipherSuiteVariant) {
-                let test_vector = get_test_vector(&variant.to_string());
-                let cipher_suite = CipherSuite::from(variant);
+        let aad_buffer = [header_buffer.as_slice(), test_vec.metadata.as_slice()].concat();
 
-                let secret = prepare_secret(&cipher_suite, test_vector);
+        let tag = cipher_suite
+            .encrypt(&mut data_buffer, &secret, &aad_buffer, header.frame_count())
+            .unwrap();
 
-                for enc in &test_vector.encryptions {
-                    let header = Header::with_frame_count(
-                        KeyId::from(enc.key_id),
-                        FrameCount::from(enc.frame_count),
-                    );
-                    let header_buffer = Vec::from(&header);
-                    let mut data = Vec::from(&enc.cipher_text[header.size()..]);
+        let full_frame: Vec<u8> = header_buffer
+            .into_iter()
+            .chain(data_buffer)
+            .chain(tag.as_ref().iter().cloned())
+            .collect();
 
-                    let decrypted = cipher_suite
-                        .decrypt(&mut data, &secret, &header_buffer, header.frame_count())
-                        .unwrap();
+        assert_bytes_eq(&aad_buffer, &test_vec.aad);
+        assert_bytes_eq(&full_frame, &test_vec.cipher_text);
+    }
 
-                    assert_bytes_eq(decrypted, &test_vector.plain_text);
-                }
-            }
+    #[test_case(CipherSuiteVariant::AesGcm128Sha256; "AesGcm128Sha256")]
+    #[test_case(CipherSuiteVariant::AesGcm256Sha512; "AesGcm256Sha512")]
+    #[cfg_attr(feature = "openssl", test_case(CipherSuiteVariant::AesCtr128HmacSha256_80; "AesCtr128HmacSha256_80"))]
+    #[cfg_attr(feature = "openssl", test_case(CipherSuiteVariant::AesCtr128HmacSha256_64; "AesCtr128HmacSha256_64"))]
+    #[cfg_attr(feature = "openssl", test_case(CipherSuiteVariant::AesCtr128HmacSha256_32; "AesCtr128HmacSha256_32"))]
+    fn decrypt_test_vector(variant: CipherSuiteVariant) {
+        let test_vec = get_sframe_test_vector(&variant.to_string());
+        let cipher_suite = CipherSuite::from(variant);
 
-            fn prepare_secret(cipher_suite: &CipherSuite, test_vector: &TestVector) -> Secret {
-                if cipher_suite.is_ctr_mode() {
-                    Secret::expand_from(cipher_suite, &test_vector.key_material).unwrap()
-                } else {
-                    Secret::from_test_vector(test_vector)
-                }
-            }
+        let secret = prepare_secret(&cipher_suite, test_vec);
+        let header = Header::with_frame_count(
+            KeyId::from(test_vec.key_id),
+            FrameCount::from(test_vec.frame_count),
+        );
+        let header_buffer = Vec::from(&header);
 
-            #[test]
-            fn encrypt_test_vector_aes_gcm_128_sha256() {
-                encrypt_test_vector(CipherSuiteVariant::AesGcm128Sha256);
-            }
+        let aad_buffer = [header_buffer.as_slice(), test_vec.metadata.as_slice()].concat();
+        assert_bytes_eq(&aad_buffer, &test_vec.aad);
 
-            #[test]
-            fn should_decrypt_test_vector_aes_gcm_128_sha256() {
-                decrypt_test_vector(CipherSuiteVariant::AesGcm128Sha256);
-            }
+        let mut data = Vec::from(&test_vec.cipher_text[header.size()..]);
 
-            #[test]
-            fn encrypt_test_vectors_aes_gcm_256_sha512() {
-                encrypt_test_vector(CipherSuiteVariant::AesGcm256Sha512);
-            }
+        let decrypted = cipher_suite
+            .decrypt(&mut data, &secret, &aad_buffer, header.frame_count())
+            .unwrap();
 
-            #[test]
-            fn should_decrypt_test_vectors_aes_gcm_256_sha512() {
-                decrypt_test_vector(CipherSuiteVariant::AesGcm256Sha512);
-            }
+        assert_bytes_eq(decrypted, &test_vec.plain_text);
+    }
 
-            #[cfg(feature = "openssl")]
-            mod aes_ctr {
-                use crate::CipherSuiteVariant;
-
-                use super::{decrypt_test_vector, encrypt_test_vector};
-
-                #[test]
-                fn should_encrypt_test_vectors_aes_ctr_64_hmac_sha256_64() {
-                    encrypt_test_vector(CipherSuiteVariant::AesCtr128HmacSha256_64);
-                }
-
-                #[test]
-                fn should_decrypt_test_vectors_aes_ctr_64_hmac_sha256_64() {
-                    decrypt_test_vector(CipherSuiteVariant::AesCtr128HmacSha256_64);
-                }
-
-                #[test]
-                fn should_encrypt_test_vectors_aes_ctr_64_hmac_sha256_32() {
-                    encrypt_test_vector(CipherSuiteVariant::AesCtr128HmacSha256_32);
-                }
-
-                #[test]
-                fn should_decrypt_test_vectors_aes_ctr_64_hmac_sha256_32() {
-                    decrypt_test_vector(CipherSuiteVariant::AesCtr128HmacSha256_32);
-                }
-
-                #[test]
-                // AesCtr128HmacSha256_80 is not available in the test vectors
-                #[ignore]
-                fn should_encrypt_test_vectors_aes_ctr_64_hmac_sha256_80() {
-                    encrypt_test_vector(CipherSuiteVariant::AesCtr128HmacSha256_32);
-                }
-
-                #[test]
-                // AesCtr128HmacSha256_80 is not available in the test vectors
-                #[ignore]
-                fn should_decrypt_test_vectors_aes_ctr_64_hmac_sha256_80() {
-                    decrypt_test_vector(CipherSuiteVariant::AesCtr128HmacSha256_32);
-                }
+    fn prepare_secret(cipher_suite: &CipherSuite, test_vec: &SframeTest) -> Secret {
+        if cipher_suite.is_ctr_mode() {
+            // the test vectors do not provide the auth key, so we have to expand here
+            Secret::expand_from(cipher_suite, &test_vec.key_material, test_vec.key_id).unwrap()
+        } else {
+            Secret {
+                key: test_vec.sframe_key.clone(),
+                salt: test_vec.sframe_salt.clone(),
+                auth: None,
             }
         }
     }

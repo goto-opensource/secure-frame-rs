@@ -5,7 +5,7 @@ use crate::{
     crypto::{
         aead::AeadEncrypt,
         cipher_suite::{CipherSuite, CipherSuiteVariant},
-        key_expansion::KeyExpansion,
+        key_derivation::KeyDerivation,
         secret::Secret,
     },
     error::{Result, SframeError},
@@ -108,71 +108,12 @@ impl Sender {
     where
         KeyMaterial: AsRef<[u8]> + ?Sized,
     {
-        self.secret = Some(Secret::expand_from(&self.cipher_suite, key_material)?);
+        self.secret = Some(Secret::expand_from(
+            &self.cipher_suite,
+            key_material,
+            self.key_id,
+        )?);
         Ok(())
-    }
-}
-
-#[cfg(test)]
-mod test_on_wire_format {
-    use super::*;
-    use crate::receiver::Receiver;
-
-    fn hex(hex_str: &str) -> Vec<u8> {
-        hex::decode(hex_str).unwrap()
-    }
-
-    const KEY_ID: u8 = 0;
-
-    #[test]
-    fn deadbeef_decrypt() {
-        let material = hex("1234567890123456789012345678901212345678901234567890123456789012");
-        let mut sender = Sender::new(KEY_ID);
-        let mut receiver = Receiver::default();
-
-        sender.set_encryption_key(&material).unwrap();
-        receiver.set_encryption_key(KEY_ID, &material).unwrap();
-
-        let encrypted = sender.encrypt(&hex("deadbeafcacadebaca00"), 4).unwrap();
-        let decrypted = receiver.decrypt(encrypted, 4).unwrap();
-
-        assert_eq!(decrypted, hex("deadbeafcacadebaca00"));
-    }
-
-    #[test]
-    fn deadbeef_on_wire() {
-        let material = hex("1234567890123456789012345678901212345678901234567890123456789012");
-        let mut sender = Sender::new(KEY_ID);
-        let mut receiver = Receiver::default();
-
-        sender.set_encryption_key(&material).unwrap();
-        receiver.set_encryption_key(KEY_ID, &material).unwrap();
-
-        let encrypted = sender.encrypt(&hex("deadbeafcacadebaca00"), 4).unwrap();
-
-        assert_eq!(
-            hex::encode(encrypted),
-            "deadbeaf0000a160a9176ba4ce7ca128df74907d422e5064d1c23529"
-        );
-    }
-
-    #[test]
-    fn deadbeef_on_wire_long() {
-        let material = hex("1234567890123456789012345678901212345678901234567890123456789012");
-        let mut sender = Sender::new(KEY_ID);
-        let mut receiver = Receiver::default();
-
-        sender.set_encryption_key(&material).unwrap();
-        receiver.set_encryption_key(KEY_ID, &material).unwrap();
-
-        let encrypted = sender
-            .encrypt(&hex("deadbeafcacadebacacacadebacacacadebaca00"), 4)
-            .unwrap();
-
-        assert_eq!(
-            hex::encode(encrypted),
-            "deadbeaf0000a160a9176b6ebe53f594a64faa1f48a5246b202d13416bf671b3edae7704a862"
-        );
     }
 }
 

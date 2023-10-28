@@ -20,48 +20,34 @@ impl Secret {
 
         iv
     }
-
-    #[cfg(test)]
-    pub(crate) fn from_test_vector(test_vector: &crate::test_vectors::TestVector) -> Secret {
-        Secret {
-            key: test_vector.key.clone(),
-            salt: test_vector.salt.clone(),
-            auth: None,
-        }
-    }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::crypto::cipher_suite::CipherSuite;
-    use crate::crypto::key_expansion::KeyExpansion;
-    use crate::test_vectors::get_test_vector;
-
+    use crate::test_vectors::get_sframe_test_vector;
     use crate::{
         crypto::cipher_suite::CipherSuiteVariant, header::FrameCount, util::test::assert_bytes_eq,
     };
 
     use super::Secret;
-
+    use test_case::test_case;
     const NONCE_LEN: usize = 12;
 
-    fn test_nonce(variant: CipherSuiteVariant) {
-        let tv = get_test_vector(&variant.to_string());
+    #[test_case(CipherSuiteVariant::AesGcm128Sha256; "AesGcm128Sha256")]
+    #[test_case(CipherSuiteVariant::AesGcm256Sha512; "AesGcm256Sha512")]
+    #[cfg_attr(feature = "openssl", test_case(CipherSuiteVariant::AesCtr128HmacSha256_80; "AesCtr128HmacSha256_80"))]
+    #[cfg_attr(feature = "openssl", test_case(CipherSuiteVariant::AesCtr128HmacSha256_64; "AesCtr128HmacSha256_64"))]
+    #[cfg_attr(feature = "openssl", test_case(CipherSuiteVariant::AesCtr128HmacSha256_32; "AesCtr128HmacSha256_32"))]
+    fn create_correct_nonce(variant: CipherSuiteVariant) {
+        let test_vec = get_sframe_test_vector(&variant.to_string());
 
-        for enc in &tv.encryptions {
-            let secret =
-                Secret::expand_from(&CipherSuite::from(variant), &tv.key_material).unwrap();
-            let nonce: [u8; NONCE_LEN] = secret.create_nonce(&FrameCount::from(enc.frame_count));
-            assert_bytes_eq(&nonce, &enc.nonce);
-        }
-    }
+        let secret = Secret {
+            key: test_vec.sframe_key.clone(),
+            salt: test_vec.sframe_salt.clone(),
+            auth: None,
+        };
 
-    #[test]
-    fn create_correct_nonce_aes_gcm_128_sha256() {
-        test_nonce(CipherSuiteVariant::AesGcm128Sha256);
-    }
-    #[test]
-    fn create_correct_nonce_aes_gcm_256_sha512() {
-        test_nonce(CipherSuiteVariant::AesGcm256Sha512);
+        let nonce: [u8; NONCE_LEN] = secret.create_nonce(&FrameCount::from(test_vec.frame_count));
+        assert_bytes_eq(&nonce, &test_vec.nonce);
     }
 }
