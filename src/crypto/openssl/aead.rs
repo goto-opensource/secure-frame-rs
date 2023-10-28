@@ -190,13 +190,12 @@ impl CipherSuite {
         let mut signer = openssl::sign::Signer::new(openssl::hash::MessageDigest::sha256(), &key)?;
 
         // for current platforms there is no issue casting from usize to u64
-        let aad_len = &(aad.len() as u64).to_be_bytes();
-        let ct_len = &(encrypted.len() as u64).to_be_bytes();
-        let tag_len = &(self.auth_tag_len as u64).to_be_bytes();
-
-        for buf in [aad_len, ct_len, tag_len, nonce, aad, encrypted] {
-            signer.update(buf)?;
-        }
+        signer.update(&(aad.len() as u64).to_be_bytes())?;
+        signer.update(&(encrypted.len() as u64).to_be_bytes())?;
+        signer.update(&(self.auth_tag_len as u64).to_be_bytes())?;
+        signer.update(nonce)?;
+        signer.update(aad)?;
+        signer.update(encrypted)?;
 
         let mut tag = signer.sign_to_vec()?;
         tag.resize(self.auth_tag_len, 0);
