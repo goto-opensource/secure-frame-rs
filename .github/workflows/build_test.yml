@@ -15,68 +15,48 @@ jobs:
       matrix:
         rust:
           - stable
+          #- stable minus 2 releases
+          #- beta
         feature:
           - ring
           - openssl
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: ${{ matrix.rust }}
-          override: true
-      - run: rustup component add clippy
+          components: clippy, rustfmt
 
-      - name: check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-          args: --no-default-features --features ${{ matrix.feature }}
+      - name: check 
+        run: cargo check --no-default-features --features ${{ matrix.feature }}
 
       - name: check (benches)
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-          args: --benches --no-default-features --features ${{ matrix.feature }}
+        run: cargo check --benches --no-default-features --features ${{ matrix.feature }}
 
       - name: check (tests)
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-          args: --tests --no-default-features --features ${{ matrix.feature }}
+        run: cargo check --tests --no-default-features --features ${{ matrix.feature }}
 
       - name: test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --no-default-features --features ${{ matrix.feature }}
+        run: cargo test --no-default-features --features ${{ matrix.feature }}
 
       - name: clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --all-targets --no-default-features --features ${{ matrix.feature }} -- -Dwarnings
+        run: cargo clippy --all-targets --no-default-features --features ${{ matrix.feature }} -- -Dwarnings
 
       # test packaging to avoid surprisis at release time
       - name: package
-        uses: actions-rs/cargo@v1
-        with:
-          command: package
+        run: cargo package
 
   
   build-wasm:
     name: build wasm32
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: stable
-          override: true
           target: wasm32-unknown-unknown 
       - name: build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --target wasm32-unknown-unknown --features ring
+        run: cargo build --target wasm32-unknown-unknown --features ring
