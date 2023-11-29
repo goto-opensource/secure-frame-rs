@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
-- Update key derivation / tag computation to draft-03
+- [**breaking**] Update key derivation / tag computation to draft-03
+The latest [changes in the draft](https://author-tools.ietf.org/diff?doc_1=draft-ietf-sframe-enc-01&doc_2=draft-ietf-sframe-enc-03) regarding the key derivation and tag computation, make theimplementation incompatible with previous versions
 
 ## [0.2.2] - 2023-08-02
 
@@ -22,18 +23,45 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
-- Crypto library feature handling
-- Openssl aead implemenation
-- Implement hkdf with openssl
-- Add openssl crypto crate stub
 - Update to draft enc-01
+- Add openssl crypto crate stub
+- Implement hkdf with openssl
+- Openssl aead implemenation
+- Crypto library feature handling
 
 ## [0.2.0] - 2023-04-28
 
+### Features
+
+- Add Receiver::remove_encryption_key()
+- Add FrameValidation in Receiver
+- Impl from trait for KeyId
+- Implement AesGcm128Sha256
+- Allow configuring ciphersuite of sender and receiver
+- Github actions
+
 ### Performance
 
-- Reusable, internal buffer in sender/receiver
+- Set participant key in decrypt benchmark
+- Avoid some allocation in extended header parsing
+- Avoid some allocation in basic header parsing
 - Improved nonce creation
+- [**breaking**] Reusable, internal buffer in sender/receiver
+decrypt requires receiver to be mutable.
+
+The user is now responsible of copying data on subsequential encrypt/decrypt calls. E.g.
+```rust
+        let frame = sender
+            .encrypt(&data, 0)?;
+        let frame2 = sender
+            .encrypt(&data2, 0)?;
+// could be replaced with
+        let frame = sender
+            .encrypt(&data, 0)?
+            .to_vec();
+        let frame2 = sender
+            .encrypt(&data2, 0)?;
+```
 
 ## [0.1.0] - 2022-12-16
 
