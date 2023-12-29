@@ -14,7 +14,6 @@ There is an alternative implementation under [goto-opensource/secure-frame-ts](h
 
 ## Differences from the sframe draft
 * ratcheting is not implemented
-* keyIds are used as senderIds
 * no metadata authentication
 
 ## Supported crypto libraries
